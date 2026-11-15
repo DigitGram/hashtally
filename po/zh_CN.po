@@ -1,0 +1,560 @@
+# Simplified Chinese translation of HashTally.
+# Copyright (C) 2026 DigitGram
+# This file is distributed under the same license as the HashTally package.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: HashTally 1.0\n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: 2026-10-18\n"
+"Last-Translator: AI-generated, not reviewed by a native speaker\n"
+"Language-Team: Simplified Chinese\n"
+"Language: zh_CN\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+#: src/core.py
+msgid "."
+msgstr "."
+
+#: src/ui_gtk.py
+msgid "Choose folder"
+msgstr "选择文件夹"
+
+#: src/core.py
+msgid "Create, verify and compare checksums right from Nautilus. Checks hash files such as SHA256SUMS together with their GPG signature, or compares a file against a hash you paste in."
+msgstr "直接在 Nautilus 中创建、验证和比较校验和。可验证 SHA256SUMS 等哈希文件及其 GPG 签名，或将文件与粘贴的哈希值进行比较。"
+
+#: src/core.py
+msgid "Create hash file"
+msgstr "创建哈希文件"
+
+#: src/core.py
+msgid "Default algorithm"
+msgstr "默认算法"
+
+#: src/core.py
+msgid "Language"
+msgstr "语言"
+
+#: src/ui_gtk.py
+msgid "Main menu"
+msgstr "主菜单"
+
+#: src/core.py
+msgid "Show or compare hash"
+msgstr "显示或比较哈希值"
+
+#: src/core.py
+msgid "System default"
+msgstr "跟随系统"
+
+#: src/core.py
+msgid "Verify hash file"
+msgstr "验证哈希文件"
+
+#: src/core.py
+msgid "gpg is not installed"
+msgstr "未安装 gpg"
+
+#: src/core.py
+#, python-brace-format
+msgid "{algo} matches"
+msgstr "{algo} 匹配"
+
+#: src/hashtally.py
+msgid "HashTally needs GTK 4 with libadwaita 1.5 or newer (python3-gi, gir1.2-adw-1)."
+msgstr "HashTally 需要 GTK 4 和 libadwaita 1.5 或更高版本（python3-gi、gir1.2-adw-1）。"
+
+#: src/ui_gtk.py
+msgid "About HashTally"
+msgstr "关于 HashTally"
+
+#: src/ui_about.py
+msgid "Mascot"
+msgstr "吉祥物"
+
+#: src/ui_gtk.py
+msgid "Algorithm"
+msgstr "算法"
+
+#: src/ui_gtk.py
+msgid "Algorithms when comparing"
+msgstr "比较时使用的算法"
+
+#: src/ui_gtk.py
+msgid "Back to the default values."
+msgstr "恢复为默认值。"
+
+#: src/ui_gtk.py
+msgid "Calculating hashes …"
+msgstr "正在计算哈希值 …"
+
+#: src/ui_gtk.py
+msgid "Cancel"
+msgstr "取消"
+
+#: src/ui_gtk.py
+msgid "Cancelled"
+msgstr "已取消"
+
+#: src/ui_gtk.py
+msgid "Cannot read file"
+msgstr "无法读取文件"
+
+#: src/ui_gtk.py
+msgid "Check again"
+msgstr "重新检查"
+
+#: src/ui_gtk.py
+msgid "Close"
+msgstr "关闭"
+
+#: src/ui_gtk.py
+msgid "Compare it with the publisher's website; HashTally cannot tell whether this key really belongs to them."
+msgstr "请与发布者网站上的指纹核对；HashTally 无法判断该密钥是否真的属于发布者。"
+
+#: src/ui_gtk.py
+msgid "Compare with clipboard automatically"
+msgstr "自动与剪贴板比较"
+
+#: src/ui_gtk.py
+msgid "Context menu"
+msgstr "右键菜单"
+
+#: src/ui_gtk.py
+msgid "Copied"
+msgstr "已复制"
+
+#: src/ui_gtk.py
+msgid "Copy"
+msgstr "复制"
+
+#: src/ui_gtk.py
+msgid "Copy import command"
+msgstr "复制导入命令"
+
+#: src/ui_gtk.py
+msgid "Create"
+msgstr "创建"
+
+#: src/ui_gtk.py
+msgid "Entries"
+msgstr "菜单项"
+
+#: src/ui_gtk.py
+msgid "Error"
+msgstr "错误"
+
+#: src/ui_gtk.py
+msgid "Expected hash"
+msgstr "预期哈希值"
+
+#: src/ui_gtk.py
+msgid "Fewer algorithms are faster for large files."
+msgstr "算法越少，处理大文件越快。"
+
+#: src/ui_gtk.py
+msgid "File"
+msgstr "文件"
+
+#: src/ui_gtk.py
+msgid "Fill in a copied hash when comparing"
+msgstr "比较时自动填入已复制的哈希值"
+
+#: src/ui_gtk.py
+msgid "Found hash"
+msgstr "实际哈希值"
+
+#: src/ui_gtk.py
+msgid "General"
+msgstr "常规"
+
+#: src/ui_gtk.py
+#, python-brace-format
+msgid "Good signature from {signer}"
+msgstr "来自 {signer} 的有效签名"
+
+#: src/ui_gtk.py
+msgid "Hash file created"
+msgstr "哈希文件已创建"
+
+#: src/ui_gtk.py
+msgid "Hash file name"
+msgstr "哈希文件名"
+
+#: src/ui_gtk.py
+msgid "In a submenu"
+msgstr "子菜单中"
+
+#: src/ui_gtk.py
+msgid "In the submenu “HashTally” they take one more click."
+msgstr "放在“HashTally”子菜单中时，需要多点一次。"
+
+#: src/ui_gtk.py
+msgid "Invalid signature: do not trust this hash file"
+msgstr "签名无效：请勿信任此哈希文件"
+
+#: src/ui_gtk.py
+msgid "Language, algorithm and everything else go back to their defaults."
+msgstr "语言、算法及其他所有设置都将恢复为默认值。"
+
+#: src/ui_gtk.py
+msgid "Later"
+msgstr "稍后"
+
+#: src/ui_gtk.py
+msgid "Location"
+msgstr "位置"
+
+#: src/ui_gtk.py
+msgid "Mismatch"
+msgstr "不匹配"
+
+#: src/ui_gtk.py
+msgid "No checksums found"
+msgstr "未找到校验和"
+
+#: src/ui_gtk.py
+msgid "No file selected"
+msgstr "未选择文件"
+
+#: src/ui_gtk.py
+msgid "No match"
+msgstr "不匹配"
+
+#: src/ui_gtk.py
+msgid "Paste expected hash"
+msgstr "粘贴预期哈希值"
+
+#: src/ui_compare.py
+msgid "Filled in automatically from the <b>clipboard</b>."
+msgstr "已自动从<b>剪贴板</b>填入。"
+
+#: src/ui_compare.py
+msgid "Filled in automatically from {file}."
+msgstr "已自动从 {file} 填入。"
+
+#: src/ui_gtk.py
+msgid "Paste from clipboard"
+msgstr "从剪贴板粘贴"
+
+#: src/ui_gtk.py
+msgid "Please select a single file"
+msgstr "请只选择一个文件"
+
+#: src/ui_gtk.py
+msgid "Reset"
+msgstr "重置"
+
+#: src/ui_gtk.py
+msgid "Reset all settings?"
+msgstr "重置所有设置？"
+
+#: src/ui_gtk.py
+msgid "Reset settings"
+msgstr "重置设置"
+
+#: src/ui_gtk.py
+msgid "Restart"
+msgstr "重启"
+
+#: src/ui_gtk.py
+msgid "Restart the file manager?"
+msgstr "重启文件管理器？"
+
+#: src/ui_gtk.py
+msgid "Selected files"
+msgstr "已选文件"
+
+#: src/ui_gtk.py
+msgid "Settings"
+msgstr "设置"
+
+#: src/ui_gtk.py
+msgid "Show files"
+msgstr "显示文件"
+
+#: src/ui_gtk.py
+msgid "Show in folder"
+msgstr "在文件夹中显示"
+
+#: src/ui_gtk.py
+msgid "Signature could not be checked"
+msgstr "无法检查签名"
+
+#: src/ui_gtk.py
+msgid "Signature not checked: public key missing"
+msgstr "未检查签名：缺少公钥"
+
+#: src/ui_gtk.py
+msgid "Size"
+msgstr "大小"
+
+#. TRANSLATORS: "Files" is the name of the GNOME file manager (Nautilus), "Dateien" in German; put the name in quotes the way your language does
+#: src/ui_gtk.py
+msgid "The file manager (“Files”) has to restart to show the new entries. Open windows close, and running file operations may be cancelled."
+msgstr "需要重启文件管理器（“文件”）才能显示新的菜单项。已打开的窗口将被关闭，正在进行的文件操作可能被取消。"
+
+#: src/ui_gtk.py
+#, python-brace-format
+msgid "This looks like {algo}, which is switched off in the settings"
+msgstr "这看起来是 {algo}，但它已在设置中关闭"
+
+#: src/ui_gtk.py
+msgid "Under Scripts"
+msgstr "脚本中"
+
+#: src/ui_gtk.py
+msgid "Unknown"
+msgstr "未知"
+
+#: src/ui_gtk.py
+msgid "Valid signature, but the key has expired"
+msgstr "签名有效，但密钥已过期"
+
+#: src/ui_gtk.py
+msgid "Valid signature, but the key was revoked"
+msgstr "签名有效，但密钥已被吊销"
+
+#: src/ui_gtk.py
+#, python-brace-format
+msgid "{n} file matches"
+msgid_plural "{n} files match"
+msgstr[0] "{n} 个文件匹配"
+
+#: src/ui_gtk.py
+#, python-brace-format
+msgid "{n} file, {size}"
+msgid_plural "{n} files, {size}"
+msgstr[0] "{n} 个文件，{size}"
+
+#: src/ui_gtk.py
+msgid "⚠ File exists and will be overwritten"
+msgstr "⚠ 文件已存在，将被覆盖"
+
+#: src/ui_gtk.py
+msgid "Overwrite file?"
+msgstr "要覆盖文件吗？"
+
+#: src/ui_gtk.py
+#, python-brace-format
+msgid "“{name}” already exists in this folder and will be replaced."
+msgstr "“{name}”已存在于此文件夹中，将被替换。"
+
+#: src/ui_gtk.py
+msgid "Overwrite"
+msgstr "覆盖"
+
+#: src/ui_gtk.py
+msgid "Are you really sure?"
+msgstr "你真的确定吗？"
+
+#: src/ui_gtk.py
+#, python-brace-format
+msgid "Checking file {i} of {n}"
+msgstr "正在检查第 {i} 个文件，共 {n} 个"
+
+#: src/ui_gtk.py
+#, python-brace-format
+msgid "{done} of {total}"
+msgstr "{done} / {total}"
+
+#: src/ui_gtk.py
+#, python-brace-format
+msgid "{time} left"
+msgstr "剩余 {time}"
+
+#: src/ui_gtk.py
+#, python-brace-format
+msgid "{n} file differs"
+msgid_plural "{n} files differ"
+msgstr[0] "{n} 个文件不匹配"
+
+#: src/ui_gtk.py
+#, python-brace-format
+msgid "{n} file could not be checked"
+msgid_plural "{n} files could not be checked"
+msgstr[0] "{n} 个文件无法检查"
+
+#: src/ui_gtk.py
+#, python-brace-format
+msgid "{n} file with problems"
+msgid_plural "{n} files with problems"
+msgstr[0] "{n} 个文件有问题"
+
+#: src/ui_gtk.py
+msgid "Signature"
+msgstr "签名"
+
+#: src/ui_gtk.py
+msgid "Without a valid signature this says nothing about whether the files are genuine."
+msgstr "没有有效签名，这无法说明文件是否真实。"
+
+#: src/ui_gtk.py
+msgid "None of the files were found"
+msgstr "未找到任何文件"
+
+#. TRANSLATORS: {names} is a list of program names, such as "Nautilus, Nemo"
+#: src/ui_gtk.py
+#, python-brace-format
+msgid "A restart of {names} applies the change. Open windows close, and running file operations may be cancelled."
+msgstr "需要重启 {names} 才能使更改生效。已打开的窗口将被关闭，正在进行的文件操作可能被取消。"
+
+#: src/ui_gtk.py
+msgid "Checking signature …"
+msgstr "正在检查签名 …"
+
+#: src/ui_verify.py
+msgid "Status"
+msgstr "状态"
+
+#: src/ui_verify.py
+msgid "All"
+msgstr "全部"
+
+#: src/ui_verify.py
+msgid "Verified"
+msgstr "已验证"
+
+#: src/ui_verify.py
+msgid "Matches"
+msgstr "匹配"
+
+#: src/ui_verify.py
+msgid "Missing"
+msgstr "缺失"
+
+#: src/ui_verify.py
+msgid "Pending"
+msgstr "等待中"
+
+#: src/ui_verify.py
+msgid "Copy expected hash"
+msgstr "复制预期哈希"
+
+#: src/ui_verify.py
+msgid "Copy found hash"
+msgstr "复制实际哈希"
+
+#: src/ui_verify.py
+msgid "{n} mismatch"
+msgid_plural "{n} mismatches"
+msgstr[0] "{n} 个不一致"
+
+#: src/ui_verify.py
+msgid "{n} verified"
+msgid_plural "{n} verified"
+msgstr[0] "{n} 个已验证"
+
+#: src/ui_verify.py
+msgid "{n} missing"
+msgid_plural "{n} missing"
+msgstr[0] "{n} 个缺失"
+
+#: src/ui_verify.py
+msgid "Signature valid"
+msgstr "签名有效"
+
+#: src/ui_verify.py
+msgid "All files"
+msgstr "所有文件"
+
+#: src/ui_common.py
+msgid "Fingerprint"
+msgstr "指纹"
+
+#: src/ui_common.py
+msgid "Key ID"
+msgstr "密钥 ID"
+
+#: src/ui_common.py
+msgid "Retry failed"
+msgstr "重试失败项"
+
+#: src/ui_common.py
+msgid "Comment"
+msgstr "备注"
+
+#: src/ui_common.py
+msgid "Expires"
+msgstr "过期时间"
+
+#: src/ui_common.py
+msgid "Never"
+msgstr "永不"
+
+
+#: src/ui_common.py
+msgid "Import key"
+msgstr "导入密钥"
+
+#: src/ui_common.py
+msgid "Import this key?"
+msgstr "导入此密钥？"
+
+#: src/ui_common.py
+msgid "Importing …"
+msgstr "正在导入 …"
+
+#: src/ui_common.py
+msgid "Key imported"
+msgstr "密钥已导入"
+
+#: src/ui_common.py
+msgid "Key not imported"
+msgstr "密钥未导入"
+
+#: src/ui_common.py
+msgid "OK"
+msgstr "确定"
+
+#: src/ui_common.py
+msgid "No full fingerprint to fetch the key by"
+msgstr "没有完整指纹，无法获取密钥"
+
+#: src/ui_common.py
+msgid "The keyserver did not answer in time"
+msgstr "密钥服务器未及时响应"
+
+#: src/ui_common.py
+msgid "HashTally will fetch the key with this fingerprint from keyserver.ubuntu.com and add it to your keyring. The server learns your IP address.\n\nBefore you go on, compare this fingerprint with the one on the publisher's website:"
+msgstr "HashTally 将从 keyserver.ubuntu.com 获取具有此指纹的密钥，并添加到您的密钥环。服务器会得知您的 IP 地址。\n\n继续之前，请将此指纹与发布者网站上的指纹进行比较："
+
+#: src/ui_common.py
+msgid "Continue"
+msgstr "继续"
+
+#: src/ui_common.py
+msgid "Have you compared the fingerprint?"
+msgstr "您比较过指纹了吗？"
+
+#: src/ui_common.py
+msgid "Not yet"
+msgstr "还没有"
+
+#: src/ui_common.py
+msgid "Yes, import key"
+msgstr "是，导入密钥"
+
+#: src/ui_common.py
+msgid "Only import the key once you have compared its fingerprint with the one on the publisher's official website. A forged key makes a forged hash file look genuine, and HashTally cannot tell the difference.\n\nIf you have not done that yet, do it first. The import is just as quick afterwards."
+msgstr "请先将密钥指纹与发布者官方网站上的指纹进行比较，再导入密钥。伪造的密钥会让伪造的校验和文件看起来像真的，而 HashTally 无法分辨。\n\n如果您还没有比较，请先去做。之后导入只需片刻。"
+
+#: src/ui_common.py
+msgid "Import command (terminal)"
+msgstr "导入命令（终端）"
+
+#: src/ui_about.py
+msgid "3 more clicks …"
+msgstr "还需点击 3 次 …"
+
+#: src/ui_about.py
+msgid "2 more clicks …"
+msgstr "还需点击 2 次 …"
+
+#: src/ui_about.py
+msgid "1 more click …"
+msgstr "还需点击 1 次 …"

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- File-type icon for checksum files (MIME type application/x-hashtally): a plain page with a hash sign. -->
+<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 128 128">
+  <defs>
+    <linearGradient id="page" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ffffff"/>
+      <stop offset="1" stop-color="#f0efed"/>
+    </linearGradient>
+  </defs>
+  <!-- page: soft shadow, body with folded top-right corner, fold -->
+  <path d="M32 10H76L104 38V114a8 8 0 0 1-8 8H32a8 8 0 0 1-8-8V18a8 8 0 0 1 8-8z" fill="#000" opacity="0.12"/>
+  <path d="M32 8H76L104 36V112a8 8 0 0 1-8 8H32a8 8 0 0 1-8-8V16a8 8 0 0 1 8-8z"
+        fill="url(#page)" stroke="#c0bfbc" stroke-width="2"/>
+  <path d="M76 8V28a8 8 0 0 0 8 8H104z" fill="#deddda" stroke="#c0bfbc" stroke-width="2" stroke-linejoin="round"/>
+  <!-- hash sign in GNOME blue -->
+  <g stroke="#1c71d8" stroke-width="7" stroke-linecap="round" fill="none">
+    <path d="M57 56l-5 36M77 56l-5 36M45 69h38M43 83h38"/>
+  </g>
+</svg>

@@ -1,0 +1,576 @@
+# Ukrainian translation of HashTally.
+# Copyright (C) 2026 DigitGram
+# This file is distributed under the same license as the HashTally package.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: HashTally 1.0\n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: 2026-10-18\n"
+"Last-Translator: AI-generated, not reviewed by a native speaker\n"
+"Language-Team: Ukrainian\n"
+"Language: uk\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+
+#: src/core.py
+msgid "."
+msgstr ","
+
+#: src/ui_gtk.py
+msgid "Choose folder"
+msgstr "Вибрати теку"
+
+#: src/core.py
+msgid "Create, verify and compare checksums right from Nautilus. Checks hash files such as SHA256SUMS together with their GPG signature, or compares a file against a hash you paste in."
+msgstr "Створення, перевірка та порівняння контрольних сум безпосередньо в Nautilus. Перевіряє файли хешів, як-от SHA256SUMS, разом із підписом GPG або порівнює файл із вставленим хешем."
+
+#: src/core.py
+msgid "Create hash file"
+msgstr "Створити файл хешів"
+
+#: src/core.py
+msgid "Default algorithm"
+msgstr "Типовий алгоритм"
+
+#: src/core.py
+msgid "Language"
+msgstr "Мова"
+
+#: src/ui_gtk.py
+msgid "Main menu"
+msgstr "Головне меню"
+
+#: src/core.py
+msgid "Show or compare hash"
+msgstr "Показати або порівняти хеш"
+
+#: src/core.py
+msgid "System default"
+msgstr "Як у системі"
+
+#: src/core.py
+msgid "Verify hash file"
+msgstr "Перевірити файл хешів"
+
+#: src/core.py
+msgid "gpg is not installed"
+msgstr "gpg не встановлено"
+
+#: src/core.py
+#, python-brace-format
+msgid "{algo} matches"
+msgstr "{algo} збігається"
+
+#: src/hashtally.py
+msgid "HashTally needs GTK 4 with libadwaita 1.5 or newer (python3-gi, gir1.2-adw-1)."
+msgstr "HashTally потребує GTK 4 з libadwaita 1.5 або новішою (python3-gi, gir1.2-adw-1)."
+
+#: src/ui_gtk.py
+msgid "About HashTally"
+msgstr "Про HashTally"
+
+#: src/ui_about.py
+msgid "Mascot"
+msgstr "Талісман"
+
+#: src/ui_gtk.py
+msgid "Algorithm"
+msgstr "Алгоритм"
+
+#: src/ui_gtk.py
+msgid "Algorithms when comparing"
+msgstr "Алгоритми під час порівняння"
+
+#: src/ui_gtk.py
+msgid "Back to the default values."
+msgstr "Повернення до типових значень."
+
+#: src/ui_gtk.py
+msgid "Calculating hashes …"
+msgstr "Обчислення хешів …"
+
+#: src/ui_gtk.py
+msgid "Cancel"
+msgstr "Скасувати"
+
+#: src/ui_gtk.py
+msgid "Cancelled"
+msgstr "Скасовано"
+
+#: src/ui_gtk.py
+msgid "Cannot read file"
+msgstr "Не вдалося прочитати файл"
+
+#: src/ui_gtk.py
+msgid "Check again"
+msgstr "Перевірити знову"
+
+#: src/ui_gtk.py
+msgid "Close"
+msgstr "Закрити"
+
+#: src/ui_gtk.py
+msgid "Compare it with the publisher's website; HashTally cannot tell whether this key really belongs to them."
+msgstr "Порівняйте його з відбитком на сайті видавця; HashTally не може визначити, чи цей ключ справді належить видавцю."
+
+#: src/ui_gtk.py
+msgid "Compare with clipboard automatically"
+msgstr "Автоматично порівнювати з буфером обміну"
+
+#: src/ui_gtk.py
+msgid "Context menu"
+msgstr "Контекстне меню"
+
+#: src/ui_gtk.py
+msgid "Copied"
+msgstr "Скопійовано"
+
+#: src/ui_gtk.py
+msgid "Copy"
+msgstr "Копіювати"
+
+#: src/ui_gtk.py
+msgid "Copy import command"
+msgstr "Копіювати команду імпорту"
+
+#: src/ui_gtk.py
+msgid "Create"
+msgstr "Створити"
+
+#: src/ui_gtk.py
+msgid "Entries"
+msgstr "Пункти"
+
+#: src/ui_gtk.py
+msgid "Error"
+msgstr "Помилка"
+
+#: src/ui_gtk.py
+msgid "Expected hash"
+msgstr "Очікуваний хеш"
+
+#: src/ui_gtk.py
+msgid "Fewer algorithms are faster for large files."
+msgstr "Менше алгоритмів — швидше для великих файлів."
+
+#: src/ui_gtk.py
+msgid "File"
+msgstr "Файл"
+
+#: src/ui_gtk.py
+msgid "Fill in a copied hash when comparing"
+msgstr "Підставляти скопійований хеш під час порівняння"
+
+#: src/ui_gtk.py
+msgid "Found hash"
+msgstr "Знайдений хеш"
+
+#: src/ui_gtk.py
+msgid "General"
+msgstr "Загальні"
+
+#: src/ui_gtk.py
+#, python-brace-format
+msgid "Good signature from {signer}"
+msgstr "Дійсний підпис від {signer}"
+
+#: src/ui_gtk.py
+msgid "Hash file created"
+msgstr "Файл хешів створено"
+
+#: src/ui_gtk.py
+msgid "Hash file name"
+msgstr "Назва файлу хешів"
+
+#: src/ui_gtk.py
+msgid "In a submenu"
+msgstr "У підменю"
+
+#: src/ui_gtk.py
+msgid "In the submenu “HashTally” they take one more click."
+msgstr "У підменю «HashTally» потрібне ще одне клацання."
+
+#: src/ui_gtk.py
+msgid "Invalid signature: do not trust this hash file"
+msgstr "Недійсний підпис: не довіряйте цьому файлу хешів"
+
+#: src/ui_gtk.py
+msgid "Language, algorithm and everything else go back to their defaults."
+msgstr "Мову, алгоритм та решту параметрів буде скинуто до типових значень."
+
+#: src/ui_gtk.py
+msgid "Later"
+msgstr "Пізніше"
+
+#: src/ui_gtk.py
+msgid "Location"
+msgstr "Розташування"
+
+#: src/ui_gtk.py
+msgid "Mismatch"
+msgstr "Не збігається"
+
+#: src/ui_gtk.py
+msgid "No checksums found"
+msgstr "Контрольних сум не знайдено"
+
+#: src/ui_gtk.py
+msgid "No file selected"
+msgstr "Файл не вибрано"
+
+#: src/ui_gtk.py
+msgid "No match"
+msgstr "Немає збігу"
+
+#: src/ui_gtk.py
+msgid "Paste expected hash"
+msgstr "Вставте очікуваний хеш"
+
+#: src/ui_compare.py
+msgid "Filled in automatically from the <b>clipboard</b>."
+msgstr "Заповнено автоматично з <b>буфера обміну</b>."
+
+#: src/ui_compare.py
+msgid "Filled in automatically from {file}."
+msgstr "Заповнено автоматично з {file}."
+
+#: src/ui_gtk.py
+msgid "Paste from clipboard"
+msgstr "Вставити з буфера обміну"
+
+#: src/ui_gtk.py
+msgid "Please select a single file"
+msgstr "Виберіть лише один файл"
+
+#: src/ui_gtk.py
+msgid "Reset"
+msgstr "Скинути"
+
+#: src/ui_gtk.py
+msgid "Reset all settings?"
+msgstr "Скинути всі параметри?"
+
+#: src/ui_gtk.py
+msgid "Reset settings"
+msgstr "Скинути параметри"
+
+#: src/ui_gtk.py
+msgid "Restart"
+msgstr "Перезапустити"
+
+#: src/ui_gtk.py
+msgid "Restart the file manager?"
+msgstr "Перезапустити файловий менеджер?"
+
+#: src/ui_gtk.py
+msgid "Selected files"
+msgstr "Вибрані файли"
+
+#: src/ui_gtk.py
+msgid "Settings"
+msgstr "Параметри"
+
+#: src/ui_gtk.py
+msgid "Show files"
+msgstr "Показати файли"
+
+#: src/ui_gtk.py
+msgid "Show in folder"
+msgstr "Показати в теці"
+
+#: src/ui_gtk.py
+msgid "Signature could not be checked"
+msgstr "Не вдалося перевірити підпис"
+
+#: src/ui_gtk.py
+msgid "Signature not checked: public key missing"
+msgstr "Підпис не перевірено: немає відкритого ключа"
+
+#: src/ui_gtk.py
+msgid "Size"
+msgstr "Розмір"
+
+#. TRANSLATORS: "Files" is the name of the GNOME file manager (Nautilus), "Dateien" in German; put the name in quotes the way your language does
+#: src/ui_gtk.py
+msgid "The file manager (“Files”) has to restart to show the new entries. Open windows close, and running file operations may be cancelled."
+msgstr "Файловий менеджер («Файли») потрібно перезапустити, щоб показати нові пункти. Відкриті вікна буде закрито, а поточні файлові операції можуть бути скасовані."
+
+#: src/ui_gtk.py
+#, python-brace-format
+msgid "This looks like {algo}, which is switched off in the settings"
+msgstr "Схоже на {algo}, який вимкнено в параметрах"
+
+#: src/ui_gtk.py
+msgid "Under Scripts"
+msgstr "У «Скриптах»"
+
+#: src/ui_gtk.py
+msgid "Unknown"
+msgstr "Невідомо"
+
+#: src/ui_gtk.py
+msgid "Valid signature, but the key has expired"
+msgstr "Дійсний підпис, але строк дії ключа минув"
+
+#: src/ui_gtk.py
+msgid "Valid signature, but the key was revoked"
+msgstr "Дійсний підпис, але ключ відкликано"
+
+#: src/ui_gtk.py
+#, python-brace-format
+msgid "{n} file matches"
+msgid_plural "{n} files match"
+msgstr[0] "{n} файл збігається"
+msgstr[1] "{n} файли збігаються"
+msgstr[2] "{n} файлів збігається"
+
+#: src/ui_gtk.py
+#, python-brace-format
+msgid "{n} file, {size}"
+msgid_plural "{n} files, {size}"
+msgstr[0] "{n} файл, {size}"
+msgstr[1] "{n} файли, {size}"
+msgstr[2] "{n} файлів, {size}"
+
+#: src/ui_gtk.py
+msgid "⚠ File exists and will be overwritten"
+msgstr "⚠ Файл уже існує й буде перезаписаний"
+
+#: src/ui_gtk.py
+msgid "Overwrite file?"
+msgstr "Замінити файл?"
+
+#: src/ui_gtk.py
+#, python-brace-format
+msgid "“{name}” already exists in this folder and will be replaced."
+msgstr "«{name}» уже існує в цій папці і буде замінено."
+
+#: src/ui_gtk.py
+msgid "Overwrite"
+msgstr "Замінити"
+
+#: src/ui_gtk.py
+msgid "Are you really sure?"
+msgstr "Ви справді впевнені?"
+
+#: src/ui_gtk.py
+#, python-brace-format
+msgid "Checking file {i} of {n}"
+msgstr "Перевірка файлу {i} із {n}"
+
+#: src/ui_gtk.py
+#, python-brace-format
+msgid "{done} of {total}"
+msgstr "{done} із {total}"
+
+#: src/ui_gtk.py
+#, python-brace-format
+msgid "{time} left"
+msgstr "залишилось {time}"
+
+#: src/ui_gtk.py
+#, python-brace-format
+msgid "{n} file differs"
+msgid_plural "{n} files differ"
+msgstr[0] "{n} файл не збігається"
+msgstr[1] "{n} файли не збігаються"
+msgstr[2] "{n} файлів не збігаються"
+
+#: src/ui_gtk.py
+#, python-brace-format
+msgid "{n} file could not be checked"
+msgid_plural "{n} files could not be checked"
+msgstr[0] "{n} файл не вдалося перевірити"
+msgstr[1] "{n} файли не вдалося перевірити"
+msgstr[2] "{n} файлів не вдалося перевірити"
+
+#: src/ui_gtk.py
+#, python-brace-format
+msgid "{n} file with problems"
+msgid_plural "{n} files with problems"
+msgstr[0] "{n} файл із проблемами"
+msgstr[1] "{n} файли з проблемами"
+msgstr[2] "{n} файлів із проблемами"
+
+#: src/ui_gtk.py
+msgid "Signature"
+msgstr "Підпис"
+
+#: src/ui_gtk.py
+msgid "Without a valid signature this says nothing about whether the files are genuine."
+msgstr "Без дійсного підпису це нічого не каже про справжність файлів."
+
+#: src/ui_gtk.py
+msgid "None of the files were found"
+msgstr "Жодного з файлів не знайдено"
+
+#. TRANSLATORS: {names} is a list of program names, such as "Nautilus, Nemo"
+#: src/ui_gtk.py
+#, python-brace-format
+msgid "A restart of {names} applies the change. Open windows close, and running file operations may be cancelled."
+msgstr "Щоб застосувати зміну, потрібно перезапустити: {names}. Відкриті вікна буде закрито, а поточні файлові операції можуть бути скасовані."
+
+#: src/ui_gtk.py
+msgid "Checking signature …"
+msgstr "Перевірка підпису …"
+
+#: src/ui_verify.py
+msgid "Status"
+msgstr "Стан"
+
+#: src/ui_verify.py
+msgid "All"
+msgstr "Усі"
+
+#: src/ui_verify.py
+msgid "Verified"
+msgstr "Перевірено"
+
+#: src/ui_verify.py
+msgid "Matches"
+msgstr "Збігаються"
+
+#: src/ui_verify.py
+msgid "Missing"
+msgstr "Відсутні"
+
+#: src/ui_verify.py
+msgid "Pending"
+msgstr "Очікує"
+
+#: src/ui_verify.py
+msgid "Copy expected hash"
+msgstr "Копіювати очікуваний хеш"
+
+#: src/ui_verify.py
+msgid "Copy found hash"
+msgstr "Копіювати знайдений хеш"
+
+#: src/ui_verify.py
+msgid "{n} mismatch"
+msgid_plural "{n} mismatches"
+msgstr[0] "{n} розбіжність"
+msgstr[1] "{n} розбіжності"
+msgstr[2] "{n} розбіжностей"
+
+#: src/ui_verify.py
+msgid "{n} verified"
+msgid_plural "{n} verified"
+msgstr[0] "{n} перевірено"
+msgstr[1] "{n} перевірено"
+msgstr[2] "{n} перевірено"
+
+#: src/ui_verify.py
+msgid "{n} missing"
+msgid_plural "{n} missing"
+msgstr[0] "{n} відсутній"
+msgstr[1] "{n} відсутні"
+msgstr[2] "{n} відсутніх"
+
+#: src/ui_verify.py
+msgid "Signature valid"
+msgstr "Підпис дійсний"
+
+#: src/ui_verify.py
+msgid "All files"
+msgstr "Усі файли"
+
+#: src/ui_common.py
+msgid "Fingerprint"
+msgstr "Відбиток"
+
+#: src/ui_common.py
+msgid "Key ID"
+msgstr "ID ключа"
+
+#: src/ui_common.py
+msgid "Retry failed"
+msgstr "Повторити невдалі"
+
+#: src/ui_common.py
+msgid "Comment"
+msgstr "Коментар"
+
+#: src/ui_common.py
+msgid "Expires"
+msgstr "Спливає"
+
+#: src/ui_common.py
+msgid "Never"
+msgstr "Ніколи"
+
+
+#: src/ui_common.py
+msgid "Import key"
+msgstr "Імпортувати ключ"
+
+#: src/ui_common.py
+msgid "Import this key?"
+msgstr "Імпортувати цей ключ?"
+
+#: src/ui_common.py
+msgid "Importing …"
+msgstr "Імпортування …"
+
+#: src/ui_common.py
+msgid "Key imported"
+msgstr "Ключ імпортовано"
+
+#: src/ui_common.py
+msgid "Key not imported"
+msgstr "Ключ не імпортовано"
+
+#: src/ui_common.py
+msgid "OK"
+msgstr "Гаразд"
+
+#: src/ui_common.py
+msgid "No full fingerprint to fetch the key by"
+msgstr "Немає повного відбитка для отримання ключа"
+
+#: src/ui_common.py
+msgid "The keyserver did not answer in time"
+msgstr "Сервер ключів не відповів вчасно"
+
+#: src/ui_common.py
+msgid "HashTally will fetch the key with this fingerprint from keyserver.ubuntu.com and add it to your keyring. The server learns your IP address.\n\nBefore you go on, compare this fingerprint with the one on the publisher's website:"
+msgstr "HashTally завантажить ключ із цим відбитком із keyserver.ubuntu.com і додасть його до вашої в’язки ключів. Сервер дізнається вашу IP-адресу.\n\nПерш ніж продовжити, порівняйте цей відбиток із відбитком на сайті видавця:"
+
+#: src/ui_common.py
+msgid "Continue"
+msgstr "Далі"
+
+#: src/ui_common.py
+msgid "Have you compared the fingerprint?"
+msgstr "Ви порівняли відбиток?"
+
+#: src/ui_common.py
+msgid "Not yet"
+msgstr "Ще ні"
+
+#: src/ui_common.py
+msgid "Yes, import key"
+msgstr "Так, імпортувати ключ"
+
+#: src/ui_common.py
+msgid "Only import the key once you have compared its fingerprint with the one on the publisher's official website. A forged key makes a forged hash file look genuine, and HashTally cannot tell the difference.\n\nIf you have not done that yet, do it first. The import is just as quick afterwards."
+msgstr "Імпортуйте ключ лише після того, як порівняєте його відбиток із відбитком на офіційному сайті видавця. Підроблений ключ робить підроблений файл із контрольними сумами схожим на справжній, а HashTally не може цього розрізнити.\n\nЯкщо ви ще цього не зробили, зробіть це спочатку. Потім імпорт займе лише мить."
+
+#: src/ui_common.py
+msgid "Import command (terminal)"
+msgstr "Команда імпорту (термінал)"
+
+#: src/ui_about.py
+msgid "3 more clicks …"
+msgstr "Ще 3 кліки …"
+
+#: src/ui_about.py
+msgid "2 more clicks …"
+msgstr "Ще 2 кліки …"
+
+#: src/ui_about.py
+msgid "1 more click …"
+msgstr "Ще 1 клік …"

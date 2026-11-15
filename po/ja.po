@@ -1,0 +1,560 @@
+# Japanese translation of HashTally.
+# Copyright (C) 2026 DigitGram
+# This file is distributed under the same license as the HashTally package.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: HashTally 1.0\n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: 2026-10-18\n"
+"Last-Translator: AI-generated, not reviewed by a native speaker\n"
+"Language-Team: Japanese\n"
+"Language: ja\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+#: src/core.py
+msgid "."
+msgstr "."
+
+#: src/ui_gtk.py
+msgid "Choose folder"
+msgstr "フォルダーを選択"
+
+#: src/core.py
+msgid "Create, verify and compare checksums right from Nautilus. Checks hash files such as SHA256SUMS together with their GPG signature, or compares a file against a hash you paste in."
+msgstr "Nautilus 上でチェックサムを直接作成・検証・比較します。SHA256SUMS などのハッシュファイルを GPG 署名とあわせて検証したり、貼り付けたハッシュとファイルを比較したりできます。"
+
+#: src/core.py
+msgid "Create hash file"
+msgstr "ハッシュファイルを作成"
+
+#: src/core.py
+msgid "Default algorithm"
+msgstr "既定のアルゴリズム"
+
+#: src/core.py
+msgid "Language"
+msgstr "言語"
+
+#: src/ui_gtk.py
+msgid "Main menu"
+msgstr "メインメニュー"
+
+#: src/core.py
+msgid "Show or compare hash"
+msgstr "ハッシュを表示または比較"
+
+#: src/core.py
+msgid "System default"
+msgstr "システムの設定に従う"
+
+#: src/core.py
+msgid "Verify hash file"
+msgstr "ハッシュファイルを検証"
+
+#: src/core.py
+msgid "gpg is not installed"
+msgstr "gpg がインストールされていません"
+
+#: src/core.py
+#, python-brace-format
+msgid "{algo} matches"
+msgstr "{algo} が一致"
+
+#: src/hashtally.py
+msgid "HashTally needs GTK 4 with libadwaita 1.5 or newer (python3-gi, gir1.2-adw-1)."
+msgstr "HashTally には GTK 4 と libadwaita 1.5 以降が必要です (python3-gi、gir1.2-adw-1)。"
+
+#: src/ui_gtk.py
+msgid "About HashTally"
+msgstr "HashTally について"
+
+#: src/ui_about.py
+msgid "Mascot"
+msgstr "マスコット"
+
+#: src/ui_gtk.py
+msgid "Algorithm"
+msgstr "アルゴリズム"
+
+#: src/ui_gtk.py
+msgid "Algorithms when comparing"
+msgstr "比較時のアルゴリズム"
+
+#: src/ui_gtk.py
+msgid "Back to the default values."
+msgstr "既定値に戻します。"
+
+#: src/ui_gtk.py
+msgid "Calculating hashes …"
+msgstr "ハッシュを計算中 …"
+
+#: src/ui_gtk.py
+msgid "Cancel"
+msgstr "キャンセル"
+
+#: src/ui_gtk.py
+msgid "Cancelled"
+msgstr "キャンセルしました"
+
+#: src/ui_gtk.py
+msgid "Cannot read file"
+msgstr "ファイルを読み取れません"
+
+#: src/ui_gtk.py
+msgid "Check again"
+msgstr "再確認"
+
+#: src/ui_gtk.py
+msgid "Close"
+msgstr "閉じる"
+
+#: src/ui_gtk.py
+msgid "Compare it with the publisher's website; HashTally cannot tell whether this key really belongs to them."
+msgstr "発行元のサイトに載っているものと照合してください。この鍵が本当に発行元のものかどうかは HashTally では判断できません。"
+
+#: src/ui_gtk.py
+msgid "Compare with clipboard automatically"
+msgstr "クリップボードと自動的に比較"
+
+#: src/ui_gtk.py
+msgid "Context menu"
+msgstr "コンテキストメニュー"
+
+#: src/ui_gtk.py
+msgid "Copied"
+msgstr "コピーしました"
+
+#: src/ui_gtk.py
+msgid "Copy"
+msgstr "コピー"
+
+#: src/ui_gtk.py
+msgid "Copy import command"
+msgstr "インポートコマンドをコピー"
+
+#: src/ui_gtk.py
+msgid "Create"
+msgstr "作成"
+
+#: src/ui_gtk.py
+msgid "Entries"
+msgstr "項目"
+
+#: src/ui_gtk.py
+msgid "Error"
+msgstr "エラー"
+
+#: src/ui_gtk.py
+msgid "Expected hash"
+msgstr "期待されるハッシュ"
+
+#: src/ui_gtk.py
+msgid "Fewer algorithms are faster for large files."
+msgstr "アルゴリズムが少ないほど、大きなファイルでは高速です。"
+
+#: src/ui_gtk.py
+msgid "File"
+msgstr "ファイル"
+
+#: src/ui_gtk.py
+msgid "Fill in a copied hash when comparing"
+msgstr "比較時にコピーしたハッシュを自動入力"
+
+#: src/ui_gtk.py
+msgid "Found hash"
+msgstr "検出されたハッシュ"
+
+#: src/ui_gtk.py
+msgid "General"
+msgstr "一般"
+
+#: src/ui_gtk.py
+#, python-brace-format
+msgid "Good signature from {signer}"
+msgstr "{signer} による有効な署名"
+
+#: src/ui_gtk.py
+msgid "Hash file created"
+msgstr "ハッシュファイルを作成しました"
+
+#: src/ui_gtk.py
+msgid "Hash file name"
+msgstr "ハッシュファイル名"
+
+#: src/ui_gtk.py
+msgid "In a submenu"
+msgstr "サブメニュー内"
+
+#: src/ui_gtk.py
+msgid "In the submenu “HashTally” they take one more click."
+msgstr "サブメニュー「HashTally」では、もう 1 回クリックが必要です。"
+
+#: src/ui_gtk.py
+msgid "Invalid signature: do not trust this hash file"
+msgstr "無効な署名: このハッシュファイルを信用しないでください"
+
+#: src/ui_gtk.py
+msgid "Language, algorithm and everything else go back to their defaults."
+msgstr "言語、アルゴリズム、その他すべての設定が既定値に戻ります。"
+
+#: src/ui_gtk.py
+msgid "Later"
+msgstr "あとで"
+
+#: src/ui_gtk.py
+msgid "Location"
+msgstr "場所"
+
+#: src/ui_gtk.py
+msgid "Mismatch"
+msgstr "不一致"
+
+#: src/ui_gtk.py
+msgid "No checksums found"
+msgstr "チェックサムが見つかりません"
+
+#: src/ui_gtk.py
+msgid "No file selected"
+msgstr "ファイルが選択されていません"
+
+#: src/ui_gtk.py
+msgid "No match"
+msgstr "一致しません"
+
+#: src/ui_gtk.py
+msgid "Paste expected hash"
+msgstr "期待されるハッシュを貼り付け"
+
+#: src/ui_compare.py
+msgid "Filled in automatically from the <b>clipboard</b>."
+msgstr "<b>クリップボード</b>から自動入力しました。"
+
+#: src/ui_compare.py
+msgid "Filled in automatically from {file}."
+msgstr "{file} から自動入力しました。"
+
+#: src/ui_gtk.py
+msgid "Paste from clipboard"
+msgstr "クリップボードから貼り付け"
+
+#: src/ui_gtk.py
+msgid "Please select a single file"
+msgstr "ファイルを 1 つだけ選択してください"
+
+#: src/ui_gtk.py
+msgid "Reset"
+msgstr "リセット"
+
+#: src/ui_gtk.py
+msgid "Reset all settings?"
+msgstr "すべての設定をリセットしますか？"
+
+#: src/ui_gtk.py
+msgid "Reset settings"
+msgstr "設定をリセット"
+
+#: src/ui_gtk.py
+msgid "Restart"
+msgstr "再起動"
+
+#: src/ui_gtk.py
+msgid "Restart the file manager?"
+msgstr "ファイルマネージャーを再起動しますか？"
+
+#: src/ui_gtk.py
+msgid "Selected files"
+msgstr "選択したファイル"
+
+#: src/ui_gtk.py
+msgid "Settings"
+msgstr "設定"
+
+#: src/ui_gtk.py
+msgid "Show files"
+msgstr "ファイルを表示"
+
+#: src/ui_gtk.py
+msgid "Show in folder"
+msgstr "フォルダーで表示"
+
+#: src/ui_gtk.py
+msgid "Signature could not be checked"
+msgstr "署名を確認できませんでした"
+
+#: src/ui_gtk.py
+msgid "Signature not checked: public key missing"
+msgstr "署名は未確認: 公開鍵がありません"
+
+#: src/ui_gtk.py
+msgid "Size"
+msgstr "サイズ"
+
+#. TRANSLATORS: "Files" is the name of the GNOME file manager (Nautilus), "Dateien" in German; put the name in quotes the way your language does
+#: src/ui_gtk.py
+msgid "The file manager (“Files”) has to restart to show the new entries. Open windows close, and running file operations may be cancelled."
+msgstr "新しい項目を表示するには、ファイルマネージャー（「ファイル」）を再起動する必要があります。開いているウィンドウは閉じられ、実行中のファイル操作は中止される場合があります。"
+
+#: src/ui_gtk.py
+#, python-brace-format
+msgid "This looks like {algo}, which is switched off in the settings"
+msgstr "{algo} のようですが、設定でオフになっています"
+
+#: src/ui_gtk.py
+msgid "Under Scripts"
+msgstr "スクリプト内"
+
+#: src/ui_gtk.py
+msgid "Unknown"
+msgstr "不明"
+
+#: src/ui_gtk.py
+msgid "Valid signature, but the key has expired"
+msgstr "署名は有効ですが、鍵の有効期限が切れています"
+
+#: src/ui_gtk.py
+msgid "Valid signature, but the key was revoked"
+msgstr "署名は有効ですが、鍵は失効しています"
+
+#: src/ui_gtk.py
+#, python-brace-format
+msgid "{n} file matches"
+msgid_plural "{n} files match"
+msgstr[0] "{n} 個のファイルが一致しました"
+
+#: src/ui_gtk.py
+#, python-brace-format
+msgid "{n} file, {size}"
+msgid_plural "{n} files, {size}"
+msgstr[0] "{n} 個のファイル、{size}"
+
+#: src/ui_gtk.py
+msgid "⚠ File exists and will be overwritten"
+msgstr "⚠ ファイルは既に存在し、上書きされます"
+
+#: src/ui_gtk.py
+msgid "Overwrite file?"
+msgstr "ファイルを上書きしますか？"
+
+#: src/ui_gtk.py
+#, python-brace-format
+msgid "“{name}” already exists in this folder and will be replaced."
+msgstr "「{name}」はこのフォルダにすでに存在し、置き換えられます。"
+
+#: src/ui_gtk.py
+msgid "Overwrite"
+msgstr "上書き"
+
+#: src/ui_gtk.py
+msgid "Are you really sure?"
+msgstr "本当によろしいですか？"
+
+#: src/ui_gtk.py
+#, python-brace-format
+msgid "Checking file {i} of {n}"
+msgstr "ファイルを確認中 ({i}/{n})"
+
+#: src/ui_gtk.py
+#, python-brace-format
+msgid "{done} of {total}"
+msgstr "{done} / {total}"
+
+#: src/ui_gtk.py
+#, python-brace-format
+msgid "{time} left"
+msgstr "残り {time}"
+
+#: src/ui_gtk.py
+#, python-brace-format
+msgid "{n} file differs"
+msgid_plural "{n} files differ"
+msgstr[0] "{n} 個のファイルが一致しません"
+
+#: src/ui_gtk.py
+#, python-brace-format
+msgid "{n} file could not be checked"
+msgid_plural "{n} files could not be checked"
+msgstr[0] "{n} 個のファイルを確認できませんでした"
+
+#: src/ui_gtk.py
+#, python-brace-format
+msgid "{n} file with problems"
+msgid_plural "{n} files with problems"
+msgstr[0] "{n} 個のファイルに問題があります"
+
+#: src/ui_gtk.py
+msgid "Signature"
+msgstr "署名"
+
+#: src/ui_gtk.py
+msgid "Without a valid signature this says nothing about whether the files are genuine."
+msgstr "有効な署名がないため、ファイルが本物かどうかは分かりません。"
+
+#: src/ui_gtk.py
+msgid "None of the files were found"
+msgstr "ファイルが 1 つも見つかりませんでした"
+
+#. TRANSLATORS: {names} is a list of program names, such as "Nautilus, Nemo"
+#: src/ui_gtk.py
+#, python-brace-format
+msgid "A restart of {names} applies the change. Open windows close, and running file operations may be cancelled."
+msgstr "変更を反映するには、{names} を再起動する必要があります。開いているウィンドウは閉じられ、実行中のファイル操作は中止される場合があります。"
+
+#: src/ui_gtk.py
+msgid "Checking signature …"
+msgstr "署名を確認中 …"
+
+#: src/ui_verify.py
+msgid "Status"
+msgstr "状態"
+
+#: src/ui_verify.py
+msgid "All"
+msgstr "すべて"
+
+#: src/ui_verify.py
+msgid "Verified"
+msgstr "検証済み"
+
+#: src/ui_verify.py
+msgid "Matches"
+msgstr "一致"
+
+#: src/ui_verify.py
+msgid "Missing"
+msgstr "見つからない"
+
+#: src/ui_verify.py
+msgid "Pending"
+msgstr "待機中"
+
+#: src/ui_verify.py
+msgid "Copy expected hash"
+msgstr "期待するハッシュをコピー"
+
+#: src/ui_verify.py
+msgid "Copy found hash"
+msgstr "実際のハッシュをコピー"
+
+#: src/ui_verify.py
+msgid "{n} mismatch"
+msgid_plural "{n} mismatches"
+msgstr[0] "{n} 件の不一致"
+
+#: src/ui_verify.py
+msgid "{n} verified"
+msgid_plural "{n} verified"
+msgstr[0] "{n} 件検証済み"
+
+#: src/ui_verify.py
+msgid "{n} missing"
+msgid_plural "{n} missing"
+msgstr[0] "{n} 件不足"
+
+#: src/ui_verify.py
+msgid "Signature valid"
+msgstr "署名は有効"
+
+#: src/ui_verify.py
+msgid "All files"
+msgstr "すべてのファイル"
+
+#: src/ui_common.py
+msgid "Fingerprint"
+msgstr "フィンガープリント"
+
+#: src/ui_common.py
+msgid "Key ID"
+msgstr "鍵 ID"
+
+#: src/ui_common.py
+msgid "Retry failed"
+msgstr "失敗したものを再試行"
+
+#: src/ui_common.py
+msgid "Comment"
+msgstr "コメント"
+
+#: src/ui_common.py
+msgid "Expires"
+msgstr "有効期限"
+
+#: src/ui_common.py
+msgid "Never"
+msgstr "なし"
+
+
+#: src/ui_common.py
+msgid "Import key"
+msgstr "鍵をインポート"
+
+#: src/ui_common.py
+msgid "Import this key?"
+msgstr "この鍵をインポートしますか?"
+
+#: src/ui_common.py
+msgid "Importing …"
+msgstr "インポート中 …"
+
+#: src/ui_common.py
+msgid "Key imported"
+msgstr "鍵をインポートしました"
+
+#: src/ui_common.py
+msgid "Key not imported"
+msgstr "鍵をインポートできませんでした"
+
+#: src/ui_common.py
+msgid "OK"
+msgstr "OK"
+
+#: src/ui_common.py
+msgid "No full fingerprint to fetch the key by"
+msgstr "鍵を取得するための完全なフィンガープリントがありません"
+
+#: src/ui_common.py
+msgid "The keyserver did not answer in time"
+msgstr "鍵サーバーが時間内に応答しませんでした"
+
+#: src/ui_common.py
+msgid "HashTally will fetch the key with this fingerprint from keyserver.ubuntu.com and add it to your keyring. The server learns your IP address.\n\nBefore you go on, compare this fingerprint with the one on the publisher's website:"
+msgstr "HashTally は keyserver.ubuntu.com からこのフィンガープリントの鍵を取得し、キーリングに追加します。サーバーはあなたの IP アドレスを知ることになります。\n\n続ける前に、このフィンガープリントを発行元のウェブサイトのものと比べてください:"
+
+#: src/ui_common.py
+msgid "Continue"
+msgstr "続ける"
+
+#: src/ui_common.py
+msgid "Have you compared the fingerprint?"
+msgstr "フィンガープリントを比較しましたか?"
+
+#: src/ui_common.py
+msgid "Not yet"
+msgstr "まだです"
+
+#: src/ui_common.py
+msgid "Yes, import key"
+msgstr "はい、鍵をインポートする"
+
+#: src/ui_common.py
+msgid "Only import the key once you have compared its fingerprint with the one on the publisher's official website. A forged key makes a forged hash file look genuine, and HashTally cannot tell the difference.\n\nIf you have not done that yet, do it first. The import is just as quick afterwards."
+msgstr "鍵のフィンガープリントを発行元の公式ウェブサイトのものと比べてから、インポートしてください。偽の鍵は偽のチェックサムファイルを本物に見せかけますが、HashTally にはその違いが分かりません。\n\nまだ比べていない場合は、先に比べてください。インポートはその後すぐに終わります。"
+
+#: src/ui_common.py
+msgid "Import command (terminal)"
+msgstr "インポートコマンド (ターミナル)"
+
+#: src/ui_about.py
+msgid "3 more clicks …"
+msgstr "あと3回クリック …"
+
+#: src/ui_about.py
+msgid "2 more clicks …"
+msgstr "あと2回クリック …"
+
+#: src/ui_about.py
+msgid "1 more click …"
+msgstr "あと1回クリック …"

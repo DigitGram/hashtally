@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mime-info xmlns="http://www.freedesktop.org/standards/shared-mime-info">
+  <mime-type type="application/x-hashtally">
+    <comment>Hash file</comment>
+    <comment xml:lang="de">Hash-Datei</comment>
+    <sub-class-of type="text/plain"/>
+    <glob pattern="*.md5" weight="80"/>
+    <glob pattern="*.sha1" weight="80"/>
+    <glob pattern="*.sha224" weight="80"/>
+    <glob pattern="*.sha256" weight="80"/>
+    <glob pattern="*.sha384" weight="80"/>
+    <glob pattern="*.sha512" weight="80"/>
+    <glob pattern="*.sfv" weight="80"/>
+    <glob pattern="*.md5sum" weight="80"/>
+    <glob pattern="*.sha1sum" weight="80"/>
+    <glob pattern="*.sha224sum" weight="80"/>
+    <glob pattern="*.sha256sum" weight="80"/>
+    <glob pattern="*.sha384sum" weight="80"/>
+    <glob pattern="*.sha512sum" weight="80"/>
+    <glob pattern="MD5SUMS" weight="80"/>
+    <glob pattern="SHA1SUMS" weight="80"/>
+    <glob pattern="SHA224SUMS" weight="80"/>
+    <glob pattern="SHA256SUMS" weight="80"/>
+    <glob pattern="SHA384SUMS" weight="80"/>
+    <glob pattern="SHA512SUMS" weight="80"/>
+    <glob pattern="sha256sum.txt" weight="80"/>
+  </mime-type>
+</mime-info>

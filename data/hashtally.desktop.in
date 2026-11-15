@@ -1,0 +1,30 @@
+[Desktop Entry]
+Type=Application
+Version=1.0
+Name=HashTally
+GenericName=Checksum tool
+GenericName[de]=Prüfsummen-Werkzeug
+Comment=Create and verify checksums
+Comment[de]=Prüfsummen erstellen und prüfen
+Exec="@LAUNCHER@" %F
+Icon=@ICON@
+StartupNotify=true
+Actions=settings;
+StartupWMClass=@APP_ID@
+MimeType=application/x-hashtally;
+Categories=Utility;GTK;
+Keywords=hash;checksum;sha256;sha1;md5;sfv;crc32;
+Keywords[de]=Prüfsumme;Hashwert;
+
+[Desktop Action settings]
+Name=Settings
+Name[de]=Einstellungen
+Name[es]=Ajustes
+Name[fr]=Paramètres
+Name[it]=Impostazioni
+Name[ja]=設定
+Name[pl]=Ustawienia
+Name[pt_BR]=Configurações
+Name[uk]=Параметри
+Name[zh_CN]=设置
+Exec="@LAUNCHER@" --settings

@@ -1,0 +1,568 @@
+# Spanish translation of HashTally.
+# Copyright (C) 2026 DigitGram
+# This file is distributed under the same license as the HashTally package.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: HashTally 1.0\n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: 2026-10-18\n"
+"Last-Translator: AI-generated, not reviewed by a native speaker\n"
+"Language-Team: Spanish\n"
+"Language: es\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: src/core.py
+msgid "."
+msgstr ","
+
+#: src/ui_gtk.py
+msgid "Choose folder"
+msgstr "Elegir carpeta"
+
+#: src/core.py
+msgid "Create, verify and compare checksums right from Nautilus. Checks hash files such as SHA256SUMS together with their GPG signature, or compares a file against a hash you paste in."
+msgstr "Crea, comprueba y compara sumas de verificación directamente desde Nautilus. Comprueba archivos de hash como SHA256SUMS junto con su firma GPG, o compara un archivo con un hash que hayas pegado."
+
+#: src/core.py
+msgid "Create hash file"
+msgstr "Crear archivo de hash"
+
+#: src/core.py
+msgid "Default algorithm"
+msgstr "Algoritmo predeterminado"
+
+#: src/core.py
+msgid "Language"
+msgstr "Idioma"
+
+#: src/ui_gtk.py
+msgid "Main menu"
+msgstr "Menú principal"
+
+#: src/core.py
+msgid "Show or compare hash"
+msgstr "Mostrar o comparar hash"
+
+#: src/core.py
+msgid "System default"
+msgstr "Predeterminado del sistema"
+
+#: src/core.py
+msgid "Verify hash file"
+msgstr "Comprobar archivo de hash"
+
+#: src/core.py
+msgid "gpg is not installed"
+msgstr "gpg no está instalado"
+
+#: src/core.py
+#, python-brace-format
+msgid "{algo} matches"
+msgstr "{algo} coincide"
+
+#: src/hashtally.py
+msgid "HashTally needs GTK 4 with libadwaita 1.5 or newer (python3-gi, gir1.2-adw-1)."
+msgstr "HashTally necesita GTK 4 con libadwaita 1.5 o posterior (python3-gi, gir1.2-adw-1)."
+
+#: src/ui_gtk.py
+msgid "About HashTally"
+msgstr "Acerca de HashTally"
+
+#: src/ui_about.py
+msgid "Mascot"
+msgstr "Mascota"
+
+#: src/ui_gtk.py
+msgid "Algorithm"
+msgstr "Algoritmo"
+
+#: src/ui_gtk.py
+msgid "Algorithms when comparing"
+msgstr "Algoritmos al comparar"
+
+#: src/ui_gtk.py
+msgid "Back to the default values."
+msgstr "Volver a los valores predeterminados."
+
+#: src/ui_gtk.py
+msgid "Calculating hashes …"
+msgstr "Calculando hashes …"
+
+#: src/ui_gtk.py
+msgid "Cancel"
+msgstr "Cancelar"
+
+#: src/ui_gtk.py
+msgid "Cancelled"
+msgstr "Cancelado"
+
+#: src/ui_gtk.py
+msgid "Cannot read file"
+msgstr "No se puede leer el archivo"
+
+#: src/ui_gtk.py
+msgid "Check again"
+msgstr "Comprobar de nuevo"
+
+#: src/ui_gtk.py
+msgid "Close"
+msgstr "Cerrar"
+
+#: src/ui_gtk.py
+msgid "Compare it with the publisher's website; HashTally cannot tell whether this key really belongs to them."
+msgstr "Conviene compararla con el sitio web del editor; HashTally no puede saber si esta clave le pertenece realmente."
+
+#: src/ui_gtk.py
+msgid "Compare with clipboard automatically"
+msgstr "Comparar automáticamente con el portapapeles"
+
+#: src/ui_gtk.py
+msgid "Context menu"
+msgstr "Menú contextual"
+
+#: src/ui_gtk.py
+msgid "Copied"
+msgstr "Copiado"
+
+#: src/ui_gtk.py
+msgid "Copy"
+msgstr "Copiar"
+
+#: src/ui_gtk.py
+msgid "Copy import command"
+msgstr "Copiar comando de importación"
+
+#: src/ui_gtk.py
+msgid "Create"
+msgstr "Crear"
+
+#: src/ui_gtk.py
+msgid "Entries"
+msgstr "Entradas"
+
+#: src/ui_gtk.py
+msgid "Error"
+msgstr "Error"
+
+#: src/ui_gtk.py
+msgid "Expected hash"
+msgstr "Hash esperado"
+
+#: src/ui_gtk.py
+msgid "Fewer algorithms are faster for large files."
+msgstr "Menos algoritmos son más rápidos con archivos grandes."
+
+#: src/ui_gtk.py
+msgid "File"
+msgstr "Archivo"
+
+#: src/ui_gtk.py
+msgid "Fill in a copied hash when comparing"
+msgstr "Insertar un hash copiado al comparar"
+
+#: src/ui_gtk.py
+msgid "Found hash"
+msgstr "Hash encontrado"
+
+#: src/ui_gtk.py
+msgid "General"
+msgstr "General"
+
+#: src/ui_gtk.py
+#, python-brace-format
+msgid "Good signature from {signer}"
+msgstr "Firma válida de {signer}"
+
+#: src/ui_gtk.py
+msgid "Hash file created"
+msgstr "Archivo de hash creado"
+
+#: src/ui_gtk.py
+msgid "Hash file name"
+msgstr "Nombre del archivo de hash"
+
+#: src/ui_gtk.py
+msgid "In a submenu"
+msgstr "En un submenú"
+
+#: src/ui_gtk.py
+msgid "In the submenu “HashTally” they take one more click."
+msgstr "En el submenú «HashTally» hace falta un clic más."
+
+#: src/ui_gtk.py
+msgid "Invalid signature: do not trust this hash file"
+msgstr "Firma no válida: no hay que fiarse de este archivo de hash"
+
+#: src/ui_gtk.py
+msgid "Language, algorithm and everything else go back to their defaults."
+msgstr "El idioma, el algoritmo y todo lo demás vuelven a sus valores predeterminados."
+
+#: src/ui_gtk.py
+msgid "Later"
+msgstr "Más tarde"
+
+#: src/ui_gtk.py
+msgid "Location"
+msgstr "Ubicación"
+
+#: src/ui_gtk.py
+msgid "Mismatch"
+msgstr "No coincide"
+
+#: src/ui_gtk.py
+msgid "No checksums found"
+msgstr "No se encontraron sumas de verificación"
+
+#: src/ui_gtk.py
+msgid "No file selected"
+msgstr "Ningún archivo seleccionado"
+
+#: src/ui_gtk.py
+msgid "No match"
+msgstr "No coincide"
+
+#: src/ui_gtk.py
+msgid "Paste expected hash"
+msgstr "Pegar el hash esperado"
+
+#: src/ui_compare.py
+msgid "Filled in automatically from the <b>clipboard</b>."
+msgstr "Rellenado automáticamente desde el <b>portapapeles</b>."
+
+#: src/ui_compare.py
+msgid "Filled in automatically from {file}."
+msgstr "Rellenado automáticamente desde {file}."
+
+#: src/ui_gtk.py
+msgid "Paste from clipboard"
+msgstr "Pegar desde el portapapeles"
+
+#: src/ui_gtk.py
+msgid "Please select a single file"
+msgstr "Seleccione un único archivo"
+
+#: src/ui_gtk.py
+msgid "Reset"
+msgstr "Restablecer"
+
+#: src/ui_gtk.py
+msgid "Reset all settings?"
+msgstr "¿Restablecer todos los ajustes?"
+
+#: src/ui_gtk.py
+msgid "Reset settings"
+msgstr "Restablecer ajustes"
+
+#: src/ui_gtk.py
+msgid "Restart"
+msgstr "Reiniciar"
+
+#: src/ui_gtk.py
+msgid "Restart the file manager?"
+msgstr "¿Reiniciar el gestor de archivos?"
+
+#: src/ui_gtk.py
+msgid "Selected files"
+msgstr "Archivos seleccionados"
+
+#: src/ui_gtk.py
+msgid "Settings"
+msgstr "Ajustes"
+
+#: src/ui_gtk.py
+msgid "Show files"
+msgstr "Mostrar archivos"
+
+#: src/ui_gtk.py
+msgid "Show in folder"
+msgstr "Mostrar en la carpeta"
+
+#: src/ui_gtk.py
+msgid "Signature could not be checked"
+msgstr "No se pudo comprobar la firma"
+
+#: src/ui_gtk.py
+msgid "Signature not checked: public key missing"
+msgstr "Firma no comprobada: falta la clave pública"
+
+#: src/ui_gtk.py
+msgid "Size"
+msgstr "Tamaño"
+
+#. TRANSLATORS: "Files" is the name of the GNOME file manager (Nautilus), "Dateien" in German; put the name in quotes the way your language does
+#: src/ui_gtk.py
+msgid "The file manager (“Files”) has to restart to show the new entries. Open windows close, and running file operations may be cancelled."
+msgstr "El gestor de archivos (“Archivos”) debe reiniciarse para mostrar las nuevas entradas. Las ventanas abiertas se cerrarán y las operaciones de archivos en curso podrían cancelarse."
+
+#: src/ui_gtk.py
+#, python-brace-format
+msgid "This looks like {algo}, which is switched off in the settings"
+msgstr "Parece {algo}, que está desactivado en los ajustes"
+
+#: src/ui_gtk.py
+msgid "Under Scripts"
+msgstr "En Scripts"
+
+#: src/ui_gtk.py
+msgid "Unknown"
+msgstr "Desconocido"
+
+#: src/ui_gtk.py
+msgid "Valid signature, but the key has expired"
+msgstr "Firma válida, pero la clave ha caducado"
+
+#: src/ui_gtk.py
+msgid "Valid signature, but the key was revoked"
+msgstr "Firma válida, pero la clave fue revocada"
+
+#: src/ui_gtk.py
+#, python-brace-format
+msgid "{n} file matches"
+msgid_plural "{n} files match"
+msgstr[0] "{n} archivo coincide"
+msgstr[1] "{n} archivos coinciden"
+
+#: src/ui_gtk.py
+#, python-brace-format
+msgid "{n} file, {size}"
+msgid_plural "{n} files, {size}"
+msgstr[0] "{n} archivo, {size}"
+msgstr[1] "{n} archivos, {size}"
+
+#: src/ui_gtk.py
+msgid "⚠ File exists and will be overwritten"
+msgstr "⚠ El archivo ya existe y se sobrescribirá"
+
+#: src/ui_gtk.py
+msgid "Overwrite file?"
+msgstr "¿Sobrescribir el archivo?"
+
+#: src/ui_gtk.py
+#, python-brace-format
+msgid "“{name}” already exists in this folder and will be replaced."
+msgstr "«{name}» ya existe en esta carpeta y se reemplazará."
+
+#: src/ui_gtk.py
+msgid "Overwrite"
+msgstr "Sobrescribir"
+
+#: src/ui_gtk.py
+msgid "Are you really sure?"
+msgstr "¿Estás completamente seguro?"
+
+#: src/ui_gtk.py
+#, python-brace-format
+msgid "Checking file {i} of {n}"
+msgstr "Comprobando archivo {i} de {n}"
+
+#: src/ui_gtk.py
+#, python-brace-format
+msgid "{done} of {total}"
+msgstr "{done} de {total}"
+
+#: src/ui_gtk.py
+#, python-brace-format
+msgid "{time} left"
+msgstr "quedan {time}"
+
+#: src/ui_gtk.py
+#, python-brace-format
+msgid "{n} file differs"
+msgid_plural "{n} files differ"
+msgstr[0] "{n} archivo no coincide"
+msgstr[1] "{n} archivos no coinciden"
+
+#: src/ui_gtk.py
+#, python-brace-format
+msgid "{n} file could not be checked"
+msgid_plural "{n} files could not be checked"
+msgstr[0] "{n} archivo sin comprobar"
+msgstr[1] "{n} archivos sin comprobar"
+
+#: src/ui_gtk.py
+#, python-brace-format
+msgid "{n} file with problems"
+msgid_plural "{n} files with problems"
+msgstr[0] "{n} archivo con problemas"
+msgstr[1] "{n} archivos con problemas"
+
+#: src/ui_gtk.py
+msgid "Signature"
+msgstr "Firma"
+
+#: src/ui_gtk.py
+msgid "Without a valid signature this says nothing about whether the files are genuine."
+msgstr "Sin una firma válida, esto no dice nada sobre si los archivos son auténticos."
+
+#: src/ui_gtk.py
+msgid "None of the files were found"
+msgstr "No se encontró ninguno de los archivos"
+
+#. TRANSLATORS: {names} is a list of program names, such as "Nautilus, Nemo"
+#: src/ui_gtk.py
+#, python-brace-format
+msgid "A restart of {names} applies the change. Open windows close, and running file operations may be cancelled."
+msgstr "Para aplicar el cambio hay que reiniciar {names}. Las ventanas abiertas se cerrarán y las operaciones de archivos en curso podrían cancelarse."
+
+#: src/ui_gtk.py
+msgid "Checking signature …"
+msgstr "Comprobando la firma …"
+
+#: src/ui_verify.py
+msgid "Status"
+msgstr "Estado"
+
+#: src/ui_verify.py
+msgid "All"
+msgstr "Todos"
+
+#: src/ui_verify.py
+msgid "Verified"
+msgstr "Verificados"
+
+#: src/ui_verify.py
+msgid "Matches"
+msgstr "Coinciden"
+
+#: src/ui_verify.py
+msgid "Missing"
+msgstr "Faltan"
+
+#: src/ui_verify.py
+msgid "Pending"
+msgstr "Pendiente"
+
+#: src/ui_verify.py
+msgid "Copy expected hash"
+msgstr "Copiar hash esperado"
+
+#: src/ui_verify.py
+msgid "Copy found hash"
+msgstr "Copiar hash encontrado"
+
+#: src/ui_verify.py
+msgid "{n} mismatch"
+msgid_plural "{n} mismatches"
+msgstr[0] "{n} discrepancia"
+msgstr[1] "{n} discrepancias"
+
+#: src/ui_verify.py
+msgid "{n} verified"
+msgid_plural "{n} verified"
+msgstr[0] "{n} verificado"
+msgstr[1] "{n} verificados"
+
+#: src/ui_verify.py
+msgid "{n} missing"
+msgid_plural "{n} missing"
+msgstr[0] "{n} falta"
+msgstr[1] "{n} faltan"
+
+#: src/ui_verify.py
+msgid "Signature valid"
+msgstr "Firma válida"
+
+#: src/ui_verify.py
+msgid "All files"
+msgstr "Todos los archivos"
+
+#: src/ui_common.py
+msgid "Fingerprint"
+msgstr "Huella digital"
+
+#: src/ui_common.py
+msgid "Key ID"
+msgstr "ID de clave"
+
+#: src/ui_common.py
+msgid "Retry failed"
+msgstr "Reintentar los fallidos"
+
+#: src/ui_common.py
+msgid "Comment"
+msgstr "Comentario"
+
+#: src/ui_common.py
+msgid "Expires"
+msgstr "Caduca"
+
+#: src/ui_common.py
+msgid "Never"
+msgstr "Nunca"
+
+
+#: src/ui_common.py
+msgid "Import key"
+msgstr "Importar clave"
+
+#: src/ui_common.py
+msgid "Import this key?"
+msgstr "¿Importar esta clave?"
+
+#: src/ui_common.py
+msgid "Importing …"
+msgstr "Importando …"
+
+#: src/ui_common.py
+msgid "Key imported"
+msgstr "Clave importada"
+
+#: src/ui_common.py
+msgid "Key not imported"
+msgstr "Clave no importada"
+
+#: src/ui_common.py
+msgid "OK"
+msgstr "Aceptar"
+
+#: src/ui_common.py
+msgid "No full fingerprint to fetch the key by"
+msgstr "No hay una huella digital completa para obtener la clave"
+
+#: src/ui_common.py
+msgid "The keyserver did not answer in time"
+msgstr "El servidor de claves no respondió a tiempo"
+
+#: src/ui_common.py
+msgid "HashTally will fetch the key with this fingerprint from keyserver.ubuntu.com and add it to your keyring. The server learns your IP address.\n\nBefore you go on, compare this fingerprint with the one on the publisher's website:"
+msgstr "HashTally descargará la clave con esta huella digital desde keyserver.ubuntu.com y la añadirá a tu llavero. El servidor conocerá tu dirección IP.\n\nAntes de continuar, compara esta huella con la del sitio web del editor:"
+
+#: src/ui_common.py
+msgid "Continue"
+msgstr "Continuar"
+
+#: src/ui_common.py
+msgid "Have you compared the fingerprint?"
+msgstr "¿Has comparado la huella digital?"
+
+#: src/ui_common.py
+msgid "Not yet"
+msgstr "Todavía no"
+
+#: src/ui_common.py
+msgid "Yes, import key"
+msgstr "Sí, importar la clave"
+
+#: src/ui_common.py
+msgid "Only import the key once you have compared its fingerprint with the one on the publisher's official website. A forged key makes a forged hash file look genuine, and HashTally cannot tell the difference.\n\nIf you have not done that yet, do it first. The import is just as quick afterwards."
+msgstr "Importa la clave solo después de comparar su huella digital con la del sitio web oficial del editor. Una clave falsificada hace que un archivo de sumas falsificado parezca auténtico, y HashTally no puede notar la diferencia.\n\nSi aún no lo has hecho, hazlo primero. La importación es igual de rápida después."
+
+#: src/ui_common.py
+msgid "Import command (terminal)"
+msgstr "Comando de importación (terminal)"
+
+#: src/ui_about.py
+msgid "3 more clicks …"
+msgstr "3 clics más …"
+
+#: src/ui_about.py
+msgid "2 more clicks …"
+msgstr "2 clics más …"
+
+#: src/ui_about.py
+msgid "1 more click …"
+msgstr "1 clic más …"
