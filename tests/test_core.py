@@ -4,6 +4,7 @@
 import ast
 import contextlib
 import hashlib
+import io
 import json
 import os
 import re
@@ -19,7 +20,9 @@ from unittest import mock
 
 SRC = Path(__file__).resolve().parent.parent / "src"
 sys.path.insert(0, str(SRC))
+import cli  # noqa: E402
 import core  # noqa: E402
+import hashtally  # noqa: E402
 import i18n  # noqa: E402
 
 A = hashlib.sha256(b"alpha").hexdigest()
@@ -1106,6 +1109,228 @@ def test_the_installer_fetches_the_release_it_belongs_to():
     # a tag can be moved too: the release workflow pins the commit in the copy it attaches, which must then fetch that commit
     assert len(re.findall(r'^COMMIT=""', text, re.M)) == 1 and "archive/${COMMIT:-refs/tags/v$VERSION}.tar.gz" in text
     assert 's/^COMMIT=\\"\\"/COMMIT=' in (SRC.parent / ".github/workflows/release.yml").read_text()
+
+
+# --------------------------------------------------------------------------- terminal mode (cli.py, and how hashtally.py picks it)
+
+def run_cli(function, *args):
+    """(exit code, stdout, stderr) of a cli function, in English and with the settings in a temporary folder."""
+    out, err = io.StringIO(), io.StringIO()
+    with settings_sandbox(), contextlib.redirect_stdout(out), contextlib.redirect_stderr(err):
+        code = function(*args)
+    return code, out.getvalue(), err.getvalue()
+
+
+def cli_folder(tmp):
+    """a.txt and b.txt with a SHA256SUMS that lists both."""
+    Path(tmp, "a.txt").write_bytes(b"alpha")
+    Path(tmp, "b.txt").write_bytes(b"beta")
+    sums = Path(tmp, "SHA256SUMS")
+    sums.write_text(f"{A}  a.txt\n{B}  b.txt\n")
+    return str(sums)
+
+
+def test_cli_verify_says_success_and_lists_every_file():
+    with tempfile.TemporaryDirectory() as tmp:
+        code, out, err = run_cli(cli.verify, [cli_folder(tmp)])
+        assert code == cli.OK and err == "", (code, err)
+        assert "SUCCESS" in out and "2 files verified" in out and "a.txt" in out and "b.txt" in out, out
+        assert "Checksums for Nautilus" in out  # the banner
+
+
+def test_cli_verify_reports_a_mismatch_a_missing_file_and_exits_with_one():
+    with tempfile.TemporaryDirectory() as tmp:
+        sums = cli_folder(tmp)
+        Path(tmp, "a.txt").write_bytes(b"tampered")
+        os.remove(Path(tmp, "b.txt"))
+        code, out, _err = run_cli(cli.verify, [sums])
+        assert code == cli.FAILED, code
+        assert "FAILED" in out and "MISMATCH" in out and "MISSING" in out, out
+        assert A in out and hashlib.sha256(b"tampered").hexdigest() in out  # expected and found are both printed
+        assert "SUCCESS" not in out
+
+
+def test_cli_verify_a_folder_that_lacks_every_listed_file_fails():
+    with tempfile.TemporaryDirectory() as tmp:
+        sums = cli_folder(tmp)
+        os.remove(Path(tmp, "a.txt"))
+        os.remove(Path(tmp, "b.txt"))
+        code, out, _err = run_cli(cli.verify, [sums])
+        assert code == cli.FAILED and "FAILED" in out and "None of the files were found" in out, out
+
+
+def test_cli_verify_some_missing_files_alone_are_no_failure():
+    with tempfile.TemporaryDirectory() as tmp:
+        sums = cli_folder(tmp)
+        os.remove(Path(tmp, "b.txt"))
+        code, out, _err = run_cli(cli.verify, [sums])
+        assert code == cli.OK and "MISSING" in out and "1 file verified" in out and "1 missing" in out, out
+
+
+def test_cli_quiet_leaves_out_the_banner_and_the_files_that_are_fine():
+    with tempfile.TemporaryDirectory() as tmp:
+        sums = cli_folder(tmp)
+        Path(tmp, "a.txt").write_bytes(b"tampered")
+        code, out, _err = run_cli(cli.verify, [sums], True)
+        assert code == cli.FAILED and "Checksums for Nautilus" not in out, out
+        assert "MISMATCH" in out and "b.txt" not in out  # b.txt is fine and stays out of the list
+
+
+def test_cli_verify_unusable_input_exits_with_two_and_speaks_on_stderr():
+    with tempfile.TemporaryDirectory() as tmp:
+        empty = Path(tmp, "SHA256SUMS")
+        empty.write_text("nothing that is a checksum\n")
+        for paths, text in (([], "No file selected"), ([str(Path(tmp, "nope.sha256"))], "Cannot read file"), ([str(empty)], "No checksums found")):
+            code, out, err = run_cli(cli.verify, paths)
+            assert code == cli.USAGE and err.startswith("hashtally: ") and text in err, (paths, code, err)
+            assert "SUCCESS" not in out
+
+
+def test_cli_verify_several_hash_files_exits_with_the_worst_result():
+    with tempfile.TemporaryDirectory() as good, tempfile.TemporaryDirectory() as bad:
+        first, second = cli_folder(good), cli_folder(bad)
+        Path(bad, "a.txt").write_bytes(b"tampered")
+        assert run_cli(cli.verify, [first, second])[0] == cli.FAILED
+        assert run_cli(cli.verify, [second, first])[0] == cli.FAILED  # the order does not matter
+        assert run_cli(cli.verify, [first, first])[0] == cli.OK
+
+
+def test_cli_create_writes_a_hash_file_that_verifies_and_never_replaces_one_unasked():
+    with tempfile.TemporaryDirectory() as tmp:
+        Path(tmp, "a.txt").write_bytes(b"alpha")
+        target = Path(tmp, "a.txt.sha256")
+        code, out, _err = run_cli(cli.create, [str(Path(tmp, "a.txt"))], "sha256", None, False)
+        assert code == cli.OK and "SUCCESS" in out and "wrote a.txt.sha256 with 1 checksum" in out, out
+        assert target.read_text().split()[0] == A
+        assert run_cli(cli.verify, [str(target)])[0] == cli.OK
+        target.write_text("precious\n")
+        code, out, err = run_cli(cli.create, [str(Path(tmp, "a.txt"))], "sha256", None, False)
+        assert code == cli.USAGE and "already exists" in err and "--force" in err and target.read_text() == "precious\n"
+        code, _out, _err = run_cli(cli.create, [str(Path(tmp, "a.txt"))], "sha256", None, True)  # --force
+        assert code == cli.OK and target.read_text().split()[0] == A
+
+
+def test_cli_create_takes_the_algorithm_and_the_output_name_and_keeps_names_relative_to_the_file():
+    with tempfile.TemporaryDirectory() as tmp:
+        Path(tmp, "sub").mkdir()
+        Path(tmp, "sub", "a.txt").write_bytes(b"alpha")
+        Path(tmp, "out").mkdir()
+        out_file = Path(tmp, "out", "list.md5")
+        code, _out, _err = run_cli(cli.create, [str(Path(tmp, "sub"))], "md5", str(out_file), False)
+        assert code == cli.OK
+        entries = core.parse(str(out_file))
+        assert [e.algo for e in entries] == ["md5"] and entries[0].digest == hashlib.md5(b"alpha").hexdigest()
+        assert [e.name for e in entries] == ["../sub/a.txt"]  # relative to where the hash file lies
+        assert run_cli(cli.verify, [str(out_file)])[0] == cli.OK
+
+
+def test_cli_create_without_files_or_with_a_missing_one_exits_with_two():
+    with tempfile.TemporaryDirectory() as tmp:
+        assert run_cli(cli.create, [], "sha256", None, False)[0] == cli.USAGE
+        code, _out, err = run_cli(cli.create, [str(Path(tmp, "nope"))], "sha256", None, False)
+        assert code == cli.USAGE and err.startswith("hashtally: ")
+        assert not list(Path(tmp).iterdir())  # nothing was written
+
+
+def test_cli_compare_matches_a_pasted_hash_and_says_no_match_otherwise():
+    with tempfile.TemporaryDirectory() as tmp:
+        path = Path(tmp, "a.txt")
+        path.write_bytes(b"alpha")
+        code, out, _err = run_cli(cli.compare, [str(path), A.upper()])  # the case of a pasted hash does not matter
+        assert code == cli.OK and "matches" in out and "<== matches" in out, out
+        code, out, _err = run_cli(cli.compare, [str(path), B])
+        assert code == cli.FAILED and "No match" in out and B in out and "<== matches" not in out, out
+
+
+def test_cli_compare_without_a_hash_shows_them_and_uses_a_hash_file_next_to_the_file():
+    with tempfile.TemporaryDirectory() as tmp:
+        path = Path(tmp, "a.txt")
+        path.write_bytes(b"alpha")
+        code, out, _err = run_cli(cli.compare, [str(path)])
+        assert code == cli.OK and A in out and "hashtally --compare a.txt HASH" in out, out
+        Path(tmp, "a.txt.sha256").write_text(f"{A}  a.txt\n")
+        code, out, _err = run_cli(cli.compare, [str(path)])
+        assert code == cli.OK and "a.txt.sha256 lists this file" in out and "<== matches" in out, out
+        Path(tmp, "a.txt.sha256").write_text(f"{B}  a.txt\n")
+        assert run_cli(cli.compare, [str(path)])[0] == cli.FAILED  # the list says something else
+
+
+def test_cli_compare_needs_exactly_one_existing_file():
+    with tempfile.TemporaryDirectory() as tmp:
+        for args in ([], [str(Path(tmp, "nope"))], [tmp], [str(Path(tmp, "a")), A, A]):
+            code, _out, err = run_cli(cli.compare, args)
+            assert code == cli.USAGE and "Please select a single file" in err, args
+
+
+def test_cli_draws_no_progress_bar_and_no_colour_when_it_is_no_terminal():
+    with tempfile.TemporaryDirectory() as tmp:
+        _code, out, err = run_cli(cli.verify, [cli_folder(tmp)])
+        assert "\x1b" not in out + err and "\r" not in out + err, repr(out + err)  # a log stays clean
+        assert not cli.Progress(10).on
+
+
+def test_cli_cut_keeps_both_ends_of_a_long_name():
+    assert cli._cut("short.txt", 20) == "short.txt"
+    cut = cli._cut("a-very-long-file-name-with-a-tail.tar.gz", 20)
+    assert len(cut) == 20 and cut.startswith("a-very") and cut.endswith("tar.gz") and "…" in cut, cut
+
+
+class TtyOut(io.StringIO):
+    def isatty(self):
+        return True
+
+
+def run_main(argv, tty):
+    """(exit code, stdout) of hashtally.main() started with `argv`; stdout is a terminal or not. ui_gtk is replaced by a
+    stand-in that records what the window would have been asked to open, so no window ever opens."""
+    opened = []
+    window = types.ModuleType("ui_gtk")
+    window.run = lambda mode, paths: opened.append((mode, paths))
+    out = TtyOut() if tty else io.StringIO()
+    with settings_sandbox(), mock.patch.object(sys, "argv", ["hashtally", *argv]), mock.patch.object(sys, "stdout", out), \
+            contextlib.redirect_stderr(io.StringIO()), mock.patch.dict(sys.modules, {"ui_gtk": window}):
+        core.CONFIG_FILE.parent.mkdir(parents=True)
+        core.CONFIG_FILE.write_text('{"language": "en"}')  # main() reads the language from the settings: not the test machine's
+        try:
+            hashtally.main()
+            code = None
+        except SystemExit as exit_:
+            code = exit_.code
+    return code, out.getvalue(), opened
+
+
+def test_a_terminal_gets_text_and_the_file_manager_gets_the_window():
+    with tempfile.TemporaryDirectory() as tmp:
+        sums = cli_folder(tmp)
+        code, out, opened = run_main([sums], tty=True)
+        assert code == 0 and "SUCCESS" in out and opened == [], (code, out)
+        code, out, opened = run_main([sums], tty=False)  # Nautilus scripts and launchers: no terminal
+        assert code is None and out == "" and opened == [("verify", [sums])], (code, out, opened)
+
+
+def test_gui_asks_for_the_window_even_in_a_terminal_and_settings_always_is_one():
+    with tempfile.TemporaryDirectory() as tmp:
+        sums = cli_folder(tmp)
+        code, out, opened = run_main(["--gui", sums], tty=True)
+        assert code is None and out == "" and opened == [("verify", [sums])]
+        code, out, opened = run_main([], tty=True)  # no files: the settings window
+        assert code is None and out == "" and opened == [("settings", [])]
+
+
+def test_the_terminal_modes_get_their_options_and_hand_back_the_exit_code():
+    with tempfile.TemporaryDirectory() as tmp:
+        Path(tmp, "a.txt").write_bytes(b"alpha")
+        out_file = Path(tmp, "x.sha1")
+        code, out, opened = run_main(["--create", "--algo", "sha1", "-o", str(out_file), "-q", str(Path(tmp, "a.txt"))], tty=True)
+        assert code == 0 and opened == [] and "Checksums for Nautilus" not in out, out
+        assert core.parse(str(out_file))[0].algo == "sha1"
+        code, _out, _opened = run_main(["--create", "--algo", "sha1", "-o", str(out_file), str(Path(tmp, "a.txt"))], tty=True)
+        assert code == cli.USAGE  # it exists: --force is needed
+        assert run_main(["--create", "--force", "--algo", "sha1", "-o", str(out_file), str(Path(tmp, "a.txt"))], tty=True)[0] == 0
+        code, out, _opened = run_main(["--compare", str(Path(tmp, "a.txt")), B], tty=True)
+        assert code == cli.FAILED and "No match" in out
+        Path(tmp, "a.txt").write_bytes(b"tampered")
+        assert run_main(["--verify", str(out_file)], tty=True)[0] == cli.FAILED
 
 
 if __name__ == "__main__":
