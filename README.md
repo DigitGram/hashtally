@@ -9,6 +9,7 @@
 **Create and verify checksums from the GNOME Files (Nautilus) context menu.** Inspired by the Windows
 shell extensions [HashCheck](https://github.com/gurnec/HashCheck) and HashTab. To *tally* means to
 match up, which is what comparing checksums does. Sister project of [TrustCopy](https://github.com/DigitGram/trustcopy).
+More on the [project website](https://digitgram.github.io/hashtally/).
 
 <p align="center">
   <img src="docs/screenshots/verify-light.png" width="48%" alt="HashTally verifying a SHA256SUMS file: one file does not match">
