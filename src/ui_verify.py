@@ -219,6 +219,53 @@ class DetailWindow(Adw.Window):
         popover.popup()
 
 
+class SignedFileWindow(BaseWindow):
+    """A detached signature opened on its own (install.sh.asc): gpg checks the file next to it, and the window gives the
+    verdict with the same signature row as the hash list's. A file without checksums is the usual case here, a download
+    and its signature."""
+
+    def __init__(self, app, sigfile, target):
+        name = os.path.basename(target)
+        super().__init__(app, os.path.basename(sigfile), size=(VerifyWindow.WIDTH, 200))
+        self.args, self.name, self.sig_row = [sigfile, target], name, None
+        if not os.path.isfile(target):
+            self.job = False  # not None: this window is no "No checksums found" page that verify_windows may merge
+            self.show_page("error", status_page("dialog-warning-symbolic", _("The signed file is missing"), name))
+            self._fit_height()
+            return
+        self.hero = Hero()
+        self.hero.ring.show([("accent", 0.25)], "")
+        self.hero.set(_("Checking signature …"), core.shown(name))
+        self.group = group()
+        self.page, scrolled = column_page(self.hero, self.group)
+        scrolled.set_propagate_natural_height(True)  # so _fit_height can ask the page how tall it is
+        self.show_page("result", scrolled)
+        self._check()
+
+    def _check(self):
+        """Run gpg in a thread: it reads the whole file, which may be an image of several GB."""
+        self.job = Job(0, lambda job: core.verify_signature(self.args), None, self._done)
+
+    def _done(self, sig, error):
+        sig = sig or core.Signature("error", detail=str(error))
+        icon, color, title = signature_texts(sig)
+        detail = core.shown(self.name)
+        if sig.status == "good":  # what the verdict means for the file: it is exactly as the signer made it
+            title, detail = _("{file} is unchanged").format(file=detail), title
+        elif sig.status == "bad":
+            title = _("Invalid signature: do not trust this file")
+        self.hero.ring.show([(color, 1)], "", icon, plain=sig.status in ("bad", "revoked"))
+        self.hero.set(title, detail)
+        if self.sig_row:  # the previous result, when checked again
+            self.group.remove(self.sig_row)
+        self.sig_row = signature_row(sig, self._copy, self._check, _("Invalid signature: do not trust this file"))
+        self.group.add(self.sig_row)
+        self._fit_height()
+
+    def _fit_height(self):
+        VerifyWindow._fit_height(self)  # the same rule: as tall as the page, never smaller
+
+
 class VerifyWindow(BaseWindow):
     """An overview of fixed size: the Hero sums up, three lines count the files that are verified, missing from the
     folder, or differ, and the signature tells whether the list itself can be trusted. A line with files opens them in

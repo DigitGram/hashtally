@@ -1333,6 +1333,18 @@ def test_the_terminal_modes_get_their_options_and_hand_back_the_exit_code():
         assert run_main(["--verify", str(out_file)], tty=True)[0] == cli.FAILED
 
 
+def test_signed_file():
+    """A detached signature names the file it signs; a clear-signed hash list called .asc is a hash file, not a signature."""
+    with tempfile.TemporaryDirectory() as tmp:
+        sig = Path(tmp, "install.sh.asc")
+        sig.write_bytes(b"-----BEGIN PGP SIGNATURE-----\n\nabc\n-----END PGP SIGNATURE-----\n")
+        assert core.signed_file(str(sig)) == str(Path(tmp, "install.sh"))  # the file need not be there: the caller says so
+        assert core.signed_file(str(Path(tmp, "install.sh"))) is None
+        listing = Path(tmp, "SHA256SUMS.asc")
+        listing.write_text("-----BEGIN PGP SIGNED MESSAGE-----\nHash: SHA256\n\n" + "a" * 64 + "  x.txt\n-----BEGIN PGP SIGNATURE-----\n\nabc\n-----END PGP SIGNATURE-----\n")
+        assert core.signed_file(str(listing)) is None
+
+
 if __name__ == "__main__":
     for name, test in sorted(globals().items()):
         if name.startswith("test_"):

@@ -562,3 +562,16 @@ msgstr "还需点击 2 次 …"
 #: src/ui_about.py
 msgid "1 more click …"
 msgstr "还需点击 1 次 …"
+
+#: src/ui_verify.py
+msgid "The signed file is missing"
+msgstr "找不到已签名的文件"
+
+#: src/ui_verify.py
+msgid "Invalid signature: do not trust this file"
+msgstr "签名无效：请勿信任此文件"
+
+#: src/ui_verify.py
+#, python-brace-format
+msgid "{file} is unchanged"
+msgstr "{file} 未被更改"

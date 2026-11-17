@@ -25,10 +25,11 @@ gi.require_version("Gdk", "4.0")
 gi.require_version("Adw", "1")
 from gi.repository import Adw, Gdk, Gio, GLib, Gtk
 
+import core
 from core import APP_ID
 from i18n import _
 from ui_common import BaseWindow, CSS, status_page
-from ui_verify import VerifyWindow
+from ui_verify import SignedFileWindow, VerifyWindow
 from ui_create import CreateWindow
 from ui_compare import CompareWindow
 from ui_settings import SettingsWindow
@@ -41,10 +42,24 @@ def load_css():
                                               Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION)
 
 
+def _window_for(app, path):
+    """A hash file gets the verify window; a detached signature (install.sh.asc) the window of the file it signs, or of its
+    hash list if that is one (SHA256SUMS.asc opens SHA256SUMS, which finds the signature itself)."""
+    try:
+        target = core.signed_file(path)
+    except OSError:
+        target = None  # the verify window says it cannot read the file
+    if target is None:
+        return VerifyWindow(app, path)
+    if os.path.isfile(target) and core.parse(target):
+        return VerifyWindow(app, target)
+    return SignedFileWindow(app, path, target)
+
+
 def verify_windows(app, paths):
     """A window per hash file. Files without checksums share one: a few hundred photos sent here by a slip in the
     Scripts menu must not open a window each."""
-    windows = [VerifyWindow(app, path) for path in paths]
+    windows = [_window_for(app, path) for path in paths]
     empty = [window for window in windows if window.job is None]  # ended on "No checksums found" or "Cannot read file"
     if len(empty) < 2:
         return windows

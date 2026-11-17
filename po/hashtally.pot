@@ -572,3 +572,16 @@ msgstr ""
 #: src/ui_about.py
 msgid "1 more click …"
 msgstr ""
+
+#: src/ui_verify.py
+msgid "The signed file is missing"
+msgstr ""
+
+#: src/ui_verify.py
+msgid "Invalid signature: do not trust this file"
+msgstr ""
+
+#: src/ui_verify.py
+#, python-brace-format
+msgid "{file} is unchanged"
+msgstr ""

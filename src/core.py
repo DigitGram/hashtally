@@ -264,6 +264,15 @@ def signature_args(path, raw=None):
     return [path] if raw.startswith(_PGP_HEADER.encode()) else None  # gpg does not skip a BOM either; parse() agrees
 
 
+def signed_file(path, raw=None):
+    """The file a detached signature (install.sh.asc, SHA256SUMS.gpg ...) belongs to, as a path next to it; it need not
+    exist. None if `path` is no such signature, or lists checksums itself (a clear-signed hash file named .asc)."""
+    target, suffix = os.path.splitext(path)
+    if suffix.lower() not in SIG_SUFFIXES or parse(path, raw):
+        return None
+    return target
+
+
 def _first_signature(status):
     """(verdict, key, signer, fingerprint) of the first signature in gpg's `--status-fd` output; the verdict is None if there is none."""
     verdict, key, signer, fingerprint, key_missing = None, "", "", "", False

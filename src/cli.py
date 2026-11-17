@@ -126,8 +126,30 @@ def verify(paths, quiet=False):
     _banner(quiet)
     code = OK
     for hashfile in paths:
-        code = max(code, _verify_one(hashfile, quiet))
+        code = max(code, _verify_signed(hashfile, quiet) if _signed(hashfile) else _verify_one(hashfile, quiet))
     return code
+
+
+def _signed(path):
+    """The file a detached signature belongs to (install.sh.asc -> install.sh); None for anything else."""
+    try:
+        return core.signed_file(path)
+    except OSError:
+        return None  # _verify_one reports it
+
+
+def _verify_signed(sigfile, quiet):
+    """A detached signature: its hash list if the file next to it is one, else the signature of that file alone."""
+    target = _signed(sigfile)
+    if not os.path.isfile(target):
+        return _fail(_("The signed file is missing") + f": {target}")
+    if core.parse(target):
+        return _verify_one(target, quiet)
+    _line(f"{os.path.basename(sigfile)}  ·  {os.path.basename(target)}", INFO)
+    sig = core.verify_signature([sigfile, target])
+    _signature(sig, "file")
+    print()
+    return OK if sig.status == "good" else FAILED
 
 
 def _verify_one(hashfile, quiet):
@@ -197,13 +219,13 @@ def _verify_one(hashfile, quiet):
     return FAILED if failed else OK
 
 
-def _signature(sig):
+def _signature(sig, what="hash file"):
     text = {
         "good": _("Good signature from {signer}").format(signer=core.shown(sig.signer)),
         "nokey": _("Signature not checked: public key missing"),
         "expired": _("Valid signature, but the key has expired"),
         "revoked": _("Valid signature, but the key was revoked"),
-        "bad": _("Invalid signature: do not trust this hash file"),
+        "bad": _("Invalid signature: do not trust this hash file") if what == "hash file" else _("Invalid signature: do not trust this file"),
         "error": _("Signature could not be checked"),
     }[sig.status]
     _line(text, {"good": TICK, "bad": CROSS, "revoked": CROSS}.get(sig.status, WARN))

@@ -562,3 +562,16 @@ msgstr "あと2回クリック …"
 #: src/ui_about.py
 msgid "1 more click …"
 msgstr "あと1回クリック …"
+
+#: src/ui_verify.py
+msgid "The signed file is missing"
+msgstr "署名されたファイルが見つかりません"
+
+#: src/ui_verify.py
+msgid "Invalid signature: do not trust this file"
+msgstr "署名が無効です: このファイルを信頼しないでください"
+
+#: src/ui_verify.py
+#, python-brace-format
+msgid "{file} is unchanged"
+msgstr "{file} は変更されていません"

@@ -570,3 +570,16 @@ msgstr "Noch 2 Klicks …"
 #: src/ui_about.py
 msgid "1 more click …"
 msgstr "Noch 1 Klick …"
+
+#: src/ui_verify.py
+msgid "The signed file is missing"
+msgstr "Die signierte Datei fehlt"
+
+#: src/ui_verify.py
+msgid "Invalid signature: do not trust this file"
+msgstr "Ungültige Signatur: dieser Datei nicht vertrauen"
+
+#: src/ui_verify.py
+#, python-brace-format
+msgid "{file} is unchanged"
+msgstr "{file} ist unverändert"

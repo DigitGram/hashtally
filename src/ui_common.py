@@ -415,11 +415,12 @@ def _one_line(text, *css):
     return Gtk.Label(label=text, xalign=0, ellipsize=Pango.EllipsizeMode.END, tooltip_text=text, css_classes=list(css))
 
 
-def signature_row(sig, on_copy, on_refresh):
+def signature_row(sig, on_copy, on_refresh, bad_title=None):
     """Two lines: the verdict above ("Signature valid", or what is wrong), below it, small and grey, who signed: "Name (e-mail)",
     cut off with "…" when it is long. A click on the line opens the SignatureWindow, where the buttons are.
     The line itself stays bare, as the other lines of the overview."""
     icon, color, title = signature_texts(sig)
+    title = bad_title if bad_title and sig.status == "bad" else title  # a signed file that is no hash list
     name, _comment, email = core.split_user_id(core.shown(sig.signer)) if sig.status == "good" else ("", "", "")
     row = Adw.ActionRow(title=_("Signature valid") if sig.status == "good" else title, subtitle=f"{name} ({email})" if name and email else name,
                         use_markup=False, title_lines=1, subtitle_lines=1, activatable=True, tooltip_text=core.shown(sig.signer) or title)
