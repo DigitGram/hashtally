@@ -50,6 +50,10 @@ When you open a hash file and a signature lies next to it (`SHA256SUMS.gpg`, `.s
 clear-signed, HashTally runs `gpg --verify` and shows the result right below the verdict. An invalid signature or a revoked
 key decides the verdict; the files then only *match* the list (shown grey), since nobody vouches for it.
 
+A signature file opened on its own (`install.sh.asc`, `.sig`, `.gpg`, `.sign`) checks the file it belongs to, the one with the
+same name next to it. If that file is a hash list, the list opens instead. Otherwise the window says whether the file is unchanged since it was
+signed, with the same signature row and details as above; a missing file is reported by name.
+
 | Result | Meaning |
 | --- | --- |
 | Good signature | Made by the key shown. **Compare the fingerprint** with the one on the publisher's website: a valid signature only proves which key signed, not whose key it is. |

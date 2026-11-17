@@ -27,7 +27,7 @@ except ImportError:
 import i18n
 from i18n import N_, _
 
-__version__ = "1.0"
+__version__ = "1.1"
 APP_ID = "io.github.digitgram.HashTally"
 AUTHOR = "DigitGram"  # shown in the About dialog; also named in the file headers, README and install.sh
 COPYRIGHT = f"© 2026 {AUTHOR}"

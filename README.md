@@ -82,6 +82,9 @@ gpg --verify install.sh.asc install.sh
 Run the script only if gpg reports a good signature and the fingerprint matches the one above. The signed script
 names the exact commit it downloads, so the signature covers the program as well, not just the installer.
 
+Instead of gpg you can open `install.sh.asc` with HashTally (double-click it, with `install.sh` next to it): it checks the
+file and says whether it is unchanged. Compare the fingerprint in its details with the one above.
+
 ## Usage
 
 | Action | How |
@@ -116,6 +119,9 @@ When a signature lies next to the hash file (`.gpg`, `.sig`, `.asc`, `.sign`) or
 `gpg --verify` and shows the result right below the verdict. **Compare the fingerprint** with the one on the publisher's website:
 a valid signature only proves which key signed, not whose key it is. An invalid signature or a revoked key decides the verdict.
 HashTally changes your keyring only when you press "Import key" and confirm.
+
+A detached signature opened on its own (`install.sh.asc`) checks the file next to it (`install.sh`) and tells you whether it
+is unchanged. For `SHA256SUMS.asc` the hash list opens, as above. In a terminal, `hashtally --verify install.sh.asc` does the same.
 
 ### Supported hash files
 
