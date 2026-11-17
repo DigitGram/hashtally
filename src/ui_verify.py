@@ -240,9 +240,11 @@ class VerifyWindow(BaseWindow):
             entries = core.parse(hashfile, self.raw)
         except OSError as exc:
             self.show_page("error", status_page("dialog-error-symbolic", _("Cannot read file"), str(exc)))
+            self._fit_height()  # the window starts small for the check: this page needs its own height
             return
         if not entries:
             self.show_page("error", status_page("dialog-warning-symbolic", _("No checksums found"), name))
+            self._fit_height()
             return
 
         self.rows = [Row(e.name, core.file_size(p) if (p := core.resolve(self.base, e.name)) else None, e) for e in entries]
