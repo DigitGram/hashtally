@@ -1,0 +1,278 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>HashTally: create and verify checksums</title>
+<meta name="description" content="Create, verify and compare checksums from the context menu of GNOME Files. Signed hash files included.">
+<meta name="color-scheme" content="dark">
+<meta property="og:title" content="HashTally: create and verify checksums">
+<meta property="og:description" content="Right from the context menu of GNOME Files. Signed hash files included.">
+<meta property="og:image" content="https://digitgram.github.io/hashtally/img/social.png">
+<link rel="icon" type="image/svg+xml" href="img/icon.svg">
+<style>
+@font-face{font-family:Lato;font-weight:300;src:url(fonts/Lato-Light.woff2) format("woff2");font-display:swap}
+@font-face{font-family:Lato;font-weight:400;src:url(fonts/Lato-Regular.woff2) format("woff2");font-display:swap}
+@font-face{font-family:Lato;font-weight:700;src:url(fonts/Lato-Bold.woff2) format("woff2");font-display:swap}
+
+:root{
+  --bg:#08162c;            /* banner: navy */
+  --bg2:#0b2442;
+  --panel-line:rgba(150,188,220,.16);
+  --accent:#78aeed;        /* icon blue */
+  --accent-d:#1a5fb4;
+  --green:#57e389;         /* icon check */
+  --white:#fff;
+  --tagline:#d6e8f7;
+  --sub:#96bcdc;
+  --foot:#87b0d2;
+  --radius:18px;
+  --wrap:1120px;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;background:var(--bg);color:var(--tagline);
+  font:400 18px/1.6 Lato,system-ui,sans-serif;-webkit-font-smoothing:antialiased;
+}
+a{color:var(--accent);text-decoration:none}
+a:hover{text-decoration:underline}
+img{max-width:100%;height:auto;display:block}
+code{font:400 .92em ui-monospace,"DejaVu Sans Mono",monospace;color:var(--tagline)}
+kbd{font:700 .8em Lato,sans-serif;padding:1px 7px;border:1px solid var(--panel-line);border-bottom-width:2px;border-radius:6px;background:rgba(255,255,255,.07);color:var(--tagline)}
+.wrap{width:min(var(--wrap),100% - 32px);margin-inline:auto}
+
+/* ---------- top bar ---------- */
+.nav{position:absolute;inset:0 0 auto 0;z-index:5}
+.nav .wrap{display:flex;align-items:center;justify-content:space-between;height:72px}
+.nav .brand{display:flex;align-items:center;gap:10px;color:var(--white);font-weight:700;font-size:19px}
+.nav .brand img{width:30px;height:30px}
+.nav ul{display:flex;gap:26px;list-style:none;margin:0;padding:0;font-size:16px}
+.nav ul a{color:var(--sub)}
+.nav ul a:hover{color:var(--white);text-decoration:none}
+@media(max-width:700px){.nav ul li:not(:last-child){display:none}}
+
+/* ---------- hero ---------- */
+.hero{
+  position:relative;overflow:hidden;padding:150px 0 110px;
+  background:
+    radial-gradient(1100px 700px at 92% 60%,rgba(31,89,154,.7),transparent 62%),
+    radial-gradient(700px 500px at 60% 110%,rgba(21,65,115,.8),transparent 70%),
+    linear-gradient(135deg,#08162c 0%,#0a2441 45%,#1a4d8c 100%);
+}
+.hero .wrap{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,6fr);gap:56px;align-items:center}
+.app-icon{width:140px;height:auto;filter:drop-shadow(0 22px 26px rgba(0,0,0,.5)) drop-shadow(0 0 40px rgba(120,174,237,.14));margin-bottom:34px}
+h1{margin:0;color:var(--white);font-weight:700;font-size:clamp(46px,7vw,84px);line-height:1;letter-spacing:-.02em}
+.tagline{margin:18px 0 0;font-weight:300;font-size:clamp(24px,3vw,36px);color:var(--tagline);line-height:1.25}
+.lead{margin:20px 0 0;color:var(--sub);font-size:20px;max-width:30em}
+.cta{display:flex;flex-wrap:wrap;gap:14px;margin-top:34px}
+.btn{
+  display:inline-flex;align-items:center;gap:10px;padding:13px 24px;border-radius:12px;
+  font-weight:700;font-size:17px;border:1px solid var(--panel-line);color:var(--white);background:rgba(255,255,255,.06);
+  transition:transform .12s,background .12s;
+}
+.btn:hover{background:rgba(255,255,255,.12);text-decoration:none;transform:translateY(-1px)}
+.btn.primary{background:linear-gradient(#78aeed,#2f78d4);color:#05172e;border-color:transparent;box-shadow:0 8px 22px rgba(47,120,212,.4)}
+.btn.primary:hover{background:linear-gradient(#8bbaf2,#3a84e0)}
+.meta{margin-top:30px;color:var(--foot);font-size:16px}
+.meta span+span::before{content:"·";margin:0 .6em}
+
+.shots{position:relative;aspect-ratio:1/0.97}
+.shots img{position:absolute;border-radius:16px;box-shadow:0 28px 60px rgba(0,0,0,.5),0 6px 16px rgba(0,0,0,.3)}
+.shots .back{bottom:0;left:0;width:62%}
+.shots .front{top:0;right:0;width:58%}
+
+@media(max-width:900px){
+  .hero{padding:120px 0 70px}
+  .hero .wrap{grid-template-columns:1fr;gap:48px}
+  .app-icon{width:110px;margin-bottom:24px}
+}
+
+/* ---------- sections ---------- */
+section{padding:96px 0}
+h2{margin:0 0 14px;color:var(--white);font-size:clamp(30px,4vw,44px);line-height:1.15;letter-spacing:-.01em}
+.kicker{color:var(--accent);font-weight:700;font-size:14px;letter-spacing:.14em;text-transform:uppercase;margin-bottom:10px}
+.intro{color:var(--sub);max-width:36em;margin:0 0 48px;font-size:20px}
+
+/* how it works */
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;counter-reset:s}
+.step{background:var(--bg2);border:1px solid var(--panel-line);border-radius:var(--radius);padding:28px}
+.step::before{
+  counter-increment:s;content:counter(s);display:grid;place-items:center;width:38px;height:38px;border-radius:50%;
+  background:var(--accent);color:#06223f;font-weight:700;margin-bottom:18px;
+}
+.step h3{margin:0 0 6px;color:var(--white);font-size:22px}
+.step p{margin:0;color:var(--sub);font-size:17px}
+@media(max-width:800px){.steps{grid-template-columns:1fr}}
+
+/* features */
+.features{background:var(--bg2);border-block:1px solid var(--panel-line)}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.card{background:rgba(255,255,255,.035);border:1px solid var(--panel-line);border-radius:var(--radius);padding:26px 26px 24px}
+.card h3{margin:0 0 8px;color:var(--white);font-size:20px;display:flex;align-items:center;gap:10px}
+.card h3 i{font-style:normal;display:grid;place-items:center;width:32px;height:32px;border-radius:9px;background:rgba(120,174,237,.16);font-size:17px}
+.card p{margin:0;color:var(--sub);font-size:16.5px}
+@media(max-width:900px){.grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:600px){.grid{grid-template-columns:1fr}}
+
+/* gallery */
+.gallery{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;align-items:start}
+.gallery figure{margin:0}
+.gallery img{border-radius:14px;box-shadow:0 18px 40px rgba(0,0,0,.4)}
+.gallery figcaption{margin-top:12px;color:var(--sub);font-size:15.5px;text-align:center}
+@media(max-width:800px){.gallery{grid-template-columns:1fr;max-width:460px;margin-inline:auto}}
+
+/* install */
+.install .box{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:40px;align-items:start}
+.install .box>div{min-width:0}
+.codewrap{position:relative}
+.code{background:#030c1a;border:1px solid var(--panel-line);border-radius:14px;padding:20px 78px 20px 22px;
+  font:400 15.5px/1.55 ui-monospace,"JetBrains Mono","DejaVu Sans Mono",monospace;color:#cfdff0;overflow-x:auto;white-space:pre}
+.code .c{color:#6f8fb0}
+.copy{position:absolute;top:12px;right:12px;padding:6px 12px;border-radius:8px;border:1px solid var(--panel-line);
+  background:rgba(255,255,255,.07);color:var(--tagline);font:700 13px Lato,sans-serif;cursor:pointer}
+.copy:hover{background:rgba(255,255,255,.14)}
+.install ul{margin:0;padding-left:1.1em;color:var(--sub)}
+.install li{margin:.5em 0}
+.install li b{color:var(--tagline)}
+.fp{font:400 14px ui-monospace,monospace;color:var(--foot);word-break:break-word}
+@media(max-width:900px){.install .box{grid-template-columns:minmax(0,1fr)}}
+
+/* footer */
+footer{padding:56px 0 64px;border-top:1px solid var(--panel-line);color:var(--foot);font-size:16px}
+footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:20px}
+footer a{color:var(--sub)}
+footer .links{display:flex;flex-wrap:wrap;gap:22px}
+</style>
+</head>
+<body>
+
+<header class="nav">
+  <div class="wrap">
+    <a class="brand" href="#top"><img src="img/icon.svg" alt="">HashTally</a>
+    <ul>
+      <li><a href="#how">How it works</a></li>
+      <li><a href="#features">Features</a></li>
+      <li><a href="#install">Install</a></li>
+      <li><a href="https://github.com/DigitGram/hashtally">GitHub</a></li>
+    </ul>
+  </div>
+</header>
+
+<main id="top">
+<div class="hero">
+  <div class="wrap">
+    <div>
+      <img class="app-icon" src="img/icon-3d.png" alt="HashTally icon" width="265" height="287">
+      <h1>HashTally</h1>
+      <p class="tagline">Create and verify checksums.</p>
+      <p class="lead">Right from the context menu of GNOME Files. Signed hash files included.</p>
+      <div class="cta">
+        <a class="btn primary" href="#install">Install</a>
+        <a class="btn" href="https://github.com/DigitGram/hashtally">View on GitHub</a>
+      </div>
+      <p class="meta"><span>GPL-3.0</span><span>GTK 4 + libadwaita</span><span>10 languages</span></p>
+    </div>
+    <div class="shots">
+      <img class="back" src="img/compare-dark.webp" alt="HashTally showing the hashes of a file and comparing one with the clipboard" width="1240" height="1358">
+      <img class="front" src="img/verify-light.webp" alt="HashTally verifying a SHA256SUMS file: one file does not match" width="1040" height="1436">
+    </div>
+  </div>
+</div>
+
+<section id="how">
+  <div class="wrap">
+    <div class="kicker">How it works</div>
+    <h2>Know that a file is what it claims to be.</h2>
+    <p class="intro">A checksum tells you whether a file arrived unchanged. HashTally creates, checks and compares them, right from the right-click menu.</p>
+    <div class="steps">
+      <div class="step"><h3>Create</h3><p>Right-click files or folders, then <i>Scripts › HashTally: Create hash file</i>. The file is named after your selection.</p></div>
+      <div class="step"><h3>Verify</h3><p>Double-click a <code>.sha256</code>, <code>.md5</code> or <code>SHA256SUMS</code> file. The verdict comes first, problems are grouped by kind.</p></div>
+      <div class="step"><h3>Compare</h3><p>Show the hashes of one file, paste the expected one and see at once whether it matches.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="features" id="features">
+  <div class="wrap">
+    <div class="kicker">Features</div>
+    <h2>Everything about a checksum, in one place.</h2>
+    <p class="intro">Small, native and out of your way until you need it.</p>
+    <div class="grid">
+      <div class="card"><h3><i>✔</i>Verify</h3><p>Checks every file a hash file lists. Files that are fine stay folded away, problems are on top.</p></div>
+      <div class="card"><h3><i>＋</i>Create</h3><p>SHA-256, SHA-512, SHA-1, MD5 or CRC32 for files and folders, written as <code>name.sha256</code> or <code>SHA256SUMS</code>.</p></div>
+      <div class="card"><h3><i>⇄</i>Compare</h3><p>Paste a hash, or a whole line from a hash file. You see at once whether it matches.</p></div>
+      <div class="card"><h3><i>✎</i>GPG signatures</h3><p>Also checks the signature of a hash file, the usual way Linux downloads are published. The result sits right below the verdict.</p></div>
+      <div class="card"><h3><i>#</i>Many formats</h3><p>GNU, BSD, SFV and files with only a digest. SHA-224/384 and BLAKE2b can be verified as well.</p></div>
+      <div class="card"><h3><i>⛨</i>Your keyring stays yours</h3><p>HashTally changes it only when you press “Import key” and confirm.</p></div>
+      <div class="card"><h3><i>›_</i>Command line too</h3><p><code>hashtally --create ~/Downloads/*.iso</code>, with text output and clear exit codes for scripts.</p></div>
+      <div class="card"><h3><i>◐</i>Native look</h3><p>GTK 4 and libadwaita, light and dark, in ten languages.</p></div>
+      <div class="card"><h3><i>⎋</i>Closes fast</h3><p><kbd>Ctrl</kbd>+<kbd>W</kbd> or <kbd>Esc</kbd> closes any HashTally window.</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="gallery">
+  <div class="wrap">
+    <div class="kicker">Screenshots</div>
+    <h2>Looks like it belongs.</h2>
+    <p class="intro">Follows your system theme, light or dark.</p>
+    <div class="gallery">
+      <figure><img src="img/verify-light.webp" alt="Verifying a SHA256SUMS file" loading="lazy" width="1040" height="1436"><figcaption>Verifying a hash file</figcaption></figure>
+      <figure><img src="img/create-light.webp" alt="The window for creating a hash file" loading="lazy" width="1040" height="1182"><figcaption>Creating a hash file</figcaption></figure>
+      <figure><img src="img/compare-light.webp" alt="Showing the hashes of a file and comparing one" loading="lazy" width="1240" height="1358"><figcaption>Show or compare hash</figcaption></figure>
+    </div>
+  </div>
+</section>
+
+<section class="install" id="install">
+  <div class="wrap">
+    <div class="kicker">Install</div>
+    <h2>One line, no root.</h2>
+    <p class="intro">Installs for the current user only. Running it again from a newer release updates.</p>
+    <div class="box">
+      <div>
+        <div class="codewrap">
+          <div class="code" id="cmd"><span class="c"># curl</span>
+curl -fsSL https://github.com/DigitGram/hashtally/releases/latest/download/install.sh | bash
+
+<span class="c"># or wget</span>
+wget -qO- https://github.com/DigitGram/hashtally/releases/latest/download/install.sh | bash</div>
+          <button class="copy" type="button" aria-label="Copy the curl command">Copy</button>
+        </div>
+      </div>
+      <div>
+        <ul>
+          <li><b>Needs</b> a GNOME-family desktop with Nautilus and GNOME 46 or newer: Ubuntu 24.04+, Fedora 40+, Debian 13+, Linux Mint 22+. Nemo and Caja get the same Scripts entries. <code>gpg</code> is optional, for signature checks.</li>
+          <li><b>Then</b> double-click a hash file, or right-click files › <i>Scripts</i> › <i>HashTally: Create hash file</i></li>
+          <li><b>Signed.</b> Releases carry a GPG signature; the fingerprint is
+            <div class="fp">E7AA EB31 A4DE CF99 B314 7E1D FAAB 30B5 FD49 0E93</div></li>
+          <li><a href="https://github.com/DigitGram/hashtally#verify-the-download">How to verify the download</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <div>© 2026 DigitGram · HashTally is free software under the GPL-3.0.</div>
+    <div class="links">
+      <a href="https://github.com/DigitGram/hashtally">GitHub</a>
+      <a href="https://github.com/DigitGram/trustcopy">TrustCopy</a>
+      <a href="https://liberapay.com/DigitGram">Support on Liberapay</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+document.querySelector('.copy').addEventListener('click', function () {
+  var b = this, text = 'curl -fsSL https://github.com/DigitGram/hashtally/releases/latest/download/install.sh | bash';
+  (navigator.clipboard ? navigator.clipboard.writeText(text) : Promise.reject()).then(function () {
+    b.textContent = 'Copied'; setTimeout(function () { b.textContent = 'Copy'; }, 1600);
+  }).catch(function () { b.textContent = 'Press Ctrl+C'; });
+});
+</script>
+</body>
+</html>
