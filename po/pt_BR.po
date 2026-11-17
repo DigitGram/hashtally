@@ -36,6 +36,10 @@ msgid "Default algorithm"
 msgstr "Algoritmo padrão"
 
 #: src/core.py
+msgid "Used when creating a checksum file"
+msgstr "Usado ao criar um arquivo de checksums"
+
+#: src/core.py
 msgid "Language"
 msgstr "Idioma"
 

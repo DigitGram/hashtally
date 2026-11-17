@@ -29,8 +29,8 @@ class SettingsWindow(BaseWindow):
 
     def _general_group(self, cfg):
         prefs = Adw.PreferencesGroup(title=_("General"))
-        for key, (title, options) in core.setting_choices().items():
-            prefs.add(combo_row(title, options, cfg[key], lambda value, key=key: self.apply(key, value)))
+        for key, (title, options, subtitle) in core.setting_choices().items():
+            prefs.add(combo_row(title, options, cfg[key], lambda value, key=key: self.apply(key, value), subtitle))
         clipboard = Adw.SwitchRow(title=_("Compare with clipboard automatically"),
                                   subtitle=_("Fill in a copied hash when comparing"), active=cfg["clipboard"])
         clipboard.connect("notify::active", lambda r, _p: self.apply("clipboard", r.get_active()))

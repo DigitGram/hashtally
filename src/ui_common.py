@@ -283,10 +283,10 @@ def set_class(widget, name, on):
         widget.remove_css_class(name)
 
 
-def combo_row(title, options, current, on_change):
+def combo_row(title, options, current, on_change, subtitle=""):
     """Adw.ComboRow over {value: label}; `on_change(value)` fires when the user picks one."""
     keys = list(options)
-    row = Adw.ComboRow(title=title, model=Gtk.StringList.new(list(options.values())))
+    row = Adw.ComboRow(title=title, subtitle=subtitle, model=Gtk.StringList.new(list(options.values())))
     row.set_selected(keys.index(current) if current in keys else 0)
     row.connect("notify::selected", lambda r, _p: on_change(keys[r.get_selected()]))
     return row

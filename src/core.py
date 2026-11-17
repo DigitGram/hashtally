@@ -523,10 +523,10 @@ def compare_algos():
 
 
 def setting_choices():
-    """Settings with a fixed set of values: {key: (title, {value: label})}, in the current language."""
+    """Settings with a fixed set of values: {key: (title, {value: label}, subtitle)}, in the current language."""
     return {
-        "language": (_("Language"), {"auto": _("System default"), **i18n.languages()}),
-        "algorithm": (_("Default algorithm"), ALGOS),
+        "language": (_("Language"), {"auto": _("System default"), **i18n.languages()}, ""),
+        "algorithm": (_("Default algorithm"), ALGOS, _("Used when creating a checksum file")),
     }
 
 

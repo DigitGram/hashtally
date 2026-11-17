@@ -36,6 +36,10 @@ msgid "Default algorithm"
 msgstr "默认算法"
 
 #: src/core.py
+msgid "Used when creating a checksum file"
+msgstr "创建校验和文件时使用"
+
+#: src/core.py
 msgid "Language"
 msgstr "语言"
 
