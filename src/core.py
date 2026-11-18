@@ -33,7 +33,7 @@ AUTHOR = "DigitGram"  # shown in the About dialog; also named in the file header
 COPYRIGHT = f"© 2026 {AUTHOR}"
 
 # Algorithms offered when creating hash files: hashlib name -> label (crc32 comes from zlib, not hashlib).
-ALGOS = {"sha256": "SHA-256", "sha512": "SHA-512", "sha1": "SHA-1", "md5": "MD5", "crc32": "CRC32 (SFV)"}
+ALGOS = {"sha512": "SHA-512", "sha256": "SHA-256", "sha1": "SHA-1", "md5": "MD5", "crc32": "CRC32 (SFV)"}  # strongest first: the order of every list in the UI
 # Hex digest length -> algorithm, for entries that do not name one.
 DIGEST_LEN = {8: "crc32", 32: "md5", 40: "sha1", 56: "sha224", 64: "sha256", 96: "sha384", 128: "sha512"}
 
