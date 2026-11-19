@@ -121,6 +121,29 @@ h2{margin:0 0 14px;color:var(--white);font-size:clamp(30px,4vw,44px);line-height
 .gallery img{border-radius:14px;box-shadow:0 18px 40px rgba(0,0,0,.4)}
 .gallery figcaption{margin-top:12px;color:var(--sub);font-size:15.5px;text-align:center}
 @media(max-width:800px){.gallery{grid-template-columns:1fr;max-width:460px;margin-inline:auto}}
+/* with script: a carousel, the next and previous screenshot peek in from the sides (without script the grid above stays) */
+.gallery.is-slider{display:block;position:relative;max-width:none;margin:0;overflow:hidden;padding:6px 0 4px;
+  -webkit-mask-image:linear-gradient(90deg,transparent,#000 9%,#000 91%,transparent);mask-image:linear-gradient(90deg,transparent,#000 9%,#000 91%,transparent)}
+.gallery.is-slider .track{display:flex;align-items:flex-start;gap:36px;transition:transform .6s cubic-bezier(.3,.7,.2,1);will-change:transform;touch-action:pan-y}
+.gallery.is-slider figure{flex:none;margin:0;opacity:.35;transform:scale(.93);transform-origin:50% 40%;transition:opacity .5s,transform .5s;cursor:pointer}
+.gallery.is-slider figure.on{opacity:1;transform:none;cursor:default}
+.gallery.is-slider img{width:auto;height:min(560px,68vh);max-width:none;margin-inline:auto}
+.gallery.is-slider figcaption{opacity:0;transition:opacity .4s}
+.gallery.is-slider figure.on figcaption{opacity:1}
+.stage{position:relative}
+.nav-btn{position:absolute;top:calc(50% - 40px);z-index:2;width:46px;height:46px;border-radius:50%;border:1px solid var(--panel-line);background:rgba(8,22,44,.78);color:var(--white);cursor:pointer;display:grid;place-items:center;backdrop-filter:blur(4px);transition:background .2s,border-color .2s}
+.nav-btn:hover{background:rgba(26,95,180,.75);border-color:var(--accent)}
+.nav-btn:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.nav-btn svg{width:22px;height:22px}
+.nav-btn.prev{left:max(0px,calc(50% - 400px))}.nav-btn.next{right:max(0px,calc(50% - 400px))}
+@media(max-width:700px){.nav-btn{width:38px;height:38px;top:calc(50% - 36px)}.nav-btn.prev{left:4px}.nav-btn.next{right:4px}}
+.dots{display:flex;justify-content:center;gap:6px;margin-top:22px}
+.dots button{width:30px;height:30px;padding:0;border:0;background:none;cursor:pointer;display:grid;place-items:center;border-radius:50%}
+.dots button::before{content:"";width:12px;height:12px;border-radius:50%;background:rgba(150,188,220,.35);transition:background .25s,transform .25s}
+.dots button:hover::before{background:rgba(150,188,220,.7)}
+.dots button[aria-current=true]::before{background:var(--accent);transform:scale(1.2)}
+.dots button:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+@media(prefers-reduced-motion:reduce){.gallery.is-slider .track,.gallery.is-slider figure,.gallery.is-slider figcaption{transition:none}}
 
 /* install */
 .install .box{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:40px;align-items:start}
@@ -226,6 +249,7 @@ footer .links{display:flex;flex-wrap:wrap;gap:22px}
       <figure><img src="img/compare-light.webp" alt="Showing the hashes of a file and comparing one" loading="lazy" width="1240" height="1358"><figcaption>Show or compare hash</figcaption></figure>
       <figure><img src="img/differ-light.webp" alt="Comparing two files: they differ" loading="lazy" width="1120" height="1236"><figcaption>Comparing two files</figcaption></figure>
       <figure><img src="img/update-light.webp" alt="Updating an existing hash file" loading="lazy" width="1040" height="1448"><figcaption>Updating a hash file</figcaption></figure>
+      <figure><img src="img/unlisted-light.webp" alt="A complete check with the optional row for files the list does not name" loading="lazy" width="1040" height="1280"><figcaption>Files the list does not name</figcaption></figure>
       <figure><img src="img/speed-light.webp" alt="The algorithm speed test" loading="lazy" width="948" height="1016"><figcaption>Which algorithm is fastest here</figcaption></figure>
     </div>
   </div>
@@ -273,6 +297,67 @@ wget -qO- https://github.com/DigitGram/hashtally/releases/latest/download/instal
 </footer>
 
 <script>
+(function () {
+  var box = document.querySelector('.gallery'), slides = box ? Array.prototype.slice.call(box.querySelectorAll('figure')) : [];
+  if (slides.length < 2) return;
+  var now = 0, timer = null, paused = false, seen = false;
+  var stage = document.createElement('div'); stage.className = 'stage';
+  var track = document.createElement('div'); track.className = 'track';
+  box.parentNode.insertBefore(stage, box); stage.appendChild(box);
+  slides.forEach(function (f) { track.appendChild(f); });
+  box.appendChild(track); box.classList.add('is-slider');
+  var arrow = 'M14.5 5.5 8 12l6.5 6.5';  // chevron, mirrored for "next"
+  function button(cls, label, flip) {
+    var b = document.createElement('button'); b.type = 'button'; b.className = 'nav-btn ' + cls; b.setAttribute('aria-label', label);
+    b.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"' + (flip ? ' style="transform:scaleX(-1)"' : '') + '><path d="' + arrow + '"/></svg>';
+    return b;
+  }
+  var prev = button('prev', 'Previous screenshot', false), next = button('next', 'Next screenshot', true);
+  stage.appendChild(prev); stage.appendChild(next);
+  var dots = document.createElement('div'); dots.className = 'dots'; stage.appendChild(dots);
+  slides.forEach(function (fig, i) {
+    fig.querySelector('img').loading = 'eager';
+    var b = document.createElement('button'); b.type = 'button';
+    b.setAttribute('aria-label', 'Screenshot ' + (i + 1) + ' of ' + slides.length + ': ' + fig.querySelector('figcaption').textContent);
+    b.addEventListener('click', function () { go(i); });
+    dots.appendChild(b);
+    fig.addEventListener('click', function () { if (i !== now) go(i); });  // a click on the peeking neighbour
+  });
+  function place() {  // slide the track so that the current screenshot sits in the middle
+    var f = slides[now];
+    track.style.transform = 'translateX(' + Math.round(box.clientWidth / 2 - (f.offsetLeft + f.offsetWidth / 2)) + 'px)';
+  }
+  function show(i) {
+    now = (i + slides.length) % slides.length;
+    slides.forEach(function (f, k) { f.classList.toggle('on', k === now); f.setAttribute('aria-hidden', k === now ? 'false' : 'true'); });
+    Array.prototype.forEach.call(dots.childNodes, function (d, k) { d.setAttribute('aria-current', k === now ? 'true' : 'false'); });
+    place();
+  }
+  function restart() { clearInterval(timer); if (!paused && seen) timer = setInterval(function () { show(now + 1); }, 5000); }
+  function go(i) { show(i); restart(); }
+  prev.addEventListener('click', function () { go(now - 1); });
+  next.addEventListener('click', function () { go(now + 1); });
+  document.addEventListener('keydown', function (e) {  // left and right arrow while the gallery is in view
+    if (!seen || e.altKey || e.ctrlKey || e.metaKey || e.shiftKey) return;
+    var t = e.target && e.target.tagName;
+    if (t === 'INPUT' || t === 'TEXTAREA' || t === 'SELECT') return;
+    if (e.key === 'ArrowRight') { go(now + 1); e.preventDefault(); }
+    else if (e.key === 'ArrowLeft') { go(now - 1); e.preventDefault(); }
+  });
+  var x0 = null;  // swipe
+  box.addEventListener('touchstart', function (e) { x0 = e.touches[0].clientX; paused = true; }, { passive: true });
+  box.addEventListener('touchend', function (e) {
+    if (x0 !== null) { var dx = e.changedTouches[0].clientX - x0; if (Math.abs(dx) > 40) go(now + (dx < 0 ? 1 : -1)); }
+    x0 = null; paused = false; restart();
+  });
+  window.addEventListener('resize', place);
+  window.addEventListener('load', place);  // the widths are known once the pictures are in
+  if (window.ResizeObserver) new ResizeObserver(place).observe(track);
+  slides.forEach(function (f) { f.querySelector('img').addEventListener('load', place); });
+  if ('IntersectionObserver' in window) new IntersectionObserver(function (en) { seen = en[0].isIntersecting; restart(); }).observe(stage);
+  else seen = true;
+  show(0); restart();
+})();
 document.querySelector('.copy').addEventListener('click', function () {
   var b = this, text = 'curl -fsSL https://github.com/DigitGram/hashtally/releases/latest/download/install.sh | bash';
   (navigator.clipboard ? navigator.clipboard.writeText(text) : Promise.reject()).then(function () {
