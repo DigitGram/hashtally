@@ -21,12 +21,20 @@ More on the [project website](https://digitgram.github.io/hashtally/).
 - **Create**: right-click files or folders → *Scripts* → *HashTally: Create hash file*.
 - **Compare**: show the hashes of one file, paste the expected one, see at once whether it matches. Select two files instead to see whether they are identical.
 - **Update**: when the hash file you create already exists, add only the new and changed files to it instead of hashing everything again.
+- **Not listed**: optional (off by default): when verifying, also counts the files in the list's folders that the list does not name, so a file added since the list was made does not go unnoticed.
+- **Speed test**: in the settings, shows which algorithm is fastest on your computer and recommends the fastest secure one.
 - **GPG signatures**: also checks the signature of a hash file, the usual way Linux downloads are published (`SHA256SUMS` + `SHA256SUMS.gpg`, or a clear-signed file).
 - **Native look**: GTK 4 and libadwaita, light and dark, in ten languages (English, Deutsch, Español, Français, Italiano, 日本語, Polski, Português (Brasil), Українська, 简体中文).
 
 <p align="center">
   <img src="docs/screenshots/create-light.png" width="38%" alt="The window for creating a hash file">
   <img src="docs/screenshots/compare-light.png" width="58%" alt="Showing the hashes of a file and comparing one with the clipboard">
+</p>
+
+<p align="center">
+  <img src="docs/screenshots/update-light.png" width="32%" alt="Updating an existing hash file: two files added, one changed, four unchanged">
+  <img src="docs/screenshots/differ-light.png" width="34%" alt="Comparing two files: they differ, the SHA-256 of each is shown">
+  <img src="docs/screenshots/speed-light.png" width="30%" alt="The speed test: a bar per algorithm and a recommendation">
 </p>
 
 ## Requirements
