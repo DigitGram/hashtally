@@ -38,7 +38,7 @@ whether they are identical (`hashtally --compare-files a b` in a terminal). The 
 **Update.** If the hash file you are about to create exists and is a plain list of one algorithm (not clear-signed, not a link),
 the window offers *Update* next to *Overwrite*. An update hashes only files that no entry names yet and files changed since the
 hash file was written; every other entry stays as it is and is **not checked again**, so use Verify for that. The file keeps its
-algorithm. Entries of files that no longer exist stay unless you switch on *Remove entries of deleted files*. The hash file does
+algorithm. Entries of files that no longer exist stay unless you switch on *Remove entries of deleted files*. The file is written again as a plain list: comments and the BSD style are not kept. It is not offered for a list with a detached signature next to it or with names that are not UTF-8. The hash file does
 not store dates, so its own date is the cut-off: a copy of it made later hides an edit made before the copy. In a terminal:
 `hashtally --create --update` (and `--prune`).
 

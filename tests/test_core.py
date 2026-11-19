@@ -1454,6 +1454,49 @@ def test_a_hash_file_that_cannot_be_updated_is_not_offered():
         assert core.plan_update(files, tmp, str(signed)) is None  # rewriting it would break the signature
 
 
+def test_an_update_keeps_names_and_edits_that_come_in_between():
+    with tempfile.TemporaryDirectory() as tmp:
+        for name in ("Äpfel.txt", "a.txt", "b.txt"):
+            Path(tmp, name).write_bytes(name.encode())
+        out = os.path.join(tmp, "SHA256SUMS")
+        core.write_hashfile(core.collect_files([tmp]), tmp, "sha256", out)
+        os.utime(out, (time.time() + 10, time.time() + 10))
+        files = core.collect_files([tmp])
+        # an edit after the plan is not lost for good: the new file is dated as of the plan, so the edit is newer than it
+        Path(tmp, "c.txt").write_bytes(b"c")
+        plan = core.plan_update(core.collect_files([tmp]), tmp, out)
+        assert [t for _f, t in plan.todo] == ["c.txt"]
+        Path(tmp, "a.txt").write_bytes(b"edited")
+        core.write_update(plan, tmp, out, drop_gone=False)
+        assert [t for _f, t in core.plan_update(core.collect_files([tmp]), tmp, out).todo] == ["a.txt"]
+        # a file that is no UTF-8 reads as Latin-1: not offered, nothing is garbled
+        raw = Path(tmp, "caf\udce9.txt")
+        raw.write_bytes(b"x")
+        bad = Path(tmp, "latin")
+        bad.write_bytes(f"{A}  ".encode() + os.fsencode(raw.name) + b"\n" + f"{A}  a.txt\n".encode())
+        assert core.plan_update(core.collect_files([tmp]), tmp, str(bad)) is None
+        assert core.unlisted_files(tmp, core.parse(str(bad)), str(bad)) == []
+        # a detached signature next to the list: not offered
+        Path(out + ".asc").write_text("x")
+        assert core.plan_update(core.collect_files([tmp]), tmp, out) is None
+
+
+def test_absolute_and_parent_names_are_one_file_and_no_reason_to_walk_up():
+    with tempfile.TemporaryDirectory() as tmp:
+        dl = Path(tmp, "dl")
+        (dl / "sub").mkdir(parents=True)
+        Path(tmp, "other").mkdir()
+        Path(tmp, "other", "x.txt").write_bytes(b"x")
+        (dl / "a").write_bytes(b"alpha")
+        (dl / "b").write_bytes(b"beta")
+        out = str(dl / "SHA256SUMS")
+        Path(out).write_text(f"{'0' * 64}  {dl / 'a'}\n{A}  b\n{A}  ../other/x.txt\n")
+        os.utime(out, (time.time() + 10, time.time() + 10))
+        plan = core.plan_update([str(dl / "a"), str(dl / "b")], str(dl), out)
+        assert (plan.added, plan.unchanged) == (0, 2)  # the absolute entry is a.txt's, not a stranger
+        assert core.unlisted_files(str(dl), core.parse(out), out) == []  # nothing of ../other, and sub/ is empty
+
+
 def test_an_sfv_is_updated_as_an_sfv():
     with tempfile.TemporaryDirectory() as tmp:
         Path(tmp, "a.txt").write_bytes(b"alpha")

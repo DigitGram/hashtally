@@ -456,12 +456,14 @@ def write_hashfile(files, base, algo, out, progress=None):
 
 # An existing hash file that gets only what changed: `algo`, its `entries` (as Entry, in file order), `todo` (the files
 # to hash, as (path, key) where key names the entry), and the counts shown to the user.
-Update = namedtuple("Update", "algo entries todo added changed unchanged gone")
+Update = namedtuple("Update", "algo entries todo added changed unchanged gone stamp")  # stamp: when the plan was made, the new date of the hash file
 
 
-def _key(name):
-    """A file name as the list and the folder spell it alike: "a\\b" and "./a/b" are one file."""
-    return os.path.normpath(name.replace("\\", "/"))
+def _key(name, base=None):
+    """A file name as the list and the folder spell it alike: "a\\b" and "./a/b" are one file. With `base`, an
+    absolute name or one with ".." reads relative to it too, as os.path.relpath(file, base) does."""
+    name = os.path.normpath(name.replace("\\", "/"))
+    return name if base is None else os.path.relpath(os.path.join(base, name), base)
 
 
 def plan_update(files, base, out):
@@ -469,20 +471,22 @@ def plan_update(files, base, out):
     holds lines that are not checksums or more than one algorithm. A file is hashed when no entry names it or when it is newer than the
     hash file; every other entry stays as it is. shortcut: the hash file keeps no dates, so its own date is the cut-off: a
     copy of it made later hides an edit from before the copy. Upgrade if that bites."""
+    stamp = time.time_ns()
     try:
-        if os.path.islink(out):
+        if os.path.islink(out) or any(os.path.lexists(out + s) for s in SIG_SUFFIXES):  # a signature would not fit the new file
             return None
         raw = read_hashfile(out)
         entries = parse(out, raw)
         cutoff = os.stat(out).st_mtime_ns
-    except OSError:
+        raw.decode("utf-8-sig")  # a name that is no UTF-8 was read as Latin-1: writing it back would garble every such name
+    except (OSError, UnicodeDecodeError):
         return None
     algos = {e.algo for e in entries}
     if not entries or len(algos) != 1 or None in algos or algos - set(ALGOS) or raw.startswith(_PGP_HEADER.encode()):
         return None
     if any(not e.digest for e in entries):
         return None
-    listed = {_key(e.name) for e in entries}
+    listed = {_key(e.name, base) for e in entries}
     todo, added, changed, unchanged = [], 0, 0, 0
     seen = set()
     for f in files:
@@ -506,7 +510,7 @@ def plan_update(files, base, out):
         else:
             unchanged += 1
     gone = sum(1 for e in entries if resolve(base, e.name) is None)
-    return Update(next(iter(algos)), entries, todo, added, changed, unchanged, gone)
+    return Update(next(iter(algos)), entries, todo, added, changed, unchanged, gone, stamp)
 
 
 def write_update(plan, base, out, drop_gone, progress=None):
@@ -515,7 +519,7 @@ def write_update(plan, base, out, drop_gone, progress=None):
     digests = {key: hash_file(f, [plan.algo], progress)[plan.algo] for f, key in plan.todo}
     lines, kept = [], set()
     for e in plan.entries:
-        key = _key(e.name)
+        key = _key(e.name, base)
         if drop_gone and resolve(base, e.name) is None:
             continue
         kept.add(key)
@@ -524,7 +528,11 @@ def write_update(plan, base, out, drop_gone, progress=None):
         if key not in kept:
             lines.append(_line(plan.algo, os.path.relpath(f, base), digests[key]))
             kept.add(key)
+    if not plan.todo and len(lines) == len(plan.entries):  # nothing to add, change or drop: the file stays as it is
+        return len(lines)
     _store(plan.algo, lines, out)
+    with contextlib.suppress(OSError):  # a file edited from the plan on is newer than the list and hashed next time
+        os.utime(out, ns=(plan.stamp, plan.stamp))
     return len(lines)
 
 
@@ -542,11 +550,15 @@ def unlisted_files(base, entries, hashfile):
     """Files in the folders a hash file covers that it does not list, sorted: the files next to it if it lists any,
     and everything below each top-level folder it lists a file in. Other hash files and signatures are no news.
     Empty for a list of one file: that is a download's checksum, and its folder holds other things. Not followed: links to folders."""
-    names = [_key(e.name) for e in entries]
+    names = [_key(e.name, base) for e in entries]
     if len(names) < 2:
         return []
+    try:
+        read_hashfile(hashfile).decode("utf-8-sig")
+    except (OSError, UnicodeDecodeError):  # names read as Latin-1 would not match the folder: every such file would show as unlisted
+        return []
     listed = set(names)
-    roots = {n.split(os.sep)[0] for n in names if os.sep in n}
+    roots = {n.split(os.sep)[0] for n in names if os.sep in n} - {os.pardir}  # a list that names "../x" does not make the parent folder its business
     skip = {os.path.abspath(hashfile), *(os.path.abspath(hashfile + s) for s in SIG_SUFFIXES)}
     found = []
 
