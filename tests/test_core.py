@@ -1461,7 +1461,6 @@ def test_an_update_keeps_names_and_edits_that_come_in_between():
         out = os.path.join(tmp, "SHA256SUMS")
         core.write_hashfile(core.collect_files([tmp]), tmp, "sha256", out)
         os.utime(out, (time.time() + 10, time.time() + 10))
-        files = core.collect_files([tmp])
         # an edit after the plan is not lost for good: the new file is dated as of the plan, so the edit is newer than it
         Path(tmp, "c.txt").write_bytes(b"c")
         plan = core.plan_update(core.collect_files([tmp]), tmp, out)
