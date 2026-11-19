@@ -3,6 +3,8 @@
 # ruff: noqa: E402
 """SettingsWindow: language, default algorithm, clipboard behaviour, compare algorithms, About."""
 
+import threading
+
 import gi
 
 gi.require_version("Gtk", "4.0")
@@ -11,7 +13,7 @@ from gi.repository import Adw, GLib, Gtk
 
 import core
 from i18n import _
-from ui_common import BaseWindow, combo_row, warning_dialog
+from ui_common import BaseWindow, SpeedDialog, combo_row, warning_dialog
 
 class SettingsWindow(BaseWindow):
     """Every change is saved at once (no OK button), like GNOME settings."""
@@ -35,8 +37,33 @@ class SettingsWindow(BaseWindow):
                                   subtitle=_("Fill in a copied hash when comparing"), active=cfg["clipboard"])
         clipboard.connect("notify::active", lambda r, _p: self.apply("clipboard", r.get_active()))
         prefs.add(clipboard)
+        unlisted = Adw.SwitchRow(title=_("Look for files not in the list"),
+                                 subtitle=_("When verifying, count the files in the list's folders that it does not name. A hint only: the result stays the same."),
+                                 active=cfg["unlisted"])
+        unlisted.connect("notify::active", lambda r, _p: self.apply("unlisted", r.get_active()))
+        prefs.add(unlisted)
         prefs.add(self._algo_expander())
+        prefs.add(self._speed_row())
         return prefs
+
+    def _speed_row(self):
+        """A button that measures every algorithm on this computer and shows the result in a window of its own."""
+        self.speed_button = Gtk.Button(label=_("Test"), valign=Gtk.Align.CENTER)
+        self.speed_button.connect("clicked", self.test_speeds)
+        row = Adw.ActionRow(title=_("Algorithm speed"), subtitle=_("Measures how fast this computer calculates each algorithm and recommends one."))
+        row.add_suffix(self.speed_button)
+        row.set_activatable_widget(self.speed_button)
+        return row
+
+    def test_speeds(self, button):
+        button.set_sensitive(False)
+        button.set_label(_("Testing…"))
+        threading.Thread(target=lambda: GLib.idle_add(self.show_speeds, core.hash_speeds()), daemon=True).start()
+
+    def show_speeds(self, speeds):
+        self.speed_button.set_label(_("Test"))
+        self.speed_button.set_sensitive(True)
+        SpeedDialog(speeds).present(self)
 
     def _algo_expander(self):
         """Which algorithms the compare window calculates. One folded row stays small however many algorithms

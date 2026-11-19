@@ -496,6 +496,84 @@ def question_fits_a_fresh_window(app):
     return 0 < width <= 480 or width
 
 
+def speed_test_opens_its_window(app):
+    """The button measures in a thread and opens a window with a bar per algorithm; no setting changes."""
+    window = ui_settings.SettingsWindow(app)
+    window.present()
+    saved = dict(core.load_config())
+    window.speed_button.emit("clicked")
+    end = time.monotonic() + 15
+    while not window.speed_button.get_sensitive() and time.monotonic() < end:
+        spin()
+    opened = window.get_visible_dialog() is not None and core.load_config() == saved
+    ui_common.SpeedDialog({"crc32": 3000e6, "sha256": 1100e6, "sha512": 500e6, "sha1": 1200e6, "md5": 500e6})  # every kind of remark
+    ui_common.SpeedDialog({"crc32": 900e6, "sha256": 300e6, "sha512": 600e6, "sha1": 100e6, "md5": 100e6})
+    window.destroy()
+    return opened or "no window, or a setting changed"
+
+
+def two_files_are_compared(app):
+    """Two files: identical, different content of the same size, or different sizes (not read at all)."""
+    with tempfile.TemporaryDirectory() as tmp:
+        for name, data in (("a", b"alpha"), ("b", b"alpha"), ("c", b"alphb"), ("d", b"longer")):
+            Path(tmp, name).write_bytes(data)
+        seen = []
+        for other in "bcd":
+            window = ui_compare.CompareFilesWindow(app, [str(Path(tmp, "a")), str(Path(tmp, other))])
+            window.present()
+            wait(lambda: hasattr(window, "hero"))
+            seen.append((window.hero.title.get_label(), window.hero.detail.get_label()))
+            folded = getattr(window, "hashes", None)  # closed when identical, open when different, absent when not read
+            seen.append(None if folded is None else folded.get_expanded())
+            if window.get_focus() is not None:
+                return "a hash is selected without being asked"
+            if folded is not None:
+                before = window.get_default_size()[1]
+                folded.set_expanded(not folded.get_expanded())
+                wait(lambda: window.get_default_size()[1] != before)  # the window follows the folding, up or down
+            window.destroy()
+    return seen == [("Files are identical", "SHA-256 matches"), False, ("Files differ", ""), True, ("Files differ", "The files have different sizes"), None] or seen
+
+
+def unlisted_files_get_a_line_that_is_no_verdict(app):
+    """Files in the folder that the list does not name are counted and can be opened; the verdict ignores them."""
+    sums, files = f"{A}  a.txt\n{hashlib.sha256(b'beta').hexdigest()}  b.txt\n".encode(), {"a.txt": b"alpha", "b.txt": b"beta", "new.txt": b"x", "other.pdf": b"y"}
+    window = verify(app, sums, files)  # off by default
+    off = window.unlisted_row.get_visible()
+    window.destroy()
+    with mock.patch.object(core, "load_config", lambda: {**core.DEFAULTS, "unlisted": True}):
+        window = verify(app, sums, files)
+        seen = (window.unlisted_row.get_visible(), window.unlisted_row.count.get_label(), window.hero.title.get_label())
+        window.destroy()
+    return (off, *seen) == (False, True, "2", "2 files match") or (off, *seen)
+
+
+def an_existing_hash_file_is_added_to(app):
+    """The create window offers to add to an existing hash file, keeps its algorithm and writes only what is new."""
+    with tempfile.TemporaryDirectory() as tmp:
+        a, b, out = (str(Path(tmp, n)) for n in ("a.txt", "b.txt", "SHA256SUMS"))
+        Path(a).write_bytes(b"alpha")
+        core.write_hashfile([a], tmp, "sha256", out)
+        os.utime(out, (time.time() + 10, time.time() + 10))
+        Path(b).write_bytes(b"beta")
+        window = ui_create.CreateWindow(app, [a, b])
+        window.present()
+        spin()
+        spin()
+        adj = window.stack.get_child_by_name("options").get_vadjustment()
+        fits = adj.get_upper() <= adj.get_page_size() + 1  # the window grew for the rows: no scrolling
+        offered = (fits, window.update_group.get_visible(), window.update_row.get_selected(), window.start_btn.get_label(), window.choice.get_sensitive())
+        window.update_row.set_selected(1)  # replace: the usual page again
+        replace = (window.start_btn.get_label(), window.choice.get_sensitive())
+        window.update_row.set_selected(0)
+        window._start()
+        wait(lambda: window.stack.get_visible_child_name() == "done")
+        names = [e.name for e in core.parse(out)]
+        title = window.hero_title if hasattr(window, "hero_title") else ""
+        window.destroy()
+    return (offered, replace, names) == ((True, True, 0, "Update", False), ("Create", True), ["a.txt", "b.txt"]) or (offered, replace, names, title)
+
+
 def main():
     app = Adw.Application(application_id=core.APP_ID + ".smoke", flags=Gio.ApplicationFlags.NON_UNIQUE)
     failures = []
@@ -521,7 +599,7 @@ def main():
         for check in (counts_open_their_files, detail_window_opens_again_after_closing, failed_files_are_checked_again, user_ids_split_and_keys_need_a_full_fingerprint, fingerprint_is_copied_without_spaces, import_asks_twice_and_only_then_fetches, empty_lines_stay_grey, gpg_is_awaited_aloud, paths_read_as_in_files, copy_leaves_blocks_out, own_hash_copied_by_hand_is_no_match,
                       names_that_are_no_utf8_open, thousands_never_freeze, none_found_is_the_problem, signature_comes_first,
                       bad_signature_takes_over, size_is_fixed, missing_files_show_in_the_ring, unchecked_signature_marks_the_green_ring, ring_parts_fit, compare_shows_the_verdict, autofill_says_where_it_came_from,
-                      unwritable_folder_stops_before_hashing, a_window_without_checksums_closes, files_without_checksums_share_one_window, create_window_fits_its_page, question_fits_a_fresh_window):
+                      unwritable_folder_stops_before_hashing, a_window_without_checksums_closes, files_without_checksums_share_one_window, create_window_fits_its_page, question_fits_a_fresh_window, two_files_are_compared, speed_test_opens_its_window, unlisted_files_get_a_line_that_is_no_verdict, an_existing_hash_file_is_added_to):
             if (result := check(app)) is not True:
                 failures.append(f"{check.__name__}: {result}")
         if not overwrite_is_confirmed(app):

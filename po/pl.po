@@ -246,10 +246,6 @@ msgid "Paste from clipboard"
 msgstr "Wklej ze schowka"
 
 #: src/ui_gtk.py
-msgid "Please select a single file"
-msgstr "Wybierz tylko jeden plik"
-
-#: src/ui_gtk.py
 msgid "Reset"
 msgstr "Resetuj"
 
@@ -591,3 +587,140 @@ msgstr "Nieprawidłowy podpis: nie ufaj temu plikowi"
 #, python-brace-format
 msgid "{file} is unchanged"
 msgstr "{file} nie został zmieniony"
+
+#: src/cli.py src/ui_compare.py
+msgid "Please select one or two files"
+msgstr "Wybierz jeden lub dwa pliki"
+
+#: src/ui_verify.py
+msgid "Not listed"
+msgstr "Nie na liście"
+
+#: src/ui_verify.py
+msgid "Files not listed"
+msgstr "Pliki spoza listy"
+
+#: src/ui_compare.py
+msgid "Compare files"
+msgstr "Porównaj pliki"
+
+#: src/cli.py src/ui_compare.py
+msgid "Files are identical"
+msgstr "Pliki są identyczne"
+
+#: src/cli.py src/ui_compare.py
+msgid "Files differ"
+msgstr "Pliki się różnią"
+
+#: src/cli.py src/ui_compare.py
+msgid "The files have different sizes"
+msgstr "Pliki mają różne rozmiary"
+
+#: src/ui_create.py
+msgid "File already exists"
+msgstr "Plik już istnieje"
+
+#: src/ui_create.py
+msgid "Only files that are new or changed since the hash file was written are hashed. The other entries are kept as they are and are not checked again."
+msgstr "Skróty są obliczane tylko dla plików nowych lub zmienionych od zapisania pliku skrótów. Pozostałe wpisy zostają bez zmian i nie są ponownie sprawdzane."
+
+#: src/ui_create.py
+msgid "Remove entries of deleted files"
+msgstr "Usuń wpisy usuniętych plików"
+
+#: src/ui_create.py
+msgid "Update"
+msgstr "Aktualizuj"
+
+#: src/ui_create.py
+msgid "Hash file updated"
+msgstr "Zaktualizowano plik skrótów"
+
+#: src/core.py
+#, python-brace-format
+msgid "Added: {n}"
+msgstr "Dodano: {n}"
+
+#: src/core.py
+#, python-brace-format
+msgid "Changed: {n}"
+msgstr "Zmieniono: {n}"
+
+#: src/core.py
+#, python-brace-format
+msgid "Unchanged: {n}"
+msgstr "Bez zmian: {n}"
+
+#: src/core.py
+#, python-brace-format
+msgid "Removed: {n}"
+msgstr "Usunięto: {n}"
+
+#: src/core.py
+#, python-brace-format
+msgid "Missing: {n}"
+msgstr "Brakuje: {n}"
+
+#: src/cli.py
+msgid "Please name exactly two files"
+msgstr "Podaj dokładnie dwa pliki"
+
+#: src/ui_gtk.py
+msgid "Choose the second file"
+msgstr "Wybierz drugi plik"
+
+#: src/ui_settings.py
+msgid "Algorithm speed"
+msgstr "Szybkość algorytmów"
+
+#: src/ui_settings.py
+msgid "Test"
+msgstr "Testuj"
+
+#: src/ui_settings.py
+msgid "Testing…"
+msgstr "Testowanie…"
+
+#: src/ui_settings.py
+msgid "Measures how fast this computer calculates each algorithm and recommends one."
+msgstr "Mierzy, jak szybko ten komputer oblicza każdy algorytm, i poleca jeden z nich."
+
+#: src/ui_common.py
+msgid "Only finds accidental errors"
+msgstr "Wykrywa tylko przypadkowe błędy"
+
+#: src/ui_common.py
+msgid "No longer secure"
+msgstr "Nie jest już bezpieczny"
+
+#: src/ui_common.py
+msgid "Secure"
+msgstr "Bezpieczny"
+
+#: src/ui_common.py
+msgid "How much data this computer can check per second. A longer bar is faster. Your drive is often slower, and then it sets the pace."
+msgstr "Ile danych ten komputer może sprawdzić w ciągu sekundy. Dłuższy pasek oznacza szybszą sumę. Dysk jest często wolniejszy i wtedy to on wyznacza tempo."
+
+#: src/ui_common.py
+msgid "CRC32 is faster, but it only finds accidental errors, not deliberate changes."
+msgstr "CRC32 jest szybszy, ale wykrywa tylko przypadkowe błędy, a nie celowe zmiany."
+
+#: src/ui_common.py
+msgid "{name} is faster, but it is no longer secure against deliberate changes."
+msgstr "{name} jest szybszy, ale nie chroni już przed celowymi zmianami."
+
+#: src/ui_common.py
+msgid "Recommendation"
+msgstr "Zalecenie"
+
+#: src/ui_common.py
+msgid "<b>{name}</b> is the fastest secure algorithm on this computer."
+msgstr "<b>{name}</b> to najszybszy bezpieczny algorytm na tym komputerze."
+
+#: src/ui_settings.py
+msgid "Look for files not in the list"
+msgstr "Szukaj plików spoza listy"
+
+#: src/ui_settings.py
+msgid "When verifying, count the files in the list's folders that it does not name. A hint only: the result stays the same."
+msgstr "Podczas weryfikacji zlicza pliki w folderach listy, których ona nie wymienia. Tylko wskazówka: wynik się nie zmienia."

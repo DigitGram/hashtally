@@ -14,6 +14,7 @@ import re
 import shlex
 import shutil
 import subprocess
+import time
 import zlib
 from collections import namedtuple
 from concurrent.futures import ThreadPoolExecutor
@@ -69,6 +70,35 @@ def hash_file(path, algos, progress=None):
     if want_crc:
         digests["crc32"] = f"{crc[0]:08x}"
     return digests
+
+
+SECURE = ("sha512", "sha256")  # the algorithms that hold against deliberate changes; CRC32 only finds accidents, MD5 and SHA-1 are broken
+
+
+def hash_speeds(seconds=0.2):
+    """{algorithm: bytes per second} of every algorithm offered for creating hash files, on this machine: one core, from memory (no disk involved).
+    Only a guide: a drive is often slower, and a hash file for several algorithms hashes them side by side."""
+    block, speeds = os.urandom(1 << 20), {}
+    for algo in ALGOS:
+        if algo == "crc32":
+            crc = [0]
+            update = lambda data: crc.__setitem__(0, zlib.crc32(data, crc[0]))  # noqa: E731
+        else:
+            update = hashlib.new(algo).update
+        update(block)  # warm up: the first call pays for the set-up
+        done, start = 0, time.perf_counter()
+        while (spent := time.perf_counter() - start) < seconds:
+            update(block)
+            done += len(block)
+        speeds[algo] = done / spent
+    return speeds
+
+
+def speed_advice(speeds):
+    """(the fastest secure algorithm, the fastest one overall if that is not a secure one else None) from `hash_speeds`."""
+    best = max(SECURE, key=speeds.get)
+    fastest = max(speeds, key=speeds.get)
+    return best, (None if fastest in SECURE else fastest)
 
 
 # --------------------------------------------------------------------------- reading hash files
@@ -394,26 +424,158 @@ def write_atomic(path, text):
         raise
 
 
-def write_hashfile(files, base, algo, out, progress=None):
-    """Write one line per file (paths relative to `base`); returns the number of files."""
-    files = [f for f in files if os.path.abspath(f) != os.path.abspath(out)]
+def _line(algo, rel, digest):
+    """One line of a hash file: SFV for CRC32, else GNU style ("hash  name") with the escaping GNU uses for odd names."""
+    if algo == "crc32":
+        return f"{rel} {digest}"
+    if re.search(r"[\\\n\r]", rel):  # GNU escaping, flagged by a leading backslash
+        return f"\\{digest}  " + rel.replace("\\", "\\\\").replace("\n", "\\n").replace("\r", "\\r")
+    return f"{digest}  {rel}"
+
+
+def _store(algo, lines, out):
+    """Write the hash file `out` from its lines (an SFV gets its header); a link at `out` is replaced, never written through:
+    a SHA256SUMS planted as a link to ~/.bashrc would cost that file."""
     # shortcut: SFV has no escaping, so a name with a line break, or starting with ";" or "#", cannot be
     # written back faithfully (GNU/BSD lines are escaped), and parse() trims blanks at the end of a line, so
     # no format keeps a name that ends in whitespace; upgrade if such names ever show up.
-    lines = ["; Created by HashTally"] if algo == "crc32" else []
-    for f in files:
-        rel = os.path.relpath(f, base)
-        digest = hash_file(f, [algo], progress)[algo]
-        if algo == "crc32":
-            lines.append(f"{rel} {digest}")
-        elif re.search(r"[\\\n\r]", rel):  # GNU escaping, flagged by a leading backslash
-            lines.append(f"\\{digest}  " + rel.replace("\\", "\\\\").replace("\n", "\\n").replace("\r", "\\r"))
-        else:
-            lines.append(f"{digest}  {rel}")
-    if os.path.islink(out):  # the link is replaced, never written through: a SHA256SUMS planted as a link to ~/.bashrc would cost that file
+    if algo == "crc32":
+        lines = ["; Created by HashTally", *lines]
+    if os.path.islink(out):
         os.unlink(out)
     write_atomic(out, "\n".join(lines) + "\n")  # a failure never destroys an existing hash file
+
+
+def write_hashfile(files, base, algo, out, progress=None):
+    """Write one line per file (paths relative to `base`); returns the number of files."""
+    files = [f for f in files if os.path.abspath(f) != os.path.abspath(out)]
+    lines = [_line(algo, os.path.relpath(f, base), hash_file(f, [algo], progress)[algo]) for f in files]
+    _store(algo, lines, out)
     return len(files)
+
+
+# An existing hash file that gets only what changed: `algo`, its `entries` (as Entry, in file order), `todo` (the files
+# to hash, as (path, key) where key names the entry), and the counts shown to the user.
+Update = namedtuple("Update", "algo entries todo added changed unchanged gone")
+
+
+def _key(name):
+    """A file name as the list and the folder spell it alike: "a\\b" and "./a/b" are one file."""
+    return os.path.normpath(name.replace("\\", "/"))
+
+
+def plan_update(files, base, out):
+    """What updating the hash file `out` with `files` would do, or None if it cannot be updated: it is a link, clear-signed,
+    holds lines that are not checksums or more than one algorithm. A file is hashed when no entry names it or when it is newer than the
+    hash file; every other entry stays as it is. shortcut: the hash file keeps no dates, so its own date is the cut-off: a
+    copy of it made later hides an edit from before the copy. Upgrade if that bites."""
+    try:
+        if os.path.islink(out):
+            return None
+        raw = read_hashfile(out)
+        entries = parse(out, raw)
+        cutoff = os.stat(out).st_mtime_ns
+    except OSError:
+        return None
+    algos = {e.algo for e in entries}
+    if not entries or len(algos) != 1 or None in algos or algos - set(ALGOS) or raw.startswith(_PGP_HEADER.encode()):
+        return None
+    if any(not e.digest for e in entries):
+        return None
+    listed = {_key(e.name) for e in entries}
+    todo, added, changed, unchanged = [], 0, 0, 0
+    seen = set()
+    for f in files:
+        if os.path.abspath(f) == os.path.abspath(out):
+            continue
+        key = _key(os.path.relpath(f, base))
+        if key in seen:
+            continue
+        seen.add(key)
+        if key not in listed:
+            todo.append((f, key))
+            added += 1
+            continue
+        try:
+            newer = os.stat(f).st_mtime_ns > cutoff
+        except OSError:
+            newer = True  # unreadable now: the job says why
+        if newer:
+            todo.append((f, key))
+            changed += 1
+        else:
+            unchanged += 1
+    gone = sum(1 for e in entries if resolve(base, e.name) is None)
+    return Update(next(iter(algos)), entries, todo, added, changed, unchanged, gone)
+
+
+def write_update(plan, base, out, drop_gone, progress=None):
+    """Hash what `plan` lists and write the hash file again: old entries as they were (a changed file gets its new hash),
+    new ones at the end. With `drop_gone` the entries of files that no longer exist are left out. Returns the number of entries."""
+    digests = {key: hash_file(f, [plan.algo], progress)[plan.algo] for f, key in plan.todo}
+    lines, kept = [], set()
+    for e in plan.entries:
+        key = _key(e.name)
+        if drop_gone and resolve(base, e.name) is None:
+            continue
+        kept.add(key)
+        lines.append(_line(plan.algo, e.name, digests.get(key, e.digest)))
+    for f, key in plan.todo:
+        if key not in kept:
+            lines.append(_line(plan.algo, os.path.relpath(f, base), digests[key]))
+            kept.add(key)
+    _store(plan.algo, lines, out)
+    return len(lines)
+
+
+def update_text(plan, prune=False):
+    """The counts of an update, one line: "Added: 1 · Changed: 2 · Unchanged: 3" (+ the deleted files' entries)."""
+    parts = [_("Added: {n}").format(n=plan.added), _("Changed: {n}").format(n=plan.changed), _("Unchanged: {n}").format(n=plan.unchanged)]
+    if plan.gone:
+        parts.append((_("Removed: {n}") if prune else _("Missing: {n}")).format(n=plan.gone))
+    return " · ".join(parts)
+
+
+# --------------------------------------------------------------------------- unlisted files
+
+def unlisted_files(base, entries, hashfile):
+    """Files in the folders a hash file covers that it does not list, sorted: the files next to it if it lists any,
+    and everything below each top-level folder it lists a file in. Other hash files and signatures are no news.
+    Empty for a list of one file: that is a download's checksum, and its folder holds other things. Not followed: links to folders."""
+    names = [_key(e.name) for e in entries]
+    if len(names) < 2:
+        return []
+    listed = set(names)
+    roots = {n.split(os.sep)[0] for n in names if os.sep in n}
+    skip = {os.path.abspath(hashfile), *(os.path.abspath(hashfile + s) for s in SIG_SUFFIXES)}
+    found = []
+
+    def add(path):
+        name = os.path.basename(path)
+        if os.path.abspath(path) not in skip and _key(os.path.relpath(path, base)) not in listed \
+                and not _HASHFILE_NAME.search(name.lower()) and not name.endswith(".part"):
+            found.append(path)
+    if any(os.sep not in n for n in names):
+        with contextlib.suppress(OSError):
+            for entry in os.scandir(base):
+                if entry.is_file():
+                    add(entry.path)
+    for top in sorted(roots):
+        for root, _dirs, files in os.walk(os.path.join(base, top)):  # an unreadable folder is skipped: this is a hint, not a verdict
+            for name in files:
+                if os.path.isfile(path := os.path.join(root, name)):
+                    add(path)
+    return sorted(found)
+
+
+# --------------------------------------------------------------------------- comparing two files
+
+def compare_files(a, b, progress=None):
+    """(same, digest of a, digest of b), by SHA-256. Files of different sizes differ without being read: no digests then."""
+    if os.path.getsize(a) != os.path.getsize(b):
+        return False, None, None
+    da, db = (hash_file(p, ["sha256"], progress)["sha256"] for p in (a, b))
+    return da == db, da, db
 
 
 # --------------------------------------------------------------------------- comparing
@@ -471,7 +633,7 @@ def human_size(n):
 # --------------------------------------------------------------------------- settings
 
 CONFIG_FILE = Path(os.environ.get("XDG_CONFIG_HOME") or "~/.config").expanduser() / "hashtally" / "config.json"
-DEFAULTS = {"language": "auto", "algorithm": "sha256", "clipboard": True, "compare_algos": list(ALGOS), "menu": "scripts",
+DEFAULTS = {"language": "auto", "algorithm": "sha256", "clipboard": True, "unlisted": False, "compare_algos": list(ALGOS), "menu": "scripts",
             "copied": ""}  # the last value a window put on the clipboard itself: no window may take it back as "expected"
 
 
@@ -558,7 +720,7 @@ SCRIPTS_DIR = DATA / "nautilus/scripts"
 FORKS = {"nemo": DATA / "nemo/scripts",
          "caja": Path(os.environ.get("XDG_CONFIG_HOME") or "~/.config").expanduser() / "caja/scripts"}
 SCRIPT_ACTIONS = {"--create": N_("Create hash file"), "--compare": N_("Show or compare hash"),
-                  "--verify": N_("Verify hash file")}
+                  "--compare-files": N_("Compare files"), "--verify": N_("Verify hash file")}
 SCRIPT_PREFIX = "HashTally: "  # keeps our entries together and recognisable in a crowded Scripts menu
 MENU_DIR = "HashTally"  # the same entries as a submenu: Nautilus shows script folders as submenus
 

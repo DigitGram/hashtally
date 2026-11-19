@@ -19,6 +19,11 @@ there is that the verdict.
 
 The window is as tall as its content needs (a clean result stays small) and keeps the size you give it.
 
+**Not listed.** Off by default; switch on *Look for files not in the list* in the settings. When a list names several files, a further row counts the files that lie in the folders it covers (next to
+the list, and below every top-level folder it lists a file in) but are not in it, so a file added to a backup since the list
+was made does not go unnoticed. It is a hint and has no say in the verdict. Other hash files and signatures are left out, and
+a list of a single file (a download's `.sha256`) never gets the row: its folder holds other things.
+
 ## Create and compare
 
 - **Create** names the hash file after the selection: `name.sha256` for a single file or folder (a folder gives
@@ -27,9 +32,21 @@ The window is as tall as its content needs (a clean result stays small) and keep
   is switched on). If nothing useful is on the clipboard, the hash that a file next to it lists for it (`SHA256SUMS`,
   `file.iso.sha256`, ...; SHA-256 before MD5) is filled in, and a hash copied later replaces it; the signature is not checked there.
 
+**Compare two files.** Select two files and choose *Compare files* (*Show or compare hash* does the same when two files are selected): both are hashed with SHA-256 and the window says
+whether they are identical (`hashtally --compare-files a b` in a terminal). The result shows the two files; the hashes are folded away and open by themselves when the files differ. Files of different sizes differ without being read.
+
+**Update.** If the hash file you are about to create exists and is a plain list of one algorithm (not clear-signed, not a link),
+the window offers *Update* next to *Overwrite*. An update hashes only files that no entry names yet and files changed since the
+hash file was written; every other entry stays as it is and is **not checked again**, so use Verify for that. The file keeps its
+algorithm. Entries of files that no longer exist stay unless you switch on *Remove entries of deleted files*. The hash file does
+not store dates, so its own date is the cut-off: a copy of it made later hides an edit made before the copy. In a terminal:
+`hashtally --create --update` (and `--prune`).
+
+**Algorithm speed.** In the settings, *Test* measures how fast this computer calculates each algorithm (about a second, from memory, one core) and opens a window with a bar for each, fastest first, marked secure or not, and a recommendation: the fastest secure one, with a note if CRC32, MD5 or SHA-1 is faster but not secure against deliberate changes. Only advice, it changes no setting; a drive is often slower than the algorithm.
+
 ## Settings
 
-Language, default algorithm, whether a hash found on the clipboard is compared automatically, which algorithms the compare
+Language, default algorithm, whether a hash found on the clipboard is compared automatically, whether verifying looks for files the list does not name, which algorithms the compare
 window calculates (fewer is faster for large files), and whether the right-click entries sit directly under *Scripts* or in a
 *HashTally* submenu (one more click). After changing the menu style HashTally offers to restart the running file managers
 (Files, and Nemo or Caja when they get entries), which is needed for the new entries to show up; their windows close and a

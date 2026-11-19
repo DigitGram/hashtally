@@ -246,10 +246,6 @@ msgid "Paste from clipboard"
 msgstr "从剪贴板粘贴"
 
 #: src/ui_gtk.py
-msgid "Please select a single file"
-msgstr "请只选择一个文件"
-
-#: src/ui_gtk.py
 msgid "Reset"
 msgstr "重置"
 
@@ -575,3 +571,140 @@ msgstr "签名无效：请勿信任此文件"
 #, python-brace-format
 msgid "{file} is unchanged"
 msgstr "{file} 未被更改"
+
+#: src/cli.py src/ui_compare.py
+msgid "Please select one or two files"
+msgstr "请选择一个或两个文件"
+
+#: src/ui_verify.py
+msgid "Not listed"
+msgstr "未列出"
+
+#: src/ui_verify.py
+msgid "Files not listed"
+msgstr "未列出的文件"
+
+#: src/ui_compare.py
+msgid "Compare files"
+msgstr "比较文件"
+
+#: src/cli.py src/ui_compare.py
+msgid "Files are identical"
+msgstr "文件相同"
+
+#: src/cli.py src/ui_compare.py
+msgid "Files differ"
+msgstr "文件不同"
+
+#: src/cli.py src/ui_compare.py
+msgid "The files have different sizes"
+msgstr "文件大小不同"
+
+#: src/ui_create.py
+msgid "File already exists"
+msgstr "文件已存在"
+
+#: src/ui_create.py
+msgid "Only files that are new or changed since the hash file was written are hashed. The other entries are kept as they are and are not checked again."
+msgstr "仅对新增的文件，或在哈希文件写入后更改过的文件计算哈希值。其余条目保持不变，也不会重新检查。"
+
+#: src/ui_create.py
+msgid "Remove entries of deleted files"
+msgstr "移除已删除文件的条目"
+
+#: src/ui_create.py
+msgid "Update"
+msgstr "更新"
+
+#: src/ui_create.py
+msgid "Hash file updated"
+msgstr "哈希文件已更新"
+
+#: src/core.py
+#, python-brace-format
+msgid "Added: {n}"
+msgstr "新增：{n}"
+
+#: src/core.py
+#, python-brace-format
+msgid "Changed: {n}"
+msgstr "已更改：{n}"
+
+#: src/core.py
+#, python-brace-format
+msgid "Unchanged: {n}"
+msgstr "未更改：{n}"
+
+#: src/core.py
+#, python-brace-format
+msgid "Removed: {n}"
+msgstr "已移除：{n}"
+
+#: src/core.py
+#, python-brace-format
+msgid "Missing: {n}"
+msgstr "缺失：{n}"
+
+#: src/cli.py
+msgid "Please name exactly two files"
+msgstr "请恰好指定两个文件"
+
+#: src/ui_gtk.py
+msgid "Choose the second file"
+msgstr "选择第二个文件"
+
+#: src/ui_settings.py
+msgid "Algorithm speed"
+msgstr "算法速度"
+
+#: src/ui_settings.py
+msgid "Test"
+msgstr "测试"
+
+#: src/ui_settings.py
+msgid "Testing…"
+msgstr "正在测试…"
+
+#: src/ui_settings.py
+msgid "Measures how fast this computer calculates each algorithm and recommends one."
+msgstr "测量这台电脑计算各种算法的速度，并给出推荐。"
+
+#: src/ui_common.py
+msgid "Only finds accidental errors"
+msgstr "只能发现意外错误"
+
+#: src/ui_common.py
+msgid "No longer secure"
+msgstr "已不再安全"
+
+#: src/ui_common.py
+msgid "Secure"
+msgstr "安全"
+
+#: src/ui_common.py
+msgid "How much data this computer can check per second. A longer bar is faster. Your drive is often slower, and then it sets the pace."
+msgstr "这台电脑每秒能校验多少数据。条越长越快。驱动器往往更慢，这时由它决定速度。"
+
+#: src/ui_common.py
+msgid "CRC32 is faster, but it only finds accidental errors, not deliberate changes."
+msgstr "CRC32 更快，但只能发现意外错误，无法发现蓄意篡改。"
+
+#: src/ui_common.py
+msgid "{name} is faster, but it is no longer secure against deliberate changes."
+msgstr "{name} 更快，但已无法防范蓄意篡改。"
+
+#: src/ui_common.py
+msgid "Recommendation"
+msgstr "推荐"
+
+#: src/ui_common.py
+msgid "<b>{name}</b> is the fastest secure algorithm on this computer."
+msgstr "在这台电脑上，最快的安全算法是 <b>{name}</b>。"
+
+#: src/ui_settings.py
+msgid "Look for files not in the list"
+msgstr "查找不在列表中的文件"
+
+#: src/ui_settings.py
+msgid "When verifying, count the files in the list's folders that it does not name. A hint only: the result stays the same."
+msgstr "验证时统计列表所在文件夹中未被列出的文件。仅作提示，不影响结果。"

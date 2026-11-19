@@ -246,10 +246,6 @@ msgid "Paste from clipboard"
 msgstr "Aus Zwischenablage einfügen"
 
 #: src/ui_gtk.py
-msgid "Please select a single file"
-msgstr "Bitte eine einzelne Datei auswählen"
-
-#: src/ui_gtk.py
 msgid "Reset"
 msgstr "Zurücksetzen"
 
@@ -583,3 +579,140 @@ msgstr "Ungültige Signatur: dieser Datei nicht vertrauen"
 #, python-brace-format
 msgid "{file} is unchanged"
 msgstr "{file} ist unverändert"
+
+#: src/cli.py src/ui_compare.py
+msgid "Please select one or two files"
+msgstr "Bitte eine oder zwei Dateien auswählen"
+
+#: src/ui_verify.py
+msgid "Not listed"
+msgstr "Nicht gelistet"
+
+#: src/ui_verify.py
+msgid "Files not listed"
+msgstr "Nicht gelistete Dateien"
+
+#: src/ui_compare.py
+msgid "Compare files"
+msgstr "Dateien vergleichen"
+
+#: src/cli.py src/ui_compare.py
+msgid "Files are identical"
+msgstr "Dateien sind identisch"
+
+#: src/cli.py src/ui_compare.py
+msgid "Files differ"
+msgstr "Dateien unterscheiden sich"
+
+#: src/cli.py src/ui_compare.py
+msgid "The files have different sizes"
+msgstr "Die Dateien haben unterschiedliche Größen"
+
+#: src/ui_create.py
+msgid "File already exists"
+msgstr "Datei existiert bereits"
+
+#: src/ui_create.py
+msgid "Only files that are new or changed since the hash file was written are hashed. The other entries are kept as they are and are not checked again."
+msgstr "Nur Dateien, die neu sind oder sich seit dem Schreiben der Hash-Datei geändert haben, werden gehasht. Die übrigen Einträge bleiben unverändert und werden nicht erneut geprüft."
+
+#: src/ui_create.py
+msgid "Remove entries of deleted files"
+msgstr "Einträge gelöschter Dateien entfernen"
+
+#: src/ui_create.py
+msgid "Update"
+msgstr "Aktualisieren"
+
+#: src/ui_create.py
+msgid "Hash file updated"
+msgstr "Hash-Datei aktualisiert"
+
+#: src/core.py
+#, python-brace-format
+msgid "Added: {n}"
+msgstr "Hinzugefügt: {n}"
+
+#: src/core.py
+#, python-brace-format
+msgid "Changed: {n}"
+msgstr "Geändert: {n}"
+
+#: src/core.py
+#, python-brace-format
+msgid "Unchanged: {n}"
+msgstr "Unverändert: {n}"
+
+#: src/core.py
+#, python-brace-format
+msgid "Removed: {n}"
+msgstr "Entfernt: {n}"
+
+#: src/core.py
+#, python-brace-format
+msgid "Missing: {n}"
+msgstr "Fehlend: {n}"
+
+#: src/cli.py
+msgid "Please name exactly two files"
+msgstr "Bitte genau zwei Dateien angeben"
+
+#: src/ui_gtk.py
+msgid "Choose the second file"
+msgstr "Zweite Datei wählen"
+
+#: src/ui_settings.py
+msgid "Algorithm speed"
+msgstr "Algorithmus-Tempo"
+
+#: src/ui_settings.py
+msgid "Test"
+msgstr "Testen"
+
+#: src/ui_settings.py
+msgid "Testing…"
+msgstr "Teste …"
+
+#: src/ui_settings.py
+msgid "Measures how fast this computer calculates each algorithm and recommends one."
+msgstr "Misst, wie schnell dieser Computer jeden Algorithmus berechnet, und empfiehlt einen."
+
+#: src/ui_common.py
+msgid "Only finds accidental errors"
+msgstr "Erkennt nur zufällige Fehler"
+
+#: src/ui_common.py
+msgid "No longer secure"
+msgstr "Nicht mehr sicher"
+
+#: src/ui_common.py
+msgid "Secure"
+msgstr "Sicher"
+
+#: src/ui_common.py
+msgid "How much data this computer can check per second. A longer bar is faster. Your drive is often slower, and then it sets the pace."
+msgstr "Wie viele Daten dieser Computer pro Sekunde prüfen kann. Ein längerer Balken ist schneller. Das Laufwerk ist oft langsamer und bestimmt dann das Tempo."
+
+#: src/ui_common.py
+msgid "CRC32 is faster, but it only finds accidental errors, not deliberate changes."
+msgstr "CRC32 ist schneller, erkennt aber nur zufällige Fehler, keine absichtlichen Änderungen."
+
+#: src/ui_common.py
+msgid "{name} is faster, but it is no longer secure against deliberate changes."
+msgstr "{name} ist schneller, bietet aber keinen sicheren Schutz mehr vor absichtlichen Änderungen."
+
+#: src/ui_common.py
+msgid "Recommendation"
+msgstr "Empfehlung"
+
+#: src/ui_common.py
+msgid "<b>{name}</b> is the fastest secure algorithm on this computer."
+msgstr "<b>{name}</b> ist der schnellste sichere Algorithmus auf diesem Computer."
+
+#: src/ui_settings.py
+msgid "Look for files not in the list"
+msgstr "Nach Dateien suchen, die nicht in der Liste stehen"
+
+#: src/ui_settings.py
+msgid "When verifying, count the files in the list's folders that it does not name. A hint only: the result stays the same."
+msgstr "Beim Prüfen die Dateien in den Ordnern der Liste zählen, die sie nicht nennt. Nur ein Hinweis: das Ergebnis bleibt gleich."

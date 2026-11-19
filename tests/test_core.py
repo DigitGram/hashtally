@@ -56,6 +56,19 @@ def settings_sandbox():
             i18n.set_language(language)
 
 
+def test_every_algorithm_gets_a_speed():
+    speeds = core.hash_speeds(0.01)
+    assert set(speeds) == set(core.ALGOS) and all(v > 0 for v in speeds.values())
+
+
+def test_advice_is_the_fastest_secure_one_and_names_a_faster_weak_one():
+    speeds = {"crc32": 3000, "sha256": 1100, "sha512": 500, "sha1": 1200, "md5": 500}
+    assert core.speed_advice(speeds) == ("sha256", "crc32")
+    assert core.speed_advice({**speeds, "crc32": 900}) == ("sha256", "sha1")  # faster, but not secure
+    assert core.speed_advice({**speeds, "crc32": 900, "sha1": 800}) == ("sha256", None)  # nothing weak beats it: no remark
+    assert core.speed_advice({**speeds, "sha256": 300}) == ("sha512", "crc32")
+
+
 def test_parse_formats():
     with tempfile.TemporaryDirectory() as tmp:
         def parse(name, content, mode="w", **kw):
@@ -445,12 +458,12 @@ def test_install_scripts():
         german = core.SCRIPTS_DIR / ("HashTally: " + i18n.translate("Create hash file", "de"))
         assert german.name != "HashTally: Create hash file" and german.is_file() and os.access(german, os.X_OK)
         assert "--create" in german.read_text()
-        assert len(list(core.SCRIPTS_DIR.glob("HashTally: *"))) == 3
+        assert len(list(core.SCRIPTS_DIR.glob("HashTally: *"))) == 4
 
         i18n.set_language("en")
         core.install_scripts()  # a language switch must not leave the German entries behind
         assert [p.name for p in sorted(core.SCRIPTS_DIR.glob("HashTally: *"))] == [
-            "HashTally: Create hash file", "HashTally: Show or compare hash", "HashTally: Verify hash file"]
+            "HashTally: Compare files", "HashTally: Create hash file", "HashTally: Show or compare hash", "HashTally: Verify hash file"]
 
         core.install_scripts(remove_only=True)
         assert list(core.SCRIPTS_DIR.glob("HashTally: *")) == [] and foreign.is_file()
@@ -462,7 +475,7 @@ def test_a_forks_folder_linked_to_the_files_one_keeps_its_entries():
         for installed in (False, True):
             with mock.patch.object(core.shutil, "which", lambda name: "/usr/bin/nemo" if installed and name == "nemo" else None):
                 assert core.install_scripts() is None
-            assert len(list(core.SCRIPTS_DIR.glob("HashTally: *"))) == 3, installed
+            assert len(list(core.SCRIPTS_DIR.glob("HashTally: *"))) == 4, installed
 
 
 def test_a_symlink_loop_as_a_scripts_folder_is_an_error_text_not_a_crash():
@@ -811,7 +824,7 @@ def test_menu_style_and_settings():
         assert core.set_option("menu", "folder") is None  # rebuilds the entries by itself
         assert json.loads(core.CONFIG_FILE.read_text()) == {"menu": "folder"}
         assert sorted(p.name for p in (core.SCRIPTS_DIR / "HashTally").iterdir()) == [
-            "Create hash file", "Show or compare hash", "Verify hash file"]
+            "Compare files", "Create hash file", "Show or compare hash", "Verify hash file"]
         assert core.menu_entries() != flat and all(p.is_file() for p in core.menu_entries())
         core.set_option("menu", "scripts")  # back: the folder is gone, the flat entries are there
         assert not (core.SCRIPTS_DIR / "HashTally").exists()
@@ -819,7 +832,7 @@ def test_menu_style_and_settings():
         assert json.loads(core.CONFIG_FILE.read_text()) == {}  # only deviations from the defaults are saved
         core.set_option("language", "de")  # the entries follow the language, without leftovers
         assert (core.SCRIPTS_DIR / "HashTally: Hash-Datei erstellen").is_file()
-        assert len(list(core.SCRIPTS_DIR.iterdir())) == 3
+        assert len(list(core.SCRIPTS_DIR.iterdir())) == 4
 
 
 def test_reset_restores_the_system_language_and_its_entries():
@@ -893,7 +906,7 @@ def test_stale_entries_go_whatever_their_name_but_foreign_files_stay():
         core.install_scripts()
         assert not old.exists()
         assert sorted(p.name for p in folder.iterdir()) == [
-            "Create hash file", "My check", "Not ours", "Show or compare hash", "Verify hash file"]
+            "Compare files", "Create hash file", "My check", "Not ours", "Show or compare hash", "Verify hash file"]
         core.set_option("menu", "scripts")  # the folder holds foreign files, so it stays
         assert (folder / "Not ours").exists() and mine.exists()
 
@@ -1259,7 +1272,44 @@ def test_cli_compare_needs_exactly_one_existing_file():
     with tempfile.TemporaryDirectory() as tmp:
         for args in ([], [str(Path(tmp, "nope"))], [tmp], [str(Path(tmp, "a")), A, A]):
             code, _out, err = run_cli(cli.compare, args)
-            assert code == cli.USAGE and "Please select a single file" in err, args
+            assert code == cli.USAGE and "Please select one or two files" in err, args
+
+
+def test_cli_compares_two_files_and_lists_what_the_hash_file_misses():
+    with tempfile.TemporaryDirectory() as tmp:
+        sums = cli_folder(tmp)
+        Path(tmp, "copy.txt").write_bytes(b"alpha")
+        Path(tmp, "other.txt").write_bytes(b"alphb")
+        code, out, _err = run_cli(cli.compare, [str(Path(tmp, "a.txt")), str(Path(tmp, "copy.txt"))])
+        assert code == cli.OK and "Files are identical" in out and A in out, out
+        code, out, _err = run_cli(cli.compare, [str(Path(tmp, "a.txt")), str(Path(tmp, "other.txt"))])
+        assert code == cli.FAILED and "Files differ" in out and "different sizes" not in out, out
+        code, out, _err = run_cli(cli.compare, [str(Path(tmp, "a.txt")), str(Path(tmp, "b.txt"))])
+        assert code == cli.FAILED and "The files have different sizes" in out, out
+        code, out, _err = run_cli(cli.compare_two, [str(Path(tmp, "a.txt")), str(Path(tmp, "copy.txt"))])
+        assert code == cli.OK and "Files are identical" in out, out
+        code, out, _err = run_cli(cli.compare_two, [str(Path(tmp, "a.txt")), A])  # a hash is no second file here
+        assert code == cli.USAGE and "exactly two files" in _err + out, (out, _err)
+        code, out, _err = run_cli(cli.verify, [sums])
+        assert code == cli.OK and "but not in it" not in out, out  # off by default
+        with mock.patch.object(core, "load_config", lambda: {**core.DEFAULTS, "unlisted": True}):
+            code, out, _err = run_cli(cli.verify, [sums])
+            assert code == cli.OK and "2 files in the folders of this list, but not in it" in out and "copy.txt" in out, out  # a hint, no failure
+
+
+def test_cli_adds_to_an_existing_hash_file_only_when_asked():
+    with tempfile.TemporaryDirectory() as tmp:
+        a, b, out_file = (str(Path(tmp, n)) for n in ("a.txt", "b.txt", "SHA256SUMS"))
+        Path(a).write_bytes(b"alpha")
+        core.write_hashfile([a], tmp, "sha256", out_file)
+        os.utime(out_file, (time.time() + 10, time.time() + 10))
+        Path(b).write_bytes(b"beta")
+        assert run_cli(cli.create, [a, b], "sha256", None, False, True)[0] == cli.USAGE  # it exists, and neither --update nor --force was given
+        code, out, _err = run_cli(cli.create, [a, b], "sha256", None, False, True, True)
+        assert code == cli.OK and "updated SHA256SUMS" in out and "Added: 1 · Changed: 0 · Unchanged: 1" in out, out
+        assert {e.name: e.digest for e in core.parse(out_file)} == {"a.txt": A, "b.txt": B}
+        Path(tmp, "bad").write_text("not a hash file\n")
+        assert run_cli(cli.create, [a, b], "sha256", str(Path(tmp, "bad")), False, True, True)[0] == cli.USAGE  # cannot be updated: say so
 
 
 def test_cli_draws_no_progress_bar_and_no_colour_when_it_is_no_terminal():
@@ -1331,6 +1381,90 @@ def test_the_terminal_modes_get_their_options_and_hand_back_the_exit_code():
         assert code == cli.FAILED and "No match" in out
         Path(tmp, "a.txt").write_bytes(b"tampered")
         assert run_main(["--verify", str(out_file)], tty=True)[0] == cli.FAILED
+
+
+def test_two_files_are_compared_by_content():
+    with tempfile.TemporaryDirectory() as tmp:
+        for name, data in (("a", b"alpha"), ("b", b"alpha"), ("c", b"alphb"), ("d", b"longer")):
+            Path(tmp, name).write_bytes(data)
+        p = lambda n: str(Path(tmp, n))
+        same, da, db = core.compare_files(p("a"), p("b"))
+        assert same and da == db == A
+        same, da, db = core.compare_files(p("a"), p("c"))
+        assert not same and da != db and da == A  # same size, other content
+        assert core.compare_files(p("a"), p("d")) == (False, None, None)  # other size: not read at all
+
+
+def test_files_the_list_does_not_name_are_found():
+    with tempfile.TemporaryDirectory() as tmp:
+        for name in ("a.txt", "b.txt", "new.txt", "sub/x.txt", "sub/deep/new.txt", "other/y.txt", "SHA256SUMS.asc", "x.part"):
+            Path(tmp, name).parent.mkdir(parents=True, exist_ok=True)
+            Path(tmp, name).write_bytes(b"x")
+        out = os.path.join(tmp, "SHA256SUMS")
+        core.write_hashfile([os.path.join(tmp, n) for n in ("a.txt", "b.txt", "sub/x.txt")], tmp, "sha256", out)
+        found = core.unlisted_files(tmp, core.parse(out), out)
+        # the list covers the folder itself and "sub"; "other" holds nothing of it; the signature and the leftover are no news
+        assert [os.path.relpath(f, tmp) for f in found] == ["new.txt", "sub/deep/new.txt"]
+        core.write_hashfile([os.path.join(tmp, "a.txt")], tmp, "sha256", out)
+        assert core.unlisted_files(tmp, core.parse(out), out) == []  # one file: a download's checksum, the folder is not its business
+
+
+def test_a_hash_file_is_updated_with_what_is_new_or_changed():
+    with tempfile.TemporaryDirectory() as tmp:
+        for name, data in (("a.txt", b"alpha"), ("b.txt", b"beta"), ("gone.txt", b"x")):
+            Path(tmp, name).write_bytes(data)
+        out = os.path.join(tmp, "SHA256SUMS")
+        core.write_hashfile(core.collect_files([tmp]), tmp, "sha256", out)
+        os.utime(out, (time.time() + 10, time.time() + 10))  # written after the files, as in real life
+        assert core.plan_update(core.collect_files([tmp]), tmp, out).todo == []  # nothing new, nothing changed
+        Path(tmp, "new.txt").write_bytes(b"new")
+        Path(tmp, "b.txt").write_bytes(b"beta2")
+        os.utime(Path(tmp, "b.txt"), (time.time() + 20, time.time() + 20))
+        os.remove(Path(tmp, "gone.txt"))
+        files = core.collect_files([tmp])
+        plan = core.plan_update(files, tmp, out)
+        assert (plan.algo, plan.added, plan.changed, plan.unchanged, plan.gone) == ("sha256", 1, 1, 1, 1), plan  # a.txt untouched
+        assert sorted(k for _f, k in plan.todo) == ["b.txt", "new.txt"]
+        core.write_update(plan, tmp, out, drop_gone=False)
+        got = {e.name: e.digest for e in core.parse(out)}
+        assert got == {"a.txt": A, "b.txt": hashlib.sha256(b"beta2").hexdigest(), "gone.txt": hashlib.sha256(b"x").hexdigest(),
+                       "new.txt": hashlib.sha256(b"new").hexdigest()}  # the entry of the deleted file stays, in its place
+        assert [e.name for e in core.parse(out)] == ["a.txt", "b.txt", "gone.txt", "new.txt"]
+        core.write_update(core.plan_update(files, tmp, out), tmp, out, drop_gone=True)
+        assert [e.name for e in core.parse(out)] == ["a.txt", "b.txt", "new.txt"]
+        assert not os.path.exists(out + ".part")
+
+
+def test_a_hash_file_that_cannot_be_updated_is_not_offered():
+    with tempfile.TemporaryDirectory() as tmp:
+        Path(tmp, "a.txt").write_bytes(b"alpha")
+        files = core.collect_files([tmp])
+        assert core.plan_update(files, tmp, os.path.join(tmp, "none")) is None  # does not exist
+        mixed = Path(tmp, "mixed")
+        mixed.write_text(f"{A}  a.txt\n{hashlib.md5(b'alpha').hexdigest()}  b.txt\n")
+        assert core.plan_update(files, tmp, str(mixed)) is None  # two algorithms
+        junk = Path(tmp, "junk")
+        junk.write_text(f"{A}  a.txt\nthis is not a checksum\n")
+        assert core.plan_update(files, tmp, str(junk)) is None  # a line that would be lost
+        link = Path(tmp, "link")
+        os.symlink(mixed, link)
+        assert core.plan_update(files, tmp, str(link)) is None
+        signed = Path(tmp, "signed")
+        signed.write_text(f"-----BEGIN PGP SIGNED MESSAGE-----\nHash: SHA256\n\n{A}  a.txt\n-----BEGIN PGP SIGNATURE-----\n\nabc\n-----END PGP SIGNATURE-----\n")
+        assert core.plan_update(files, tmp, str(signed)) is None  # rewriting it would break the signature
+
+
+def test_an_sfv_is_updated_as_an_sfv():
+    with tempfile.TemporaryDirectory() as tmp:
+        Path(tmp, "a.txt").write_bytes(b"alpha")
+        out = os.path.join(tmp, "x.sfv")
+        core.write_hashfile(core.collect_files([tmp]), tmp, "crc32", out)
+        os.utime(out, (time.time() + 10, time.time() + 10))
+        Path(tmp, "b.txt").write_bytes(b"beta")
+        core.write_update(core.plan_update(core.collect_files([tmp]), tmp, out), tmp, out, drop_gone=False)
+        text = Path(out).read_text()
+        assert text.startswith("; Created by HashTally\n") and [e.name for e in core.parse(out)] == ["a.txt", "b.txt"]
+        assert [core.check(tmp, e)[0] for e in core.parse(out)] == ["ok", "ok"]
 
 
 def test_signed_file():

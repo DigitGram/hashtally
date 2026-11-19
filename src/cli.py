@@ -212,6 +212,13 @@ def _verify_one(hashfile, quiet):
         _line("Files the list names but this folder lacks are not a problem as long as others were found.", indent=6)
     if nothing_found:
         _line(_("None of the files were found"), indent=6)
+    unlisted = core.unlisted_files(base, entries, hashfile) if core.load_config()["unlisted"] else []  # a hint, no verdict; off by default
+    if unlisted:
+        _line(f"{_plural(len(unlisted), 'file', 'files')} in the folders of this list, but not in it:", WARN)
+        for path in unlisted[:10]:
+            _line(core.shown(os.path.relpath(path, base)), indent=8)
+        if len(unlisted) > 10:
+            _line(f"... and {len(unlisted) - 10} more", indent=8)
     if distrusted:
         _line("Matching a forged list proves nothing: do not trust these results.", indent=6)
     _line(f"{core.human_size(sum(sizes))} in {_duration(progress.seconds)}  ({_speed(sum(sizes), progress.seconds) or '-'})", INFO)
@@ -244,7 +251,7 @@ def _signature(sig, what="hash file"):
 
 # --------------------------------------------------------------------------- create
 
-def create(paths, algo, out, force, quiet=False):
+def create(paths, algo, out, force, quiet=False, update=False, prune=False):
     if not paths:
         return _fail(_("No file selected"))
     algo = algo or core.load_config()["algorithm"]
@@ -256,11 +263,17 @@ def create(paths, algo, out, force, quiet=False):
         return _fail(_("No file selected"))
     base, name = core.default_target(paths, algo)
     out = out or os.path.join(base, name)
-    if os.path.lexists(out) and not force:
-        return _fail(f"{out} already exists (use --force to replace it)")
+    exists = os.path.lexists(out)
+    if exists and not (force or update):
+        return _fail(f"{out} already exists (use --update to add to it, or --force to replace it)")
     if out != os.path.join(base, name):
         base = os.path.dirname(os.path.abspath(out))  # names in the file are relative to where it lies
-    total = core.total_size(files)
+    plan = core.plan_update(files, base, out) if update and exists else None
+    if update and exists and not force and plan is None:
+        return _fail(f"{out} cannot be updated: it is a link, signed, or not a plain list of one algorithm (use --force to replace it)")
+    if plan:
+        algo = plan.algo  # the file keeps its algorithm
+    total = sum(core.file_size(f) or 0 for f, _key in plan.todo) if plan else core.total_size(files)
     _banner(quiet)
     _line(f"{os.path.basename(out)}  ·  {_plural(len(files), 'file', 'files')} ({core.human_size(total)})  ·  {core.ALGOS[algo]}", INFO)
     _line(core.shown(os.path.dirname(os.path.abspath(out))), indent=6)
@@ -268,19 +281,21 @@ def create(paths, algo, out, force, quiet=False):
     progress = Progress(total)
     progress.label = _("Calculating hashes …")
     try:
-        count = core.write_hashfile(files, base, algo, out, progress)
+        count = core.write_update(plan, base, out, prune, progress) if plan else core.write_hashfile(files, base, algo, out, progress)
     except OSError as exc:
         progress.clear()
         return _fail(str(exc))
     progress.clear()
-    if not quiet:
+    if not quiet and not plan:
         width = min(max(len(core.shown(e.name)) for e in core.parse(out)), 44)
         for entry in core.parse(out):
             digest = entry.digest if len(entry.digest) <= 24 else f"{entry.digest[:10]}…{entry.digest[-10:]}"
             _line(f"{_cut(core.shown(entry.name), width).ljust(width)}  {digest}", TICK)
         print()
     _rule()
-    _line(f"SUCCESS  ·  wrote {os.path.basename(out)} with {_plural(count, 'checksum', 'checksums')}", TICK)
+    _line(f"SUCCESS  ·  {'updated' if plan else 'wrote'} {os.path.basename(out)} with {_plural(count, 'checksum', 'checksums')}", TICK)
+    if plan:
+        _line(core.update_text(plan, prune), INFO)
     _line(f"{core.human_size(total)} in {_duration(progress.seconds)}  ({_speed(total, progress.seconds) or '-'})", INFO)
     print()
     return OK
@@ -288,12 +303,49 @@ def create(paths, algo, out, force, quiet=False):
 
 # --------------------------------------------------------------------------- compare
 
+def compare_files(a, b, quiet=False):
+    """Two files: identical or not, by SHA-256 (files of different sizes are not read)."""
+    _banner(quiet)
+    for path in (a, b):
+        _line(f"{os.path.basename(path)}  ·  {core.human_size(os.path.getsize(path))}  ·  modified {_date(os.path.getmtime(path))}", INFO)
+        _line(core.shown(os.path.dirname(path)), indent=6)
+    print()
+    progress = Progress(os.path.getsize(a) + os.path.getsize(b))
+    progress.label = _("Calculating hashes …")
+    try:
+        same, da, db = core.compare_files(a, b, progress)
+    except OSError as exc:
+        progress.clear()
+        return _fail(str(exc))
+    progress.clear()
+    for digest in (da, db):
+        if digest:
+            _line(f"{core.ALGOS['sha256']:<12}{digest}", indent=4)
+    print()
+    _rule()
+    if same:
+        _line(_("Files are identical"), TICK)
+    else:
+        _line(_("Files differ") + ("" if da else "  ·  " + _("The files have different sizes")), CROSS)
+    print()
+    return OK if same else FAILED
+
+
+def compare_two(args, quiet=False):
+    """Exactly two files: are they identical?"""
+    if len(args) != 2 or not all(os.path.isfile(a) for a in args):
+        return _fail(_("Please name exactly two files"))
+    return compare_files(*map(os.path.abspath, args), quiet)
+
+
 def compare(args, quiet=False):
     """FILE: print its hashes (and what a hash file next to it lists). FILE HASH: say whether HASH is one of them.
-    `args` are as typed: the second one is a hash, not a path."""
+    FILE FILE: say whether the two are identical. `args` are as typed: the second one is a hash or a file."""
+    if len(args) == 2 and os.path.isfile(args[0]) and os.path.isfile(args[1]):
+        return compare_files(*map(os.path.abspath, args), quiet)
     paths = [os.path.abspath(args[0])] + args[1:] if args else []
     if not paths or len(paths) > 2 or not os.path.isfile(paths[0]):
-        return _fail(_("Please select a single file"))
+        return _fail(_("Please select one or two files"))
     path = paths[0]
     algos = core.compare_algos()
     extra = ["blake2b"] if "sha512" in algos else []  # a pasted b2sum is as long as a SHA-512

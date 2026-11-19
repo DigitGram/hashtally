@@ -248,10 +248,6 @@ msgid "Paste from clipboard"
 msgstr ""
 
 #: src/ui_gtk.py
-msgid "Please select a single file"
-msgstr ""
-
-#: src/ui_gtk.py
 msgid "Reset"
 msgstr ""
 
@@ -584,4 +580,141 @@ msgstr ""
 #: src/ui_verify.py
 #, python-brace-format
 msgid "{file} is unchanged"
+msgstr ""
+
+#: src/cli.py src/ui_compare.py
+msgid "Please select one or two files"
+msgstr ""
+
+#: src/ui_verify.py
+msgid "Not listed"
+msgstr ""
+
+#: src/ui_verify.py
+msgid "Files not listed"
+msgstr ""
+
+#: src/ui_compare.py
+msgid "Compare files"
+msgstr ""
+
+#: src/cli.py src/ui_compare.py
+msgid "Files are identical"
+msgstr ""
+
+#: src/cli.py src/ui_compare.py
+msgid "Files differ"
+msgstr ""
+
+#: src/cli.py src/ui_compare.py
+msgid "The files have different sizes"
+msgstr ""
+
+#: src/ui_create.py
+msgid "File already exists"
+msgstr ""
+
+#: src/ui_create.py
+msgid "Only files that are new or changed since the hash file was written are hashed. The other entries are kept as they are and are not checked again."
+msgstr ""
+
+#: src/ui_create.py
+msgid "Remove entries of deleted files"
+msgstr ""
+
+#: src/ui_create.py
+msgid "Update"
+msgstr ""
+
+#: src/ui_create.py
+msgid "Hash file updated"
+msgstr ""
+
+#: src/core.py
+#, python-brace-format
+msgid "Added: {n}"
+msgstr ""
+
+#: src/core.py
+#, python-brace-format
+msgid "Changed: {n}"
+msgstr ""
+
+#: src/core.py
+#, python-brace-format
+msgid "Unchanged: {n}"
+msgstr ""
+
+#: src/core.py
+#, python-brace-format
+msgid "Removed: {n}"
+msgstr ""
+
+#: src/core.py
+#, python-brace-format
+msgid "Missing: {n}"
+msgstr ""
+
+#: src/cli.py
+msgid "Please name exactly two files"
+msgstr ""
+
+#: src/ui_gtk.py
+msgid "Choose the second file"
+msgstr ""
+
+#: src/ui_settings.py
+msgid "Algorithm speed"
+msgstr ""
+
+#: src/ui_settings.py
+msgid "Test"
+msgstr ""
+
+#: src/ui_settings.py
+msgid "Testing…"
+msgstr ""
+
+#: src/ui_settings.py
+msgid "Measures how fast this computer calculates each algorithm and recommends one."
+msgstr ""
+
+#: src/ui_common.py
+msgid "Only finds accidental errors"
+msgstr ""
+
+#: src/ui_common.py
+msgid "No longer secure"
+msgstr ""
+
+#: src/ui_common.py
+msgid "Secure"
+msgstr ""
+
+#: src/ui_common.py
+msgid "How much data this computer can check per second. A longer bar is faster. Your drive is often slower, and then it sets the pace."
+msgstr ""
+
+#: src/ui_common.py
+msgid "CRC32 is faster, but it only finds accidental errors, not deliberate changes."
+msgstr ""
+
+#: src/ui_common.py
+msgid "{name} is faster, but it is no longer secure against deliberate changes."
+msgstr ""
+
+#: src/ui_common.py
+msgid "Recommendation"
+msgstr ""
+
+#: src/ui_common.py
+msgid "<b>{name}</b> is the fastest secure algorithm on this computer."
+msgstr ""
+
+#: src/ui_settings.py
+msgid "Look for files not in the list"
+msgstr ""
+
+#: src/ui_settings.py
+msgid "When verifying, count the files in the list's folders that it does not name. A hint only: the result stays the same."
 msgstr ""

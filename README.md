@@ -19,7 +19,8 @@ More on the [project website](https://digitgram.github.io/hashtally/).
 
 - **Verify**: double-click a `.sha256`, `.sha1`, `.md5`, `.sfv` or `SHA256SUMS` file to check every file it lists. The verdict comes first, problems are grouped by kind, the files that are fine stay folded away.
 - **Create**: right-click files or folders → *Scripts* → *HashTally: Create hash file*.
-- **Compare**: show the hashes of one file, paste the expected one, see at once whether it matches.
+- **Compare**: show the hashes of one file, paste the expected one, see at once whether it matches. Select two files instead to see whether they are identical.
+- **Update**: when the hash file you create already exists, add only the new and changed files to it instead of hashing everything again.
 - **GPG signatures**: also checks the signature of a hash file, the usual way Linux downloads are published (`SHA256SUMS` + `SHA256SUMS.gpg`, or a clear-signed file).
 - **Native look**: GTK 4 and libadwaita, light and dark, in ten languages (English, Deutsch, Español, Français, Italiano, 日本語, Polski, Português (Brasil), Українська, 简体中文).
 
@@ -92,7 +93,8 @@ file and says whether it is unchanged. Compare the fingerprint in its details wi
 | --- | --- |
 | Verify | Double-click a hash file, or right-click → *Open With HashTally* / Scripts → *HashTally: Verify hash file* |
 | Create | Select files or folders → right-click → Scripts → *HashTally: Create hash file*. The file is named after the selection (`name.sha256`, or `SHA256SUMS` for several items); the name can be changed before creating |
-| Compare | Select one file → right-click → Scripts → *HashTally: Show or compare hash*, then paste a hash (a whole line from a hash file works too) |
+| Compare | Select one file → right-click → Scripts → *HashTally: Show or compare hash*, then paste a hash (a whole line from a hash file works too). With two files selected it tells whether they are identical |
+| Compare two files | Select two files → right-click → Scripts → *HashTally: Compare files* |
 | Settings | Open **HashTally** from the Activities overview, or run `hashtally --settings` |
 
 The *Scripts* entries are always listed, because Nautilus scripts cannot depend on the selection. All of them
@@ -107,8 +109,10 @@ Started from a terminal, HashTally answers there, as text; started from the file
 ```sh
 hashtally SHA256SUMS                       # verify (the default when files are given)
 hashtally --create ~/Downloads/*.iso       # writes SHA256SUMS; --algo, --output, --force
+hashtally --create --update /mnt/backup    # adds only new and changed files to the existing list; --prune drops deleted ones
 hashtally --compare ubuntu.iso             # print the hashes
 hashtally --compare ubuntu.iso 3a7b...     # does this hash match?
+hashtally --compare a.iso b.iso            # are these two files identical?
 hashtally --settings                       # always the window
 ```
 

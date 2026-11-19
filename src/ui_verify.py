@@ -14,7 +14,7 @@ from gi.repository import Adw, Gio, GLib, Gtk, Pango
 
 import core
 from i18n import N_, _, _n
-from ui_common import badge, BaseWindow, column_page, fmt_duration, group, Hero, ICONS, Job, progress_text, Row, short_path, show_in_folder, signature_row, signature_texts, size_text, status_page
+from ui_common import badge, BaseWindow, column_page, FilesDialog, fmt_duration, group, Hero, ICONS, Job, progress_text, Row, short_path, show_in_folder, signature_row, signature_texts, size_text, status_page
 
 # Problem kinds of a checked file that is there, in the order of their groups: (label, icon, colour class); the label
 # is translated where it is shown, so a language picked in the settings applies to the next window. A file that is
@@ -280,7 +280,7 @@ class VerifyWindow(BaseWindow):
     def __init__(self, app, hashfile):
         name = os.path.basename(hashfile)
         super().__init__(app, name, size=(self.WIDTH, 200))
-        self.base = os.path.dirname(hashfile)
+        self.base, self.hashfile = os.path.dirname(hashfile), hashfile
         self.detail = None  # before the pages that end here: _on_close asks for it
         try:
             self.raw = core.read_hashfile(hashfile)  # read once: the list and gpg see the same bytes, even if the file changes
@@ -294,6 +294,7 @@ class VerifyWindow(BaseWindow):
             self._fit_height()
             return
 
+        self.entries, self.unlisted = entries, []  # the unlisted files are looked for once, after a complete check
         self.rows = [Row(e.name, core.file_size(p) if (p := core.resolve(self.base, e.name)) else None, e) for e in entries]
         self.counts = dict.fromkeys(("ok", "missing", *PROBLEMS), 0)
         self.store = Gio.ListStore(item_type=Row)  # every file, for the DetailWindow
@@ -337,7 +338,10 @@ class VerifyWindow(BaseWindow):
         self.kind_rows["bad"].set_title(_("Mismatch"))
         for kind, row in self.kind_rows.items():
             row.connect("activated", lambda r, kind=kind: self._open(kind))
-        self.files_group = group(*self.kind_rows.values())
+        self.unlisted_row = KindRow("list-add-symbolic", None, visible=False)  # no verdict: a folder holds more than its list
+        self.unlisted_row.set_title(_("Not listed"))
+        self.unlisted_row.connect("activated", lambda r: FilesDialog(self.unlisted, self.base, _("Files not listed")).present(self))
+        self.files_group = group(*self.kind_rows.values(), self.unlisted_row)
         self.retry_btn = Gtk.Button(label=_("Retry failed"), halign=Gtk.Align.CENTER, valign=Gtk.Align.CENTER, vexpand=True,
                                     css_classes=["pill"], sensitive=False)  # always there, so no room stands empty: grey until something failed; in the middle of any room that is left
         self.retry_btn.connect("clicked", lambda b: self._retry())
@@ -389,6 +393,8 @@ class VerifyWindow(BaseWindow):
             row = self.rows[i]
             row.status, row.found = core.check(self.base, row.entry, job.progress)
             self.checked = pos + 1
+        if len(self.queue) == len(self.rows) and core.load_config()["unlisted"]:  # off by default; not after "Retry failed": the folder was looked at once
+            self.unlisted = core.unlisted_files(self.base, self.entries, self.hashfile)
         return True
 
     FAILED = ("bad", "error", "missing")  # what a second look can change: a file fetched again, or put in the folder
@@ -460,6 +466,8 @@ class VerifyWindow(BaseWindow):
         self.current.set_visible(False)
         self.all_row.set_visible(True)
         self.all_row.show(len(self.rows))
+        self.unlisted_row.set_visible(bool(self.unlisted) and self.ended == "done")
+        self.unlisted_row.show(len(self.unlisted))
         self.outcome = self.ended
         self.retry_btn.set_sensitive(self.outcome == "done" and any(row.status in self.FAILED for row in self.rows))
         self._show_result()

@@ -7,7 +7,8 @@
                     below grouped by kind, the files that are fine folded away; plus the GPG signature when one
                     is found next to the file
     CreateWindow    pick an algorithm and write a new hash file for the selected files
-    CompareWindow   show all hashes of one file and compare them with a pasted value
+    CompareWindow   show all hashes of one file and compare them with a pasted value;
+                    CompareFilesWindow: two files, identical or not
     SettingsWindow  language, default algorithm, clipboard behaviour, compare algorithms, About
 
 All windows derive from BaseWindow and open with the same Hero: a Ring, a big title and a line of detail.
@@ -31,7 +32,7 @@ from i18n import _
 from ui_common import BaseWindow, CSS, status_page
 from ui_verify import SignedFileWindow, VerifyWindow
 from ui_create import CreateWindow
-from ui_compare import CompareWindow
+from ui_compare import CompareFilesWindow, CompareWindow
 from ui_settings import SettingsWindow
 
 
@@ -71,6 +72,21 @@ def verify_windows(app, paths):
     return [window for window in windows if window not in empty] + [shared]
 
 
+def pick_second(app, first):
+    """One file selected: ask for the one to compare it with (Files cannot select across folders), then compare."""
+    def chosen(dialog, result):
+        try:
+            second = dialog.open_finish(result).get_path()
+        except GLib.Error:  # cancelled
+            second = None
+        if second:
+            CompareFilesWindow(app, [first, second]).present()
+        app.release()
+
+    app.hold()  # no window yet while the dialog is open
+    Gtk.FileDialog(title=_("Choose the second file"), initial_folder=Gio.File.new_for_path(os.path.dirname(first))).open(None, None, chosen)
+
+
 def run(mode, paths):
     """Open the window(s) for `mode` and enter the GTK main loop."""
     GLib.set_prgname(APP_ID)  # window class = app id, so the shell finds our .desktop file and icon
@@ -89,7 +105,16 @@ def run(mode, paths):
         elif mode == "create":
             windows = [CreateWindow(app, paths)]
         elif mode == "compare":
-            windows = [CompareWindow(app, paths)]
+            windows = [CompareFilesWindow(app, paths) if len(paths) == 2 and all(os.path.isfile(p) for p in paths) else CompareWindow(app, paths)]
+        elif mode == "compare-files" and len(paths) == 1 and os.path.isfile(paths[0]):
+            pick_second(app, paths[0])
+            return
+        elif mode == "compare-files":
+            if len(paths) == 2 and all(os.path.isfile(p) for p in paths):
+                windows = [CompareFilesWindow(app, paths)]
+            else:
+                windows = [BaseWindow(app, _("Compare files"), size=(480, 420))]  # the text may wrap to two lines
+                windows[0].show_page("error", status_page("dialog-warning-symbolic", _("Please select one or two files")))
         else:
             windows = [SettingsWindow(app)]
         for window in windows:

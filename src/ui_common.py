@@ -28,6 +28,9 @@ CSS = """
 /* easter egg cat: a popover that shows nothing but the drawing */
 popover.k-cat > contents { background: none; border: none; box-shadow: none; padding: 0; }
 .ht-hash { font-family: monospace; font-size: 0.9em; }
+.ht-speed trough, .ht-speed progress { min-height: 10px; }  /* the bars of the speed test: green for the secure algorithms, orange for the others (not the accent colour: it is red on Ubuntu) */
+.ht-speed progress { background: @success_bg_color; }
+.ht-weak progress { background: @warning_bg_color; }
 row.ht-mono .subtitle { font-family: monospace; font-size: 0.9em; }
 row.ht-empty { background-color: @window_bg_color; }
 .ht-tint-error, row.ht-tint-error { background: alpha(@error_color, 0.045); }
@@ -348,6 +351,58 @@ def text_column(title, text_of, xalign=0.0, kind=False, width=-1, expand=False):
     factory.connect("setup", lambda f, item: item.set_child(setup()))
     factory.connect("bind", lambda f, item: bind(item.get_child(), item.get_item()))
     return Gtk.ColumnViewColumn(title=title, factory=factory, resizable=True, expand=expand, fixed_width=width)
+
+
+class FilesDialog(Adw.Dialog):
+    """Read-only list of files, relative to `base`: name and size."""
+
+    def __init__(self, files, base, title):
+        super().__init__(title=title, content_width=560, content_height=480)
+        store = Gio.ListStore(item_type=Row)
+        for path in files:
+            store.append(Row(os.path.relpath(path, base), core.file_size(path)))
+        table = Gtk.ColumnView(model=Gtk.NoSelection(model=store), css_classes=["data-table", "ht-table"])
+        table.append_column(text_column(_("File"), lambda r: r.name, expand=True, kind=True))
+        table.append_column(text_column(_("Size"), size_text, xalign=1.0, width=100))
+        view = Adw.ToolbarView(content=Gtk.ScrolledWindow(child=table))
+        view.add_top_bar(Adw.HeaderBar())
+        self.set_child(view)
+
+
+class SpeedDialog(Adw.Dialog):
+    """The result of the speed test: a bar per algorithm, fastest first, and a recommendation. Only advice, it changes no setting."""
+
+    def __init__(self, speeds):
+        super().__init__(title=_("Algorithm speed"), content_width=520)
+        box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=12, margin_top=12, margin_bottom=18, margin_start=18, margin_end=18)
+        box.append(Gtk.Label(label=_("How much data this computer can check per second. A longer bar is faster. Your drive is often slower, and then it sets the pace."),
+                             wrap=True, justify=Gtk.Justification.CENTER, css_classes=["dim-label"]))
+        names = {a: core.ALGOS[a].split(" (")[0] for a in core.ALGOS}  # "CRC32 (SFV)" is just CRC32 here
+        notes = {"crc32": _("Only finds accidental errors"), "md5": _("No longer secure"), "sha1": _("No longer secure")}
+        card = Gtk.ListBox(css_classes=["boxed-list"], selection_mode=Gtk.SelectionMode.NONE)
+        top = max(speeds.values())
+        for algo in sorted(speeds, key=speeds.get, reverse=True):
+            row = Adw.ActionRow(title=names[algo], subtitle=notes.get(algo, _("Secure")), use_markup=False)
+            bar = Gtk.ProgressBar(fraction=speeds[algo] / top, valign=Gtk.Align.CENTER, css_classes=["ht-speed"] if algo in core.SECURE else ["ht-speed", "ht-weak"])
+            bar.set_size_request(170, -1)
+            row.add_suffix(bar)
+            row.add_suffix(Gtk.Label(label=f"{round(speeds[algo] / 1e6)} MB/s", width_chars=9, xalign=1))
+            card.append(row)
+        box.append(card)
+        best, faster = core.speed_advice(speeds)
+        lines = [_("<b>{name}</b> is the fastest secure algorithm on this computer.").format(name=names[best])]
+        if faster == "crc32":
+            lines.append(_("CRC32 is faster, but it only finds accidental errors, not deliberate changes."))
+        elif faster:
+            lines.append(_("{name} is faster, but it is no longer secure against deliberate changes.").format(name=names[faster]))
+        box.append(Gtk.Label(label=_("Recommendation"), xalign=0, margin_top=6, css_classes=["heading"]))
+        box.append(Gtk.Label(label=" ".join(lines), use_markup=True, wrap=True, xalign=0))
+        close = Gtk.Button(label=_("Close"), halign=Gtk.Align.END, margin_top=6)
+        close.connect("clicked", lambda b: self.close())
+        box.append(close)
+        view = Adw.ToolbarView(content=box)
+        view.add_top_bar(Adw.HeaderBar())
+        self.set_child(view)
 
 
 def import_command(sig):

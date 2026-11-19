@@ -246,10 +246,6 @@ msgid "Paste from clipboard"
 msgstr "クリップボードから貼り付け"
 
 #: src/ui_gtk.py
-msgid "Please select a single file"
-msgstr "ファイルを 1 つだけ選択してください"
-
-#: src/ui_gtk.py
 msgid "Reset"
 msgstr "リセット"
 
@@ -575,3 +571,140 @@ msgstr "署名が無効です: このファイルを信頼しないでくださ�
 #, python-brace-format
 msgid "{file} is unchanged"
 msgstr "{file} は変更されていません"
+
+#: src/cli.py src/ui_compare.py
+msgid "Please select one or two files"
+msgstr "ファイルを 1 つまたは 2 つ選択してください"
+
+#: src/ui_verify.py
+msgid "Not listed"
+msgstr "一覧にない"
+
+#: src/ui_verify.py
+msgid "Files not listed"
+msgstr "一覧にないファイル"
+
+#: src/ui_compare.py
+msgid "Compare files"
+msgstr "ファイルを比較"
+
+#: src/cli.py src/ui_compare.py
+msgid "Files are identical"
+msgstr "ファイルは同一です"
+
+#: src/cli.py src/ui_compare.py
+msgid "Files differ"
+msgstr "ファイルが異なります"
+
+#: src/cli.py src/ui_compare.py
+msgid "The files have different sizes"
+msgstr "ファイルのサイズが異なります"
+
+#: src/ui_create.py
+msgid "File already exists"
+msgstr "ファイルは既に存在します"
+
+#: src/ui_create.py
+msgid "Only files that are new or changed since the hash file was written are hashed. The other entries are kept as they are and are not checked again."
+msgstr "新規のファイル、またはハッシュファイルの作成後に変更されたファイルだけを計算します。それ以外の項目はそのまま残り、再確認されません。"
+
+#: src/ui_create.py
+msgid "Remove entries of deleted files"
+msgstr "削除されたファイルの項目を取り除く"
+
+#: src/ui_create.py
+msgid "Update"
+msgstr "更新"
+
+#: src/ui_create.py
+msgid "Hash file updated"
+msgstr "ハッシュファイルを更新しました"
+
+#: src/core.py
+#, python-brace-format
+msgid "Added: {n}"
+msgstr "追加: {n}"
+
+#: src/core.py
+#, python-brace-format
+msgid "Changed: {n}"
+msgstr "変更: {n}"
+
+#: src/core.py
+#, python-brace-format
+msgid "Unchanged: {n}"
+msgstr "変更なし: {n}"
+
+#: src/core.py
+#, python-brace-format
+msgid "Removed: {n}"
+msgstr "削除: {n}"
+
+#: src/core.py
+#, python-brace-format
+msgid "Missing: {n}"
+msgstr "見つからない: {n}"
+
+#: src/cli.py
+msgid "Please name exactly two files"
+msgstr "ファイルをちょうど2つ指定してください"
+
+#: src/ui_gtk.py
+msgid "Choose the second file"
+msgstr "2つ目のファイルを選択"
+
+#: src/ui_settings.py
+msgid "Algorithm speed"
+msgstr "アルゴリズムの速度"
+
+#: src/ui_settings.py
+msgid "Test"
+msgstr "テスト"
+
+#: src/ui_settings.py
+msgid "Testing…"
+msgstr "テスト中…"
+
+#: src/ui_settings.py
+msgid "Measures how fast this computer calculates each algorithm and recommends one."
+msgstr "このコンピューターが各アルゴリズムを計算する速さを測り、おすすめを1つ表示します。"
+
+#: src/ui_common.py
+msgid "Only finds accidental errors"
+msgstr "偶発的なエラーしか検出できません"
+
+#: src/ui_common.py
+msgid "No longer secure"
+msgstr "もう安全ではありません"
+
+#: src/ui_common.py
+msgid "Secure"
+msgstr "安全"
+
+#: src/ui_common.py
+msgid "How much data this computer can check per second. A longer bar is faster. Your drive is often slower, and then it sets the pace."
+msgstr "このコンピューターが1秒あたりに確認できるデータ量です。バーが長いほど高速です。多くの場合、ドライブのほうが遅く、その速度が全体を決めます。"
+
+#: src/ui_common.py
+msgid "CRC32 is faster, but it only finds accidental errors, not deliberate changes."
+msgstr "CRC32 のほうが高速ですが、偶発的なエラーしか検出できず、意図的な改ざんは検出できません。"
+
+#: src/ui_common.py
+msgid "{name} is faster, but it is no longer secure against deliberate changes."
+msgstr "{name} のほうが高速ですが、意図的な改ざんに対してはもう安全ではありません。"
+
+#: src/ui_common.py
+msgid "Recommendation"
+msgstr "おすすめ"
+
+#: src/ui_common.py
+msgid "<b>{name}</b> is the fastest secure algorithm on this computer."
+msgstr "このコンピューターで最も高速な安全なアルゴリズムは <b>{name}</b> です。"
+
+#: src/ui_settings.py
+msgid "Look for files not in the list"
+msgstr "リストにないファイルを探す"
+
+#: src/ui_settings.py
+msgid "When verifying, count the files in the list's folders that it does not name. A hint only: the result stays the same."
+msgstr "検証時に、リストのフォルダにあるがリストに載っていないファイルを数えます。目安のみで、結果は変わりません。"

@@ -246,10 +246,6 @@ msgid "Paste from clipboard"
 msgstr "Вставити з буфера обміну"
 
 #: src/ui_gtk.py
-msgid "Please select a single file"
-msgstr "Виберіть лише один файл"
-
-#: src/ui_gtk.py
 msgid "Reset"
 msgstr "Скинути"
 
@@ -591,3 +587,140 @@ msgstr "Недійсний підпис: не довіряйте цьому фа
 #, python-brace-format
 msgid "{file} is unchanged"
 msgstr "{file} не змінено"
+
+#: src/cli.py src/ui_compare.py
+msgid "Please select one or two files"
+msgstr "Виберіть один або два файли"
+
+#: src/ui_verify.py
+msgid "Not listed"
+msgstr "Немає в списку"
+
+#: src/ui_verify.py
+msgid "Files not listed"
+msgstr "Файли, яких немає в списку"
+
+#: src/ui_compare.py
+msgid "Compare files"
+msgstr "Порівняти файли"
+
+#: src/cli.py src/ui_compare.py
+msgid "Files are identical"
+msgstr "Файли ідентичні"
+
+#: src/cli.py src/ui_compare.py
+msgid "Files differ"
+msgstr "Файли відрізняються"
+
+#: src/cli.py src/ui_compare.py
+msgid "The files have different sizes"
+msgstr "Файли мають різний розмір"
+
+#: src/ui_create.py
+msgid "File already exists"
+msgstr "Файл уже існує"
+
+#: src/ui_create.py
+msgid "Only files that are new or changed since the hash file was written are hashed. The other entries are kept as they are and are not checked again."
+msgstr "Хеші обчислюються лише для нових файлів і файлів, змінених після запису файлу хешів. Решта записів залишається без змін і повторно не перевіряється."
+
+#: src/ui_create.py
+msgid "Remove entries of deleted files"
+msgstr "Видалити записи видалених файлів"
+
+#: src/ui_create.py
+msgid "Update"
+msgstr "Оновити"
+
+#: src/ui_create.py
+msgid "Hash file updated"
+msgstr "Файл хешів оновлено"
+
+#: src/core.py
+#, python-brace-format
+msgid "Added: {n}"
+msgstr "Додано: {n}"
+
+#: src/core.py
+#, python-brace-format
+msgid "Changed: {n}"
+msgstr "Змінено: {n}"
+
+#: src/core.py
+#, python-brace-format
+msgid "Unchanged: {n}"
+msgstr "Без змін: {n}"
+
+#: src/core.py
+#, python-brace-format
+msgid "Removed: {n}"
+msgstr "Видалено: {n}"
+
+#: src/core.py
+#, python-brace-format
+msgid "Missing: {n}"
+msgstr "Відсутні: {n}"
+
+#: src/cli.py
+msgid "Please name exactly two files"
+msgstr "Вкажіть рівно два файли"
+
+#: src/ui_gtk.py
+msgid "Choose the second file"
+msgstr "Виберіть другий файл"
+
+#: src/ui_settings.py
+msgid "Algorithm speed"
+msgstr "Швидкість алгоритмів"
+
+#: src/ui_settings.py
+msgid "Test"
+msgstr "Тестувати"
+
+#: src/ui_settings.py
+msgid "Testing…"
+msgstr "Тестування…"
+
+#: src/ui_settings.py
+msgid "Measures how fast this computer calculates each algorithm and recommends one."
+msgstr "Вимірює, як швидко цей комп’ютер обчислює кожен алгоритм, і радить один із них."
+
+#: src/ui_common.py
+msgid "Only finds accidental errors"
+msgstr "Виявляє лише випадкові помилки"
+
+#: src/ui_common.py
+msgid "No longer secure"
+msgstr "Більше не безпечний"
+
+#: src/ui_common.py
+msgid "Secure"
+msgstr "Безпечний"
+
+#: src/ui_common.py
+msgid "How much data this computer can check per second. A longer bar is faster. Your drive is often slower, and then it sets the pace."
+msgstr "Скільки даних цей комп’ютер може перевірити за секунду. Довша смуга означає швидше. Накопичувач часто повільніший і тоді саме він визначає швидкість."
+
+#: src/ui_common.py
+msgid "CRC32 is faster, but it only finds accidental errors, not deliberate changes."
+msgstr "CRC32 швидший, але виявляє лише випадкові помилки, а не навмисні зміни."
+
+#: src/ui_common.py
+msgid "{name} is faster, but it is no longer secure against deliberate changes."
+msgstr "{name} швидший, але вже не захищає від навмисних змін."
+
+#: src/ui_common.py
+msgid "Recommendation"
+msgstr "Рекомендація"
+
+#: src/ui_common.py
+msgid "<b>{name}</b> is the fastest secure algorithm on this computer."
+msgstr "<b>{name}</b> — найшвидший безпечний алгоритм на цьому комп’ютері."
+
+#: src/ui_settings.py
+msgid "Look for files not in the list"
+msgstr "Шукати файли, яких немає в списку"
+
+#: src/ui_settings.py
+msgid "When verifying, count the files in the list's folders that it does not name. A hint only: the result stays the same."
+msgstr "Під час перевірки рахує файли в теках списку, яких він не називає. Лише підказка: результат не змінюється."
