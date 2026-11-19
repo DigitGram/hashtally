@@ -31,19 +31,8 @@ More on the [project website](https://digitgram.github.io/hashtally/).
 
 <p align="center">
   <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="docs/screenshots/create-dark.png">
-    <img src="docs/screenshots/create-light.png" width="38%" alt="The window for creating a hash file">
-  </picture>
-  <picture>
     <source media="(prefers-color-scheme: dark)" srcset="docs/screenshots/compare-dark.png">
     <img src="docs/screenshots/compare-light.png" width="58%" alt="Showing the hashes of a file and comparing one with the clipboard">
-  </picture>
-</p>
-
-<p align="center">
-  <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="docs/screenshots/update-dark.png">
-    <img src="docs/screenshots/update-light.png" width="36%" alt="Updating an existing hash file: two files added, one changed, four unchanged">
   </picture>
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="docs/screenshots/differ-dark.png">
