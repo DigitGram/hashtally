@@ -201,7 +201,10 @@ footer .links{display:flex;flex-wrap:wrap;gap:22px}
     <div class="grid">
       <div class="card"><h3><i>✔</i>Verify</h3><p>Checks every file a hash file lists. Files that are fine stay folded away, problems are on top.</p></div>
       <div class="card"><h3><i>＋</i>Create</h3><p>SHA-256, SHA-512, SHA-1, MD5 or CRC32 for files and folders, written as <code>name.sha256</code> or <code>SHA256SUMS</code>.</p></div>
-      <div class="card"><h3><i>⇄</i>Compare</h3><p>Paste a hash, or a whole line from a hash file. You see at once whether it matches.</p></div>
+      <div class="card"><h3><i>⇄</i>Compare</h3><p>Paste a hash, or a whole line from a hash file. You see at once whether it matches. Select two files to see whether they are identical.</p></div>
+      <div class="card"><h3><i>↻</i>Update</h3><p>Adding to a hash file that exists hashes only the new and changed files, not everything again.</p></div>
+      <div class="card"><h3><i>⊕</i>Spots strays</h3><p>Optionally counts the files in a list's folders that the list does not name, so nothing slips in unnoticed.</p></div>
+      <div class="card"><h3><i>⏱</i>Speed test</h3><p>Shows which algorithm is fastest on your computer and recommends the fastest secure one.</p></div>
       <div class="card"><h3><i>✎</i>GPG signatures</h3><p>Also checks the signature of a hash file, the usual way Linux downloads are published. The result sits right below the verdict.</p></div>
       <div class="card"><h3><i>#</i>Many formats</h3><p>GNU, BSD, SFV and files with only a digest. SHA-224/384 and BLAKE2b can be verified as well.</p></div>
       <div class="card"><h3><i>⛨</i>Your keyring stays yours</h3><p>HashTally changes it only when you press “Import key” and confirm.</p></div>
@@ -221,6 +224,9 @@ footer .links{display:flex;flex-wrap:wrap;gap:22px}
       <figure><img src="img/verify-light.webp" alt="Verifying a SHA256SUMS file" loading="lazy" width="1040" height="1436"><figcaption>Verifying a hash file</figcaption></figure>
       <figure><img src="img/create-light.webp" alt="The window for creating a hash file" loading="lazy" width="1040" height="1182"><figcaption>Creating a hash file</figcaption></figure>
       <figure><img src="img/compare-light.webp" alt="Showing the hashes of a file and comparing one" loading="lazy" width="1240" height="1358"><figcaption>Show or compare hash</figcaption></figure>
+      <figure><img src="img/differ-light.webp" alt="Comparing two files: they differ" loading="lazy" width="1120" height="1236"><figcaption>Comparing two files</figcaption></figure>
+      <figure><img src="img/update-light.webp" alt="Updating an existing hash file" loading="lazy" width="1040" height="1448"><figcaption>Updating a hash file</figcaption></figure>
+      <figure><img src="img/speed-light.webp" alt="The algorithm speed test" loading="lazy" width="948" height="1016"><figcaption>Which algorithm is fastest here</figcaption></figure>
     </div>
   </div>
 </section>
