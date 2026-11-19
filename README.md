@@ -12,7 +12,10 @@ match up, which is what comparing checksums does. Sister project of [TrustCopy](
 More on the [project website](https://digitgram.github.io/hashtally/).
 
 <p align="center">
-  <img src="docs/screenshots/verify-light.png" width="48%" alt="HashTally verifying a SHA256SUMS file: one file does not match">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="docs/screenshots/verify-dark.png">
+    <img src="docs/screenshots/verify-light.png" width="48%" alt="HashTally verifying a SHA256SUMS file: one file does not match">
+  </picture>
 </p>
 
 ## What you get
@@ -27,15 +30,28 @@ More on the [project website](https://digitgram.github.io/hashtally/).
 - **Native look**: GTK 4 and libadwaita, light and dark, in ten languages (English, Deutsch, Español, Français, Italiano, 日本語, Polski, Português (Brasil), Українська, 简体中文).
 
 <p align="center">
-  <img src="docs/screenshots/create-light.png" width="38%" alt="The window for creating a hash file">
-  <img src="docs/screenshots/compare-light.png" width="58%" alt="Showing the hashes of a file and comparing one with the clipboard">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="docs/screenshots/create-dark.png">
+    <img src="docs/screenshots/create-light.png" width="38%" alt="The window for creating a hash file">
+  </picture>
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="docs/screenshots/compare-dark.png">
+    <img src="docs/screenshots/compare-light.png" width="58%" alt="Showing the hashes of a file and comparing one with the clipboard">
+  </picture>
 </p>
 
 <p align="center">
-  <img src="docs/screenshots/update-light.png" width="32%" alt="Updating an existing hash file: two files added, one changed, four unchanged">
-  <img src="docs/screenshots/differ-light.png" width="34%" alt="Comparing two files: they differ, the SHA-256 of each is shown">
-  <img src="docs/screenshots/speed-light.png" width="30%" alt="The speed test: a bar per algorithm and a recommendation">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="docs/screenshots/update-dark.png">
+    <img src="docs/screenshots/update-light.png" width="36%" alt="Updating an existing hash file: two files added, one changed, four unchanged">
+  </picture>
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="docs/screenshots/differ-dark.png">
+    <img src="docs/screenshots/differ-light.png" width="40%" alt="Comparing two files: they differ, the SHA-256 of each is shown">
+  </picture>
 </p>
+
+<p align="center"><sub>More screenshots on the <a href="https://digitgram.github.io/hashtally/#gallery">project website</a>.</sub></p>
 
 ## Requirements
 
