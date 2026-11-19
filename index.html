@@ -137,7 +137,10 @@ h2{margin:0 0 14px;color:var(--white);font-size:clamp(30px,4vw,44px);line-height
 .gallery figure{margin:0}
 .gallery img{border-radius:14px;box-shadow:0 18px 40px rgba(0,0,0,.4)}
 .gallery figcaption{margin-top:12px;color:var(--sub);font-size:15.5px;text-align:center}
-@media(max-width:800px){.gallery{grid-template-columns:1fr;max-width:460px;margin-inline:auto}}
+/* two screenshots side by side, the wide one (a table) below them over the full width */
+.gallery.mixed{grid-template-columns:repeat(2,minmax(0,1fr));max-width:860px;margin-inline:auto;gap:28px 24px}
+.gallery.mixed .wide{grid-column:1/-1}
+@media(max-width:800px){.gallery{grid-template-columns:1fr;max-width:460px;margin-inline:auto}.gallery.mixed{grid-template-columns:1fr;max-width:460px}}
 /* install */
 .install .box{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:40px;align-items:start}
 .install .box>div{min-width:0}
@@ -245,10 +248,10 @@ footer .links{display:flex;flex-wrap:wrap;gap:22px}
     <div class="kicker">Screenshots</div>
     <h2>Looks like it belongs.</h2>
     <p class="intro">Follows your system theme, light or dark.</p>
-    <div class="gallery">
+    <div class="gallery mixed">
       <figure><img src="img/create-light.webp" alt="The window for creating a hash file" loading="lazy" width="1040" height="1182"><figcaption>Creating a hash file</figcaption></figure>
       <figure><img src="img/compare-light.webp" alt="Showing the hashes of a file and comparing one" loading="lazy" width="1240" height="1358"><figcaption>Show or compare hash</figcaption></figure>
-      <figure><img src="img/speed-light.webp" alt="The algorithm speed test" loading="lazy" width="948" height="1016"><figcaption>Which algorithm is fastest here</figcaption></figure>
+      <figure class="wide"><img src="img/all-light.webp" alt="All files of a list in a table, with their status, size, algorithm and hashes; the one that differs is marked red" loading="lazy" width="1720" height="960"><figcaption>All files, with the status of each one</figcaption></figure>
     </div>
   </div>
 </section>
