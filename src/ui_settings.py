@@ -13,7 +13,7 @@ from gi.repository import Adw, GLib, Gtk
 
 import core
 from i18n import _
-from ui_common import BaseWindow, SpeedDialog, combo_row, warning_dialog
+from ui_common import BaseWindow, SpeedDialog, combo_row, update_toast, warning_dialog
 
 class SettingsWindow(BaseWindow):
     """Every change is saved at once (no OK button), like GNOME settings."""
@@ -26,6 +26,8 @@ class SettingsWindow(BaseWindow):
         page = Adw.PreferencesPage()
         page.add(self._general_group(cfg))
         page.add(self._context_group(cfg))
+        if core.update_check_offered():
+            page.add(self._update_row())
         page.add(self._info_group())
         self.show_page("settings", page)
 
@@ -99,6 +101,51 @@ class SettingsWindow(BaseWindow):
         info.add(reset_row)
         info.add(about)
         return info
+
+    def _update_row(self):
+        """A switch for the weekly check at start (off by default) and a button that checks right now."""
+        row = Adw.SwitchRow(title=_("Check for updates weekly"),
+                            subtitle=_("Asks GitHub once a week for the newest version. Nothing is sent and nothing is installed."),
+                            active=core.load_config()["update_check"])
+        row.connect("notify::active", lambda r, _p: self.apply("update_check", r.get_active()))
+        self.update_button = Gtk.Button(label=_("Check now"), valign=Gtk.Align.CENTER)
+        self.update_button.connect("clicked", self.check_update)
+        self.update_page = None  # set once a newer release is found: the button then opens its page
+        self.update_row = now = Adw.ActionRow(title=_("Installed version: {version}").format(version=core.__version__))
+        now.add_suffix(self.update_button)
+        now.set_activatable_widget(self.update_button)
+        group = Adw.PreferencesGroup(title=_("Updates"))
+        group.add(row)
+        group.add(now)
+        return group
+
+    def check_update(self, button):
+        if self.update_page:
+            Gtk.UriLauncher(uri=self.update_page).launch(self, None, None)
+            return
+        button.set_sensitive(False)
+
+        def work():
+            try:
+                found, error = core.newer_release(), None
+            except (OSError, ValueError, KeyError) as e:
+                found, error = None, e
+            GLib.idle_add(self.show_update, found, error)
+        threading.Thread(target=work, daemon=True).start()
+
+    def show_update(self, found, error):
+        self.update_button.set_sensitive(True)
+        if error:
+            self.toast(_("Could not check for updates. Are you online?"))
+        else:
+            installed = _("Installed version: {version}").format(version=core.__version__)
+            if found:  # the row itself says it, and its button leads to the release notes and the way to update
+                self.update_page = found[1]
+                self.update_row.set_title(_("Update available: {version}").format(version=found[0]))
+                self.update_button.set_label(_("Release notes"))
+            else:
+                self.update_row.set_title(_("HashTally is up to date."))
+            self.update_row.set_subtitle(installed)
 
     def _algo_toggled(self, row, pspec, algo):
         chosen = [a for a in core.ALGOS if self.algo_rows[a].get_active()]

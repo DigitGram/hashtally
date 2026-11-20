@@ -724,3 +724,46 @@ msgstr "Шукати файли, яких немає в списку"
 #: src/ui_settings.py
 msgid "When verifying, count the files in the list's folders that it does not name. A hint only: the result stays the same."
 msgstr "Під час перевірки рахує файли в теках списку, яких він не називає. Лише підказка: результат не змінюється."
+
+#: src/ui_settings.py
+msgid "Check for updates weekly"
+msgstr "Перевіряти оновлення щотижня"
+
+#: src/ui_settings.py
+msgid "Asks GitHub once a week for the newest version. Nothing is sent and nothing is installed."
+msgstr "Раз на тиждень запитує в GitHub найновішу версію. Нічого не надсилається й не встановлюється."
+
+#: src/ui_settings.py
+msgid "Updates"
+msgstr "Оновлення"
+
+#: src/ui_settings.py
+#, python-brace-format
+msgid "Installed version: {version}"
+msgstr "Установлена версія: {version}"
+
+#: src/ui_settings.py
+msgid "Check now"
+msgstr "Перевірити зараз"
+
+#: src/ui_settings.py
+msgid "Could not check for updates. Are you online?"
+msgstr "Не вдалося перевірити оновлення. Ви в мережі?"
+
+#: src/ui_settings.py
+msgid "HashTally is up to date."
+msgstr "HashTally актуальний."
+
+#: src/ui_common.py
+#, python-brace-format
+msgid "HashTally {version} is available"
+msgstr "Доступний HashTally {version}"
+
+#: src/ui_common.py
+msgid "Release notes"
+msgstr "Примітки до випуску"
+
+#: src/ui_settings.py
+#, python-brace-format
+msgid "Update available: {version}"
+msgstr "Доступне оновлення: {version}"

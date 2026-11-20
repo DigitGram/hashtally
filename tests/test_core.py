@@ -1521,6 +1521,40 @@ def test_signed_file():
         assert core.signed_file(str(listing)) is None
 
 
+def test_update_check():
+    """Versions compare as numbers, a bad answer is refused, the weekly check is off by default and waits a week."""
+    assert core.version_tuple("v1.10") > core.version_tuple("1.9") and core.version_tuple("1.2") == (1, 2)
+    assert core.version_tuple("latest") is None and core.version_tuple("1.2-beta") is None
+
+    def answer(tag, url="https://github.com/DigitGram/hashtally/releases/tag/v9"):
+        return contextlib.nullcontext(io.BytesIO(json.dumps({"tag_name": tag, "html_url": url}).encode()))
+    with mock.patch("urllib.request.urlopen", return_value=answer("v99.0")):
+        assert core.newer_release()[0] == "99.0"
+    with mock.patch("urllib.request.urlopen", return_value=answer("v" + core.__version__)):
+        assert core.newer_release() is None  # the same version is not news
+    for bad in (answer("nightly"), answer("v99", "https://evil.example/")):
+        with mock.patch("urllib.request.urlopen", return_value=bad):
+            try:
+                core.newer_release()
+            except ValueError:
+                continue
+            raise AssertionError("a strange answer was accepted")
+    old_file = core.CONFIG_FILE
+    with tempfile.TemporaryDirectory() as tmp:
+        core.CONFIG_FILE = Path(tmp) / "config.json"
+        try:
+            assert not core.update_due()  # off by default
+            core.set_option("update_check", True)
+            assert core.update_due()
+            core.set_option("update_last", int(time.time()))
+            assert not core.update_due()
+            assert core.update_due(time.time() + core.UPDATE_INTERVAL + 1)
+            with mock.patch("os.path.exists", return_value=True):  # in a Flatpak the store updates
+                assert not core.update_due(time.time() + 10 * core.UPDATE_INTERVAL)
+        finally:
+            core.CONFIG_FILE = old_file
+
+
 if __name__ == "__main__":
     for name, test in sorted(globals().items()):
         if name.startswith("test_"):

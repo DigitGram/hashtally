@@ -615,6 +615,30 @@ def show_in_folder(window, path):
     Gtk.FileLauncher(file=Gio.File.new_for_path(path)).open_containing_folder(window, None, None)
 
 
+def update_toast(window, version, page):
+    """A toast that stays until dismissed, with a button that opens the release page in the browser."""
+    toast = Adw.Toast(title=_("HashTally {version} is available").format(version=version), button_label=_("Release notes"), timeout=0)
+    toast.connect("button-clicked", lambda t: Gtk.UriLauncher(uri=page).launch(window, None, None))
+    window.toasts.add_toast(toast)
+
+
+def weekly_update_check(window):
+    """At start, if the user switched the weekly check on and it is due: look in the background, say so only when there is news.
+    The date is saved whatever the answer, so an offline start does not retry on every launch."""
+    if not core.update_due():
+        return
+    core.set_option("update_last", int(time.time()))
+
+    def work():
+        try:
+            found = core.newer_release()
+        except (OSError, ValueError, KeyError):
+            return
+        if found:
+            GLib.idle_add(update_toast, window, *found)
+    threading.Thread(target=work, daemon=True).start()
+
+
 class BaseWindow(Adw.ApplicationWindow):
     """Header bar plus a page stack; cancels the running job when the window closes."""
 

@@ -29,7 +29,7 @@ from gi.repository import Adw, Gdk, Gio, GLib, Gtk
 import core
 from core import APP_ID
 from i18n import _
-from ui_common import BaseWindow, CSS, status_page
+from ui_common import BaseWindow, CSS, status_page, weekly_update_check
 from ui_verify import SignedFileWindow, VerifyWindow
 from ui_create import CreateWindow
 from ui_compare import CompareFilesWindow, CompareWindow
@@ -119,6 +119,8 @@ def run(mode, paths):
             windows = [SettingsWindow(app)]
         for window in windows:
             window.present()
+        if windows and mode != "settings":  # the settings window has its own button
+            weekly_update_check(windows[0])
 
     app.connect("activate", activate)
     app.run([])

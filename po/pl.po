@@ -724,3 +724,46 @@ msgstr "Szukaj plików spoza listy"
 #: src/ui_settings.py
 msgid "When verifying, count the files in the list's folders that it does not name. A hint only: the result stays the same."
 msgstr "Podczas weryfikacji zlicza pliki w folderach listy, których ona nie wymienia. Tylko wskazówka: wynik się nie zmienia."
+
+#: src/ui_settings.py
+msgid "Check for updates weekly"
+msgstr "Sprawdzaj aktualizacje co tydzień"
+
+#: src/ui_settings.py
+msgid "Asks GitHub once a week for the newest version. Nothing is sent and nothing is installed."
+msgstr "Raz w tygodniu pyta GitHub o najnowszą wersję. Nic nie jest wysyłane i nic nie jest instalowane."
+
+#: src/ui_settings.py
+msgid "Updates"
+msgstr "Aktualizacje"
+
+#: src/ui_settings.py
+#, python-brace-format
+msgid "Installed version: {version}"
+msgstr "Zainstalowana wersja: {version}"
+
+#: src/ui_settings.py
+msgid "Check now"
+msgstr "Sprawdź teraz"
+
+#: src/ui_settings.py
+msgid "Could not check for updates. Are you online?"
+msgstr "Nie udało się sprawdzić aktualizacji. Czy jesteś online?"
+
+#: src/ui_settings.py
+msgid "HashTally is up to date."
+msgstr "HashTally jest aktualny."
+
+#: src/ui_common.py
+#, python-brace-format
+msgid "HashTally {version} is available"
+msgstr "Dostępny jest HashTally {version}"
+
+#: src/ui_common.py
+msgid "Release notes"
+msgstr "Informacje o wydaniu"
+
+#: src/ui_settings.py
+#, python-brace-format
+msgid "Update available: {version}"
+msgstr "Dostępna aktualizacja: {version}"
