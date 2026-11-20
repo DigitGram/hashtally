@@ -97,7 +97,7 @@ class SettingsWindow(BaseWindow):
         about = Adw.ActionRow(title=_("About HashTally"), activatable=True)
         about.add_suffix(Gtk.Image.new_from_icon_name("go-next-symbolic"))
         about.connect("activated", self._about)
-        info = Adw.PreferencesGroup()
+        info = Adw.PreferencesGroup(title=_("Other"))
         info.add(reset_row)
         info.add(about)
         return info
