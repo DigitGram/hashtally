@@ -1,22 +1,50 @@
 <p align="center">
-  <img src="docs/banner.png" alt="HashTally: create and verify checksums from the GNOME Files context menu">
+  <img src="data/icons/hicolor/scalable/apps/hashtally.svg" width="96" height="96" alt="HashTally icon">
 </p>
 
-# HashTally
-
-[![tests](https://github.com/DigitGram/hashtally/actions/workflows/test.yml/badge.svg)](https://github.com/DigitGram/hashtally/actions/workflows/test.yml)
-
-**Create and verify checksums from the GNOME Files (Nautilus) context menu.** Inspired by the Windows
-shell extensions [HashCheck](https://github.com/gurnec/HashCheck) and HashTab. To *tally* means to
-match up, which is what comparing checksums does. Sister project of [TrustCopy](https://github.com/DigitGram/trustcopy).
-More on the [project website](https://digitgram.github.io/hashtally/).
+<h1 align="center">HashTally</h1>
 
 <p align="center">
-  <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="docs/screenshots/verify-dark.png">
-    <img src="docs/screenshots/verify-light.png" width="48%" alt="HashTally verifying a SHA256SUMS file: one file does not match">
-  </picture>
+  Create and verify checksums from the <b>GNOME Files (Nautilus) context menu</b>.<br>
+  Double-click a hash file to check it, right-click files to create one. Installs for your user, no root needed.
 </p>
+
+<p align="center">
+  <a href="https://github.com/DigitGram/hashtally/actions/workflows/test.yml"><img src="https://github.com/DigitGram/hashtally/actions/workflows/test.yml/badge.svg" alt="Tests"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/license-GPL--3.0-blue" alt="License: GPL-3.0"></a>
+  <a href="https://github.com/DigitGram/hashtally/releases/latest"><img src="https://img.shields.io/github/v/release/DigitGram/hashtally" alt="Latest release"></a>
+</p>
+
+<p align="center">
+  <a href="#install"><b>Install</b></a> ·
+  <a href="#usage">Usage</a> ·
+  <a href="#verify-the-download">Verify the download</a> ·
+  <a href="https://digitgram.github.io/hashtally/">Website</a> ·
+  <a href="#support">Support</a>
+</p>
+
+<p align="center">
+  <img src="docs/media/hashtally-tour.webp" width="100%" alt="A tour of HashTally: checking a SHA256SUMS list with one file that differs, a signed list with its GPG signature, creating a hash file from the right-click menu, and comparing a file with a pasted hash">
+</p>
+
+Inspired by the Windows shell extensions [HashCheck](https://github.com/gurnec/HashCheck) and HashTab. To *tally* means to
+match up, which is what comparing checksums does. Sister project of [TrustCopy](https://github.com/DigitGram/trustcopy).
+
+## Contents
+
+- [What you get](#what-you-get)
+- [Requirements](#requirements)
+- [Install](#install)
+- [Verify the download](#verify-the-download)
+- [Usage](#usage)
+- [Command line](#command-line)
+- [Signature check](#signature-check)
+- [Supported hash files](#supported-hash-files)
+- [Translating](#translating)
+- [Development](#development)
+- [How it was made](#how-it-was-made)
+- [Support](#support)
+- [License](#license)
 
 ## What you get
 
@@ -55,20 +83,23 @@ Older systems are not supported; the installer stops with an install hint.
 
 ## Install
 
-One line (installs for the current user only, no root):
+HashTally installs for the current user only. It needs no root and refuses to run under `sudo`. The installer
+downloads exactly the version it belongs to, and releases are [signed](#verify-the-download).
+
+Read it first, then run it:
+
+```sh
+curl -fsSLO https://github.com/DigitGram/hashtally/releases/latest/download/install.sh
+less install.sh && bash install.sh
+```
+
+Or the short way, if you trust the signed release:
 
 ```sh
 curl -fsSL https://github.com/DigitGram/hashtally/releases/latest/download/install.sh | bash
 
 # no curl (e.g. a fresh Ubuntu)? wget does the same:
 wget -qO- https://github.com/DigitGram/hashtally/releases/latest/download/install.sh | bash
-```
-
-Prefer to read the script first? Download it, inspect it, then run it:
-
-```sh
-curl -fsSLO https://github.com/DigitGram/hashtally/releases/latest/download/install.sh
-less install.sh && bash install.sh
 ```
 
 Or from a checkout: `git clone https://github.com/DigitGram/hashtally && cd hashtally && ./install.sh`.
