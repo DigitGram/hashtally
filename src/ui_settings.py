@@ -13,7 +13,7 @@ from gi.repository import Adw, GLib, Gtk
 
 import core
 from i18n import _
-from ui_common import BaseWindow, SpeedDialog, combo_row, update_toast, warning_dialog
+from ui_common import BaseWindow, SpeedDialog, combo_row, warning_dialog
 
 class SettingsWindow(BaseWindow):
     """Every change is saved at once (no OK button), like GNOME settings."""
