@@ -117,6 +117,8 @@ class SettingsWindow(BaseWindow):
         group = Adw.PreferencesGroup(title=_("Updates"))
         group.add(row)
         group.add(now)
+        if core.update_found:  # the weekly check at start already found one
+            self._show_found(core.update_found)
         return group
 
     def check_update(self, button):
@@ -138,14 +140,19 @@ class SettingsWindow(BaseWindow):
         if error:
             self.toast(_("Could not check for updates. Are you online?"))
         else:
-            installed = _("Installed version: {version}").format(version=core.__version__)
-            if found:  # the row itself says it, and its button leads to the release notes and the way to update
-                self.update_page = found[1]
-                self.update_row.set_title(_("Update available: {version}").format(version=found[0]))
-                self.update_button.set_label(_("Release notes"))
+            if found:
+                core.update_found = found
+                self._show_found(found)
             else:
                 self.update_row.set_title(_("HashTally is up to date."))
-            self.update_row.set_subtitle(installed)
+                self.update_row.set_subtitle(_("Installed version: {version}").format(version=core.__version__))
+
+    def _show_found(self, found):
+        """The row says it, and its button leads to the release notes and the way to update."""
+        self.update_page = found[1]
+        self.update_row.set_title(_("Update available: {version}").format(version=found[0]))
+        self.update_row.set_subtitle(_("Installed version: {version}").format(version=core.__version__))
+        self.update_button.set_label(_("Release notes"))
 
     def _algo_toggled(self, row, pspec, algo):
         chosen = [a for a in core.ALGOS if self.algo_rows[a].get_active()]
