@@ -55,6 +55,7 @@ match up, which is what comparing checksums does. Sister project of [TrustCopy](
 - **Not listed**: optional (off by default): when verifying, also counts the files in the list's folders that the list does not name, so a file added since the list was made does not go unnoticed.
 - **Speed test**: in the settings, shows which algorithm is fastest on your computer and recommends the fastest secure one.
 - **GPG signatures**: also checks the signature of a hash file, the usual way Linux downloads are published (`SHA256SUMS` + `SHA256SUMS.gpg`, or a clear-signed file).
+- **Your menu**: the entries sit under *Scripts*, or, with the `python3-nautilus` package, in an entry of their own that shows only what fits the selection and that you can rename (a switch in the settings).
 - **Native look**: GTK 4 and libadwaita, light and dark, in ten languages (English, Deutsch, Español, Français, Italiano, 日本語, Polski, Português (Brasil), Українська, 简体中文).
 
 <p align="center">
