@@ -37,6 +37,7 @@ class KindRow(Adw.ActionRow):
 
     def __init__(self, icon, color, **kw):
         super().__init__(use_markup=False, activatable=False, sensitive=False, **kw)  # grey while it holds nothing
+        self.settled = False  # the check is over: only then does an empty line grey its icon, before that a file may still turn up
         self.color, self.muted = color, False  # muted: grey even with files, as when matching proves nothing
         self.badge = badge(icon, color)
         self.add_prefix(self.badge)
@@ -50,7 +51,7 @@ class KindRow(Adw.ActionRow):
         self.set_sensitive(n > 0)
         self.set_activatable(n > 0)
         self.arrow.set_visible(n > 0)
-        self.badge.set_css_classes(["ht-badge", *([self.color] if self.color and n and not self.muted else [])])  # its disc takes its colour: grey while there is none
+        self.badge.set_css_classes(["ht-badge", *([self.color] if self.color and n and not self.muted else []), *(["ht-settled"] if self.settled and not n else [])])  # its disc takes its colour: grey while there is none
         if self.color in ("error", "warning"):  # a problem tints its line and its figure
             for widget, css in ((self, f"ht-tint-{self.color}"), (self.count, self.color)):
                 (widget.add_css_class if n else widget.remove_css_class)(css)
@@ -411,6 +412,8 @@ class VerifyWindow(BaseWindow):
         self._plan(queue)
         self.index = self.checked = self.listed = 0
         self.at = self.outcome = self.ended = None
+        for row in self.kind_rows.values():
+            row.settled = False
         self.started = time.monotonic()
         self.retry_btn.set_sensitive(False)
         self.cancel_btn.set_visible(True)
@@ -469,6 +472,9 @@ class VerifyWindow(BaseWindow):
         self.unlisted_row.set_visible(bool(self.unlisted) and self.ended == "done")
         self.unlisted_row.show(len(self.unlisted))
         self.outcome = self.ended
+        for row in self.kind_rows.values():
+            row.settled = self.outcome == "done"
+        self._show_counts()
         self.retry_btn.set_sensitive(self.outcome == "done" and any(row.status in self.FAILED for row in self.rows))
         self._show_result()
 

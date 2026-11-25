@@ -37,6 +37,7 @@ row.ht-empty { background-color: @window_bg_color; }
 .ht-tint-warning, row.ht-tint-warning { background: alpha(@warning_color, 0.045); }
 .ht-emblem { background: @window_bg_color; border-radius: 99px; padding: 3px; }
 .ht-badge { min-width: 34px; min-height: 34px; border-radius: 99px; background: alpha(currentColor, 0.14); }
+.ht-badge.ht-settled { color: @insensitive_fg_color; opacity: 0.55; }  /* nothing in it, and the check is over: further into the background */
 .ht-table cell { padding: 0; }
 .ht-cell { padding: 6px 10px; }
 statuspage.ht-good image { color: @success_color; opacity: 1; }
