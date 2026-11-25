@@ -504,8 +504,9 @@ def settings_tabs_fit_in_every_language(app):
             window.present()
             spin()
             switcher = switchers(window)[0]
-            if switcher.get_width() < switcher.measure(Gtk.Orientation.HORIZONTAL, -1)[1]:
-                cut.append(lang)
+            wanted = switcher.measure(Gtk.Orientation.HORIZONTAL, -1)[1]
+            if switcher.get_width() < wanted:
+                cut.append(f"{lang} ({switcher.get_width()} of {wanted} px)")
             window.destroy()
     finally:
         i18n.set_language("en")

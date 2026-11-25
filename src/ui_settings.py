@@ -21,7 +21,7 @@ class SettingsWindow(BaseWindow):
     HAS_MENU = False
 
     def __init__(self, app):
-        super().__init__(app, _("Settings"), size=(720, 720))
+        super().__init__(app, _("Settings"), size=(840, 720))
         cfg = core.load_config()
         general, menu, updates = Adw.PreferencesPage(), Adw.PreferencesPage(), Adw.PreferencesPage()
         general.add(self._general_group(cfg))
