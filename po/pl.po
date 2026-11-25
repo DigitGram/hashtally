@@ -771,3 +771,23 @@ msgstr "Dostępna aktualizacja: {version}"
 #: src/ui_settings.py
 msgid "Other"
 msgstr "Inne"
+
+#: src/ui_settings.py
+msgid "Separate entry in the context menu"
+msgstr "Osobna pozycja w menu kontekstowym"
+
+#: src/ui_settings.py
+msgid "Only the entries that fit what you selected."
+msgstr "Tylko pozycje pasujące do zaznaczenia."
+
+#: src/ui_settings.py
+msgid "Needs the package python3-nautilus: sudo apt install python3-nautilus"
+msgstr "Wymaga pakietu python3-nautilus: sudo apt install python3-nautilus"
+
+#: src/ui_settings.py
+msgid "Name of the entry"
+msgstr "Nazwa pozycji"
+
+#: src/ui_settings.py
+msgid "Context menu in the Scripts folder"
+msgstr "Menu kontekstowe w folderze Skrypty"

@@ -755,3 +755,23 @@ msgstr "アップデートがあります: {version}"
 #: src/ui_settings.py
 msgid "Other"
 msgstr "その他"
+
+#: src/ui_settings.py
+msgid "Separate entry in the context menu"
+msgstr "コンテキストメニューに専用の項目"
+
+#: src/ui_settings.py
+msgid "Only the entries that fit what you selected."
+msgstr "選択内容に合う項目だけを表示します。"
+
+#: src/ui_settings.py
+msgid "Needs the package python3-nautilus: sudo apt install python3-nautilus"
+msgstr "python3-nautilus パッケージが必要です: sudo apt install python3-nautilus"
+
+#: src/ui_settings.py
+msgid "Name of the entry"
+msgstr "項目の名前"
+
+#: src/ui_settings.py
+msgid "Context menu in the Scripts folder"
+msgstr "スクリプトフォルダー内のコンテキストメニュー"

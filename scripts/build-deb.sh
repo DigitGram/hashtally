@@ -64,6 +64,7 @@ Architecture: all
 Installed-Size: $SIZE
 Depends: python3 (>= 3.10), python3-gi, gir1.2-gtk-4.0, gir1.2-adw-1 (>= 1.5), shared-mime-info
 Recommends: nautilus | nemo | caja, gnupg
+Suggests: python3-nautilus
 Maintainer: DigitGram <120712067+DigitGram@users.noreply.github.com>
 Homepage: https://github.com/DigitGram/hashtally
 Description: Create and verify checksums from the Files right-click menu

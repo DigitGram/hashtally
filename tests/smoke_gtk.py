@@ -21,6 +21,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "src"))
 scratch = tempfile.TemporaryDirectory()  # the settings are read at import: the test must never touch the real ones
 os.environ.update(GSETTINGS_BACKEND="memory", GTK_A11Y="none", XDG_CONFIG_HOME=scratch.name)
 import core  # noqa: E402
+import i18n  # noqa: E402
 import ui_common  # noqa: E402
 import ui_compare  # noqa: E402
 import ui_create  # noqa: E402
@@ -486,6 +487,31 @@ def create_window_fits_its_page(app):
     return seen == (True, True) or seen
 
 
+def settings_tabs_fit_in_every_language(app):
+    """The tab names of the settings are written out in full in every language: the switcher gets the width it asks for."""
+    def switchers(widget):
+        found, child = [], widget.get_first_child()
+        while child:
+            found += ([child] if isinstance(child, Adw.ViewSwitcher) else []) + switchers(child)
+            child = child.get_next_sibling()
+        return found
+
+    cut = []
+    try:
+        for lang in dict.fromkeys(["en", *i18n.languages()]):
+            i18n.set_language(lang)
+            window = ui_settings.SettingsWindow(app)
+            window.present()
+            spin()
+            switcher = switchers(window)[0]
+            if switcher.get_width() < switcher.measure(Gtk.Orientation.HORIZONTAL, -1)[1]:
+                cut.append(lang)
+            window.destroy()
+    finally:
+        i18n.set_language("en")
+    return not cut or f"tab names are cut off in {cut}"
+
+
 def question_fits_a_fresh_window(app):
     """The settings reopen in a new language and ask about the restart at once, before the window has a width."""
     window = ui_settings.SettingsWindow(app)
@@ -599,7 +625,7 @@ def main():
         for check in (counts_open_their_files, detail_window_opens_again_after_closing, failed_files_are_checked_again, user_ids_split_and_keys_need_a_full_fingerprint, fingerprint_is_copied_without_spaces, import_asks_twice_and_only_then_fetches, empty_lines_stay_grey, gpg_is_awaited_aloud, paths_read_as_in_files, copy_leaves_blocks_out, own_hash_copied_by_hand_is_no_match,
                       names_that_are_no_utf8_open, thousands_never_freeze, none_found_is_the_problem, signature_comes_first,
                       bad_signature_takes_over, size_is_fixed, missing_files_show_in_the_ring, unchecked_signature_marks_the_green_ring, ring_parts_fit, compare_shows_the_verdict, autofill_says_where_it_came_from,
-                      unwritable_folder_stops_before_hashing, a_window_without_checksums_closes, files_without_checksums_share_one_window, create_window_fits_its_page, question_fits_a_fresh_window, two_files_are_compared, speed_test_opens_its_window, unlisted_files_get_a_line_that_is_no_verdict, an_existing_hash_file_is_added_to):
+                      unwritable_folder_stops_before_hashing, a_window_without_checksums_closes, files_without_checksums_share_one_window, create_window_fits_its_page, question_fits_a_fresh_window, settings_tabs_fit_in_every_language, two_files_are_compared, speed_test_opens_its_window, unlisted_files_get_a_line_that_is_no_verdict, an_existing_hash_file_is_added_to):
             if (result := check(app)) is not True:
                 failures.append(f"{check.__name__}: {result}")
         if not overwrite_is_confirmed(app):

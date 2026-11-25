@@ -755,3 +755,23 @@ msgstr "有可用更新:{version}"
 #: src/ui_settings.py
 msgid "Other"
 msgstr "其他"
+
+#: src/ui_settings.py
+msgid "Separate entry in the context menu"
+msgstr "在右键菜单中单独显示"
+
+#: src/ui_settings.py
+msgid "Only the entries that fit what you selected."
+msgstr "只显示与所选内容相符的菜单项。"
+
+#: src/ui_settings.py
+msgid "Needs the package python3-nautilus: sudo apt install python3-nautilus"
+msgstr "需要软件包 python3-nautilus：sudo apt install python3-nautilus"
+
+#: src/ui_settings.py
+msgid "Name of the entry"
+msgstr "菜单项名称"
+
+#: src/ui_settings.py
+msgid "Context menu in the Scripts folder"
+msgstr "脚本文件夹中的右键菜单"

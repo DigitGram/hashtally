@@ -169,6 +169,10 @@ installer. (The releases up to 1.3 have a separate `install.sh.asc` instead: `gp
 
 The *Scripts* entries are always listed, because Nautilus scripts cannot depend on the selection. All of them
 start with "HashTally:"; if you prefer, the settings collect them in one *HashTally* submenu.
+
+Optional, for **Files (Nautilus) only**: with the `python3-nautilus` package installed (`sudo apt install python3-nautilus`), turn on
+*Separate entry in the context menu* in the settings. HashTally then has an entry of its own that shows only what fits the selection
+and can be renamed; the *Scripts* entries are removed while it is on. HashTally never installs the package itself.
 <kbd>Ctrl</kbd>+<kbd>W</kbd> or <kbd>Esc</kbd> closes any HashTally window.
 
 ### Command line

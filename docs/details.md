@@ -53,6 +53,14 @@ window calculates (fewer is faster for large files), and whether the right-click
 file operation still running there may be cancelled. The settings page can also reset everything to the defaults, and shows
 the version and an About dialog.
 
+The *Context menu* tab can switch the right-click entries from the *Scripts* folder to a **separate entry** that Files loads from a
+`python3-nautilus` extension (the switch stays grey until that package is installed; HashTally never installs it, as that needs root).
+The entry is always a submenu, named *HashTally* unless you rename it, and it lists only what fits the selection: *Create* for any
+selection (and for an open folder's background), *Show or compare hash* for one file, *Compare files* for two, *Verify* when every
+selected file is a hash file. There is no 128 KiB limit, and the *Scripts* entries are removed while it is on, so nothing shows twice.
+It is Files only (Nemo and Caja keep their scripts); switching it on or off needs `nautilus -q` once. The settings window itself has two
+tabs, *General* and *Context menu*.
+
 ## Command line
 
 The output follows the installer: a banner, then one line per step marked `[✓]`, `[✗]`, `[!]` or `[i]`, without colours.

@@ -23,6 +23,7 @@ sys.path.insert(0, str(SRC))
 import cli  # noqa: E402
 import core  # noqa: E402
 import hashtally  # noqa: E402
+import nautilus_ext  # noqa: E402
 import i18n  # noqa: E402
 
 A = hashlib.sha256(b"alpha").hexdigest()
@@ -44,15 +45,16 @@ def environment(**values):
 @contextlib.contextmanager
 def settings_sandbox():
     """Scripts folder and settings file in a temporary directory; the language is restored afterwards."""
-    old, language = (core.SCRIPTS_DIR, core.CONFIG_FILE, core.FORKS), i18n._current
+    old, language = (core.SCRIPTS_DIR, core.CONFIG_FILE, core.FORKS, core.EXTENSION_FILE, core.MENU_FILE), i18n._current
     with tempfile.TemporaryDirectory() as tmp:
         core.SCRIPTS_DIR, core.CONFIG_FILE = Path(tmp, "scripts"), Path(tmp, "cfg", "config.json")
         core.FORKS = {"nemo": Path(tmp, "nemo"), "caja": Path(tmp, "caja")}  # never the real folders
+        core.EXTENSION_FILE, core.MENU_FILE = Path(tmp, "ext", "hashtally.py"), Path(tmp, "data", "menu.json")
         try:
             i18n.set_language("en")
             yield Path(tmp)
         finally:
-            core.SCRIPTS_DIR, core.CONFIG_FILE, core.FORKS = old
+            core.SCRIPTS_DIR, core.CONFIG_FILE, core.FORKS, core.EXTENSION_FILE, core.MENU_FILE = old
             i18n.set_language(language)
 
 
@@ -467,6 +469,54 @@ def test_install_scripts():
 
         core.install_scripts(remove_only=True)
         assert list(core.SCRIPTS_DIR.glob("HashTally: *")) == [] and foreign.is_file()
+
+
+def test_the_extension_offers_only_what_fits_the_selection():
+    assert nautilus_ext.HASHFILE_NAME.pattern == core._HASHFILE_NAME.pattern  # the extension stands alone and keeps its own copy
+    with tempfile.TemporaryDirectory() as tmp:
+        a, b, c, d = (Path(tmp, n) for n in ("a.iso", "b.iso", "SHA256SUMS", "x.sha256"))
+        for f in (a, b, c, d):
+            f.write_text("x")
+        folder = Path(tmp, "dir")
+        folder.mkdir()
+        assert nautilus_ext.entries_for([]) == []
+        assert nautilus_ext.entries_for([str(a)]) == ["--create", "--compare"]
+        assert nautilus_ext.entries_for([str(a), str(b)]) == ["--create", "--compare-files"]
+        assert nautilus_ext.entries_for([str(a), str(b), str(c)]) == ["--create"]
+        assert nautilus_ext.entries_for([str(c)]) == ["--create", "--compare", "--verify"]
+        assert nautilus_ext.entries_for([str(c), str(d)]) == ["--create", "--compare-files", "--verify"]
+        assert nautilus_ext.entries_for([str(folder)]) == ["--create"]
+        assert nautilus_ext.entries_for([str(a), str(folder)]) == ["--create"]
+        assert nautilus_ext.entries_for([str(folder)], folder=True) == ["--create"]
+
+
+def test_with_the_extension_on_the_scripts_folder_stays_empty_and_back():
+    with settings_sandbox(), mock.patch.object(core, "extension_available", lambda: True):
+        assert core.set_option("extension", True) is None
+        assert core.EXTENSION_FILE.read_text().splitlines()[1] == core.MARKER
+        menu = json.loads(core.MENU_FILE.read_text())
+        assert menu["name"] == "HashTally" and menu["labels"]["--verify"] == "Verify hash file"
+        core.set_option("menu_name", "My sums")  # the name is read when the menu opens: only the file is rewritten
+        assert json.loads(core.MENU_FILE.read_text())["name"] == "My sums"
+        assert not list(core.SCRIPTS_DIR.glob("HashTally: *"))  # no double entries
+        assert core.set_option("extension", False) is None
+        assert not core.EXTENSION_FILE.exists() and not core.MENU_FILE.exists() and len(list(core.SCRIPTS_DIR.glob("HashTally: *"))) == 4
+
+
+def test_without_python3_nautilus_the_extension_setting_falls_back_to_scripts():
+    with settings_sandbox(), mock.patch.object(core, "extension_available", lambda: False):
+        assert core.set_option("extension", True) is None
+        assert not core.EXTENSION_FILE.exists() and len(list(core.SCRIPTS_DIR.glob("HashTally: *"))) == 4
+
+
+def test_removing_the_entries_also_removes_the_extension_but_not_a_foreign_file():
+    with settings_sandbox(), mock.patch.object(core, "extension_available", lambda: True):
+        core.set_option("extension", True)
+        core.install_scripts(remove_only=True)
+        assert not core.EXTENSION_FILE.exists()
+        core.EXTENSION_FILE.write_text("# somebody else's\n")
+        core.install_scripts(remove_only=True)
+        assert core.EXTENSION_FILE.read_text() == "# somebody else's\n"
 
 
 def test_a_forks_folder_linked_to_the_files_one_keeps_its_entries():
@@ -1560,3 +1610,21 @@ if __name__ == "__main__":
         if name.startswith("test_"):
             test()
             print("ok", name)
+
+
+def test_extension_available_is_false_without_the_library():
+    with tempfile.TemporaryDirectory() as tmp, mock.patch.object(core.glob, "glob", lambda pattern: [tmp]):
+        assert core.extension_available() is False
+        Path(tmp, "libnautilus-python.so").write_text("")
+        assert core.extension_available() is True
+
+
+def test_the_menu_name_is_tidied_and_empty_means_the_default():
+    with settings_sandbox():
+        assert core.load_config()["menu_name"] == ""
+        core.set_option("menu_name", "  My   hashes \n")
+        assert core.load_config()["menu_name"] == "My hashes"
+        core.set_option("menu_name", "x" * 100)
+        assert len(core.load_config()["menu_name"]) == 40
+        core.set_option("menu_name", "")
+        assert core.load_config()["menu_name"] == ""

@@ -7,6 +7,7 @@ comparing pasted hashes, settings, and the Nautilus right-click scripts. Nothing
 """
 import contextlib
 import functools
+import glob
 import hashlib
 import json
 import os
@@ -647,6 +648,8 @@ def human_size(n):
 CONFIG_FILE = Path(os.environ.get("XDG_CONFIG_HOME") or "~/.config").expanduser() / "hashtally" / "config.json"
 DEFAULTS = {"language": "auto", "algorithm": "sha256", "clipboard": True, "unlisted": False, "compare_algos": list(ALGOS), "menu": "scripts",
             "update_check": False, "update_last": 0,  # weekly check at start: off until the user switches it on
+            "menu_name": "",  # the extension's submenu: empty = MENU_DIR
+            "extension": False,  # opt-in: entries from a nautilus-python extension (needs python3-nautilus) instead of the Scripts folder
             "integrated": False,  # the .deb creates the right-click entries at the first start (see first_run_entries)
             "copied": ""}  # the last value a window put on the clipboard itself: no window may take it back as "expected"
 
@@ -679,6 +682,8 @@ def set_option(key, value):
     The right-click entries depend on the language and the menu style, so changing either rebuilds them;
     returns an error text (file not writable, install_scripts()'s), else None.
     """
+    if key == "menu_name":
+        value = " ".join(str(value).split())[:40]  # one line, no padding, nothing a menu would choke on
     saved = {**load_config(), key: value}
     try:
         CONFIG_FILE.parent.mkdir(parents=True, exist_ok=True)
@@ -687,7 +692,7 @@ def set_option(key, value):
         return str(e)
     if key == "language":
         i18n.set_language(value)
-    return install_scripts() if key in ("language", "menu") else None
+    return install_scripts() if key in ("language", "menu", "extension", "menu_name") else None
 
 
 def reset_config():
@@ -823,11 +828,44 @@ def file_managers():
     return ["nautilus", *(fm for fm in FORKS if shutil.which(fm))]
 
 
+# --------------------------------------------------------------------------- the optional Nautilus extension
+# Instead of the Scripts folder the entries can come from a nautilus-python extension: they sit at the top of the menu and show
+# only what fits the selection, and there is no 128 KiB limit. It is opt-in (setting "extension") and needs python3-nautilus,
+# which the app never installs itself (that takes root). It is nautilus_ext.py, copied to Files' folder.
+
+EXTENSION_FILE = DATA / "nautilus-python/extensions/hashtally.py"
+EXTENSION_SOURCE = Path(__file__).resolve().parent / "nautilus_ext.py"
+MENU_FILE = DATA / "hashtally/menu.json"  # what the extension reads each time the menu opens (the same path is in nautilus_ext.py)
+
+
+def extension_available():
+    """True when Files can load Python extensions (python3-nautilus, for Files 43 and newer)."""
+    patterns = ("/usr/lib/*/nautilus/extensions-4", "/usr/lib64/nautilus/extensions-4", "/usr/lib/nautilus/extensions-4")
+    return any(Path(d, "libnautilus-python.so").exists() for pattern in patterns for d in glob.glob(pattern))
+
+
+def _apply_extension(on):
+    """Puts the extension and its menu texts in place when `on`, else takes them away (the file only if it is ours)."""
+    if on:
+        cfg = load_config()
+        menu = {"launcher": str(LAUNCHER), "name": cfg["menu_name"] or MENU_DIR, "labels": {flag: _(title) for flag, title in SCRIPT_ACTIONS.items()}}
+        MENU_FILE.parent.mkdir(parents=True, exist_ok=True)
+        MENU_FILE.write_text(json.dumps(menu, ensure_ascii=False))
+        EXTENSION_FILE.parent.mkdir(parents=True, exist_ok=True)
+        EXTENSION_FILE.write_text("#!/usr/bin/python3\n" + MARKER + "\n" + EXTENSION_SOURCE.read_text())
+    else:
+        MENU_FILE.unlink(missing_ok=True)
+        if _ours(EXTENSION_FILE):
+            EXTENSION_FILE.unlink()
+
+
 def install_scripts(remove_only=False):
     """(Re)create the right-click entries in the current language and menu style, dropping stale ones
     (any language, any style, even from an older translation), for Files and for each fork that is installed.
     Returns an error text, or None on success."""
     try:
+        via_extension = not remove_only and load_config()["extension"] and extension_available()  # then the Scripts folder stays empty: no double entries
+        _apply_extension(via_extension)
         seen = set()
         for fm, base in (("nautilus", SCRIPTS_DIR), *FORKS.items()):
             if base.resolve() in seen:  # linked to another one: a second pass would delete what the first wrote
@@ -838,7 +876,7 @@ def install_scripts(remove_only=False):
                 old.unlink()
             with contextlib.suppress(OSError):  # not there, or holds files that are not ours
                 folder.rmdir()
-            if remove_only or fm not in file_managers():
+            if remove_only or via_extension and fm == "nautilus" or fm not in file_managers():
                 continue  # a fork that is not installed gets no folder; its old entries are gone anyway
             for key, script in zip(SCRIPT_ACTIONS, menu_entries(base)):
                 script.parent.mkdir(parents=True, exist_ok=True)

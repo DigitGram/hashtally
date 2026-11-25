@@ -21,18 +21,23 @@ class SettingsWindow(BaseWindow):
     HAS_MENU = False
 
     def __init__(self, app):
-        super().__init__(app, _("Settings"), size=(560, 720))
+        super().__init__(app, _("Settings"), size=(720, 720))
         cfg = core.load_config()
-        page = Adw.PreferencesPage()
-        page.add(self._general_group(cfg))
-        page.add(self._context_group(cfg))
+        general, menu = Adw.PreferencesPage(), Adw.PreferencesPage()
+        general.add(self._general_group(cfg))
         if core.update_check_offered():
-            page.add(self._update_row())
-        page.add(self._info_group())
-        self.show_page("settings", page)
+            general.add(self._update_row())
+        general.add(self._info_group())
+        menu.add(self._context_group(cfg))
+        stack = Adw.ViewStack()
+        for page, title, icon in ((general, _("General"), "preferences-system-symbolic"),
+                                  (menu, _("Context menu"), "view-list-symbolic")):
+            stack.add_titled_with_icon(page, title, title, icon)
+        self.header.set_title_widget(Adw.ViewSwitcher(stack=stack, policy=Adw.ViewSwitcherPolicy.WIDE))
+        self.show_page("settings", stack)
 
     def _general_group(self, cfg):
-        prefs = Adw.PreferencesGroup(title=_("General"))
+        prefs = Adw.PreferencesGroup()  # the tab is called "General"
         for key, (title, options, subtitle) in core.setting_choices().items():
             prefs.add(combo_row(title, options, cfg[key], lambda value, key=key: self.apply(key, value), subtitle))
         clipboard = Adw.SwitchRow(title=_("Compare with clipboard automatically"),
@@ -82,12 +87,41 @@ class SettingsWindow(BaseWindow):
         return self.algo_expander
 
     def _context_group(self, cfg):
-        menu = combo_row(_("Entries"), {"scripts": _("Under Scripts"), "folder": _("In a submenu")}, cfg["menu"],
-                         lambda value: self.apply("menu", value))
-        context = Adw.PreferencesGroup(title=_("Context menu"),
-                                       description=_("In the submenu “HashTally” they take one more click."))
-        context.add(menu)
+        """Two ways to get the right-click entries, exactly one on: the Scripts folder (with its menu style) or a separate entry
+        of its own (with its name). Each switch greys the settings of the other way."""
+        available = core.extension_available()
+        own = cfg["extension"] and available
+        self.scripts_row = Adw.SwitchRow(title=_("Context menu in the Scripts folder"), active=not own)
+        self.entries_row = combo_row(_("Entries"), {"scripts": _("Under Scripts"), "folder": _("In a submenu")}, cfg["menu"],
+                                     lambda value: self.apply("menu", value),
+                                     _("In the submenu “HashTally” they take one more click."))
+        self.entries_row.set_sensitive(not own)
+        self.extension_row = Adw.SwitchRow(title=_("Separate entry in the context menu"), active=own, sensitive=available,
+                                           subtitle=_("Only the entries that fit what you selected.") if available
+                                           else _("Needs the package python3-nautilus: sudo apt install python3-nautilus"))
+        self.name_row = Adw.EntryRow(title=_("Name of the entry"), text=cfg["menu_name"] or core.MENU_DIR, show_apply_button=True, sensitive=own)
+        self.name_row.connect("apply", lambda row: self.apply("menu_name", "" if row.get_text().strip() in ("", core.MENU_DIR) else row.get_text()))
+        self.scripts_row.connect("notify::active", lambda row, _p: self._way_toggled(row, self.extension_row, False))
+        self.extension_row.connect("notify::active", lambda row, _p: self._way_toggled(row, self.scripts_row, True))
+        context = Adw.PreferencesGroup()
+        for row in (self.scripts_row, self.entries_row, self.extension_row, self.name_row):
+            context.add(row)
         return context
+
+    def _way_toggled(self, row, other, own):
+        """`row` was switched; `own`: it is the separate entry. Exactly one way is on: switching one on switches the other off,
+        and switching the one that is on off switches the other on (they act like one toggle).
+        shortcut: no way to have no entry at all; upgrade if users ask for it."""
+        if getattr(self, "_switching", False) or self.scripts_row.get_active() != self.extension_row.get_active():
+            return  # ours, or a late notice of a change we made: exactly one is on, nothing to do
+        self._switching = True
+        try:
+            other.set_active(not row.get_active())
+            self.entries_row.set_sensitive(not self.extension_row.get_active())
+            self.name_row.set_sensitive(self.extension_row.get_active())
+        finally:
+            self._switching = False
+        self.apply("extension", self.extension_row.get_active())
 
     def _info_group(self):
         reset = Gtk.Button(label=_("Reset"), valign=Gtk.Align.CENTER, css_classes=["destructive-action"])
@@ -173,14 +207,14 @@ class SettingsWindow(BaseWindow):
         before = core.menu_entries()
         error = core.set_option(key, value)
         # idle: a language change replaces this window, which must not happen inside its own drop-down's signal
-        GLib.idle_add(self.finish_change, before, error, key == "language")
+        GLib.idle_add(self.finish_change, before, error, key == "language", key == "extension")
 
-    def finish_change(self, before, error, reopen):
+    def finish_change(self, before, error, reopen, forced=False):
         """Shows the error, or offers a restart to each running file manager that would list other entries than before."""
         window = self.reopen() if reopen else self
         if error:
             window.toast(error)
-        elif core.menu_entries() != before and (running := core.files_running(core.file_managers())):
+        elif (forced or core.menu_entries() != before) and (running := core.files_running(core.file_managers())):
             window.offer_restart(running)
 
     def reopen(self):

@@ -5,7 +5,7 @@
 The installer copies `src/` to `~/.local/share/hashtally/`, links `~/.local/bin/hashtally`,
 and registers a desktop entry, a *hash file* MIME type and the icons. The right-click
 entries are small Nautilus scripts (and Nemo/Caja scripts, when installed) that `hashtally` writes itself, named in the current
-language. `core.py` holds all logic (no UI code), including the call to `gpg`; the `ui_*.py` modules only show it.
+language. Optionally (setting `extension`, needs `python3-nautilus`) a copy of `nautilus_ext.py` in `~/.local/share/nautilus-python/extensions/` (standalone: all extensions share one process inside Files; its texts come from `menu.json`) replaces the scripts. `core.py` holds all logic (no UI code), including the call to `gpg`; the `ui_*.py` modules only show it.
 
 ## Project layout
 
