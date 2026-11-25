@@ -647,6 +647,7 @@ def human_size(n):
 CONFIG_FILE = Path(os.environ.get("XDG_CONFIG_HOME") or "~/.config").expanduser() / "hashtally" / "config.json"
 DEFAULTS = {"language": "auto", "algorithm": "sha256", "clipboard": True, "unlisted": False, "compare_algos": list(ALGOS), "menu": "scripts",
             "update_check": False, "update_last": 0,  # weekly check at start: off until the user switches it on
+            "integrated": False,  # the .deb creates the right-click entries at the first start (see first_run_entries)
             "copied": ""}  # the last value a window put on the clipboard itself: no window may take it back as "expected"
 
 
@@ -706,6 +707,9 @@ def reset_config():
 RELEASES_API = "https://api.github.com/repos/DigitGram/hashtally/releases/latest"
 UPDATE_INTERVAL = 7 * 24 * 3600
 update_found = None  # (version, page) of a newer release, once one was found: the settings show it at once
+
+
+PACKAGED = Path(__file__).resolve().is_relative_to("/usr")  # the .deb: the program sits below /usr, not in the user's home
 
 
 def update_check_offered():
@@ -782,7 +786,7 @@ MENU_DIR = "HashTally"  # the same entries as a submenu: Nautilus shows script f
 
 # Never change this text: older entries are recognised only by this line, so a new wording would orphan them all.
 MARKER = "# Written by HashTally from its settings, replaced or deleted whenever they change"
-LAUNCHER = Path("~/.local/bin/hashtally").expanduser()  # where install.sh puts it: a run from a checkout must not bind the menu to itself
+LAUNCHER = Path("/usr/bin/hashtally") if PACKAGED else Path("~/.local/bin/hashtally").expanduser()  # where the .deb or install.sh puts it: a run from a checkout must not bind the menu to itself
 
 
 def script_text(flag):
@@ -843,6 +847,14 @@ def install_scripts(remove_only=False):
     except (OSError, RuntimeError) as e:  # RuntimeError: resolve() on a symlink loop
         return str(e)
     return None
+
+
+def first_run_entries():
+    """The .deb cannot write into the users' homes, so its first start creates the right-click entries, once.
+    True if it did now (the file managers then need a restart to show them)."""
+    if not PACKAGED or load_config()["integrated"]:
+        return False
+    return install_scripts() is None and set_option("integrated", True) is None
 
 
 # --------------------------------------------------------------------------- restarting the file managers

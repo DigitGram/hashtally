@@ -96,6 +96,7 @@ def run(mode, paths):
     def activate(app):
         Gtk.Window.set_default_icon_name(APP_ID)
         load_css()
+        fresh = core.first_run_entries()
         if mode != "settings" and not paths:  # e.g. the Scripts menu of Files' empty background
             window = BaseWindow(app, _("No file selected"), size=(420, 300))
             window.show_page("error", status_page("dialog-warning-symbolic", _("No file selected")))
@@ -119,6 +120,8 @@ def run(mode, paths):
             windows = [SettingsWindow(app)]
         for window in windows:
             window.present()
+        if fresh and mode == "settings" and (running := core.files_running(core.file_managers())):
+            windows[0].offer_restart(running)
         if windows and mode != "settings":  # the settings window has its own button
             weekly_update_check(windows[0])
 
