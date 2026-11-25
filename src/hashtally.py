@@ -43,6 +43,8 @@ def main():
     parser.add_argument("--prune", action="store_true", help="with --update: also drop the entries of files that no longer exist")
     parser.add_argument("--version", action="version", version=f"HashTally {core.__version__}")
     args = parser.parse_args()
+    if args.prune and not args.update:
+        parser.error("--prune only works together with --update")  # not silently ignored: the entries would stay
 
     cfg = core.load_config()
     i18n.set_language(cfg["language"])

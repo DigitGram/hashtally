@@ -1417,6 +1417,24 @@ def test_gui_asks_for_the_window_even_in_a_terminal_and_settings_always_is_one()
         assert code is None and out == "" and opened == [("settings", [])]
 
 
+def test_prune_without_update_is_an_error_not_silently_ignored():
+    with tempfile.TemporaryDirectory() as tmp:
+        cli_folder(tmp)
+        assert run_main(["--create", "--prune", str(Path(tmp, "a.txt"))], tty=True)[0] == 2  # argparse's usage error
+        assert run_main(["--create", "--update", "--prune", str(Path(tmp, "a.txt"))], tty=True)[0] in (0, 1)  # together they are accepted
+
+
+def test_a_file_that_vanishes_before_the_compare_is_an_error_message_not_a_traceback():
+    with tempfile.TemporaryDirectory() as tmp:
+        a = Path(tmp, "a")
+        a.write_bytes(b"x")
+        for call in (lambda: cli.compare_files(str(a), str(Path(tmp, "gone"))), lambda: cli.compare_files(str(Path(tmp, "gone")), str(a))):
+            code, _out, err = run_cli(call)
+            assert code == cli.USAGE and err.startswith("hashtally:"), (code, err)
+        with mock.patch("os.path.getsize", side_effect=FileNotFoundError("gone")):  # the only file of a one-file compare vanishes
+            assert run_cli(cli.compare, [str(a)])[0] == cli.USAGE
+
+
 def test_the_terminal_modes_get_their_options_and_hand_back_the_exit_code():
     with tempfile.TemporaryDirectory() as tmp:
         Path(tmp, "a.txt").write_bytes(b"alpha")

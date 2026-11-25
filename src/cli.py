@@ -306,11 +306,14 @@ def create(paths, algo, out, force, quiet=False, update=False, prune=False):
 def compare_files(a, b, quiet=False):
     """Two files: identical or not, by SHA-256 (files of different sizes are not read)."""
     _banner(quiet)
-    for path in (a, b):
-        _line(f"{os.path.basename(path)}  ·  {core.human_size(os.path.getsize(path))}  ·  modified {_date(os.path.getmtime(path))}", INFO)
-        _line(core.shown(os.path.dirname(path)), indent=6)
-    print()
-    progress = Progress(os.path.getsize(a) + os.path.getsize(b))
+    try:  # a file may vanish between the check and here
+        for path in (a, b):
+            _line(f"{os.path.basename(path)}  ·  {core.human_size(os.path.getsize(path))}  ·  modified {_date(os.path.getmtime(path))}", INFO)
+            _line(core.shown(os.path.dirname(path)), indent=6)
+        print()
+        progress = Progress(os.path.getsize(a) + os.path.getsize(b))
+    except OSError as exc:
+        return _fail(str(exc))
     progress.label = _("Calculating hashes …")
     try:
         same, da, db = core.compare_files(a, b, progress)
@@ -349,9 +352,12 @@ def compare(args, quiet=False):
     path = paths[0]
     algos = core.compare_algos()
     extra = ["blake2b"] if "sha512" in algos else []  # a pasted b2sum is as long as a SHA-512
-    size = os.path.getsize(path)
+    try:  # the file may vanish between the check and here
+        size, modified = os.path.getsize(path), os.path.getmtime(path)
+    except OSError as exc:
+        return _fail(str(exc))
     _banner(quiet)
-    _line(f"{os.path.basename(path)}  ·  {core.human_size(size)}  ·  modified {_date(os.path.getmtime(path))}", INFO)
+    _line(f"{os.path.basename(path)}  ·  {core.human_size(size)}  ·  modified {_date(modified)}", INFO)
     _line(core.shown(os.path.dirname(path)), indent=6)
     print()
     progress = Progress(size)
