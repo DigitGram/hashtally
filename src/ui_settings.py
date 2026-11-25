@@ -23,15 +23,18 @@ class SettingsWindow(BaseWindow):
     def __init__(self, app):
         super().__init__(app, _("Settings"), size=(720, 720))
         cfg = core.load_config()
-        general, menu = Adw.PreferencesPage(), Adw.PreferencesPage()
+        general, menu, updates = Adw.PreferencesPage(), Adw.PreferencesPage(), Adw.PreferencesPage()
         general.add(self._general_group(cfg))
-        if core.update_check_offered():
-            general.add(self._update_row())
         general.add(self._info_group())
         menu.add(self._context_group(cfg))
+        if core.update_check_offered():
+            updates.add(self._update_row())
         stack = Adw.ViewStack()
         for page, title, icon in ((general, _("General"), "preferences-system-symbolic"),
-                                  (menu, _("Context menu"), "view-list-symbolic")):
+                                  (menu, _("Context menu"), "view-list-symbolic"),
+                                  (updates, _("Updates"), "software-update-available-symbolic")):
+            if page is updates and not core.update_check_offered():  # a Flatpak updates through its store
+                continue
             stack.add_titled_with_icon(page, title, title, icon)
         self.header.set_title_widget(Adw.ViewSwitcher(stack=stack, policy=Adw.ViewSwitcherPolicy.WIDE))
         self.show_page("settings", stack)
@@ -148,7 +151,7 @@ class SettingsWindow(BaseWindow):
         self.update_row = now = Adw.ActionRow(title=_("Installed version: {version}").format(version=core.__version__))
         now.add_suffix(self.update_button)
         now.set_activatable_widget(self.update_button)
-        group = Adw.PreferencesGroup(title=_("Updates"))
+        group = Adw.PreferencesGroup()  # the tab is called "Updates"
         group.add(row)
         group.add(now)
         if core.update_found:  # the weekly check at start already found one
