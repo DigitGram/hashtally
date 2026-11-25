@@ -16,6 +16,7 @@ jobs:
       - run: sudo apt-get update && sudo apt-get install -y --no-install-recommends python3-gi python3-gi-cairo gir1.2-adw-1 xvfb dbus-x11
       - run: xvfb-run -a dbus-run-session -- /usr/bin/python3 tests/smoke_gtk.py  # system Python: it has the GTK bindings
       - run: tests/install_test.sh  # here, not in the container below: install.sh refuses root
+      - run: scripts/build-deb.sh "$RUNNER_TEMP" && dpkg-deb -I "$RUNNER_TEMP"/hashtally_*_all.deb && shellcheck scripts/build-deb.sh
 
   ubuntu-26-04:  # the newest GNOME we support: newer GTK lays out and newer Python behaves differently from the job above
     runs-on: ubuntu-latest
@@ -27,3 +28,40 @@ jobs:
       - run: apt-get update && apt-get install -y --no-install-recommends python3 python3-gi python3-gi-cairo gir1.2-adw-1 xvfb xauth dbus dbus-x11 gnupg fonts-dejavu-core
       - run: python3 tests/test_core.py
       - run: xvfb-run -a dbus-run-session -- python3 tests/smoke_gtk.py
+
+  deb:  # the .deb on a clean system: it must install with its dependencies, start and leave nothing behind
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        image: ["ubuntu:24.04", "ubuntu:26.04", "debian:13"]
+    container: ${{ matrix.image }}
+    env:
+      DEBIAN_FRONTEND: noninteractive
+    steps:
+      - uses: actions/checkout@v4
+      - run: apt-get update && apt-get install -y --no-install-recommends shellcheck xvfb xauth fonts-dejavu-core
+      - run: shellcheck scripts/build-deb.sh
+      - run: scripts/build-deb.sh "$RUNNER_TEMP"
+      - name: install it; apt pulls in the dependencies
+        run: apt-get install -y --no-install-recommends "$RUNNER_TEMP"/hashtally_*_all.deb
+      - name: files and version
+        run: |
+          test "$(hashtally --version)" = "HashTally $(sed -n 's/^VERSION="\([^"]*\)".*/\1/p' install.sh)"
+          test -f /usr/share/applications/io.github.digitgram.HashTally.desktop
+          test -f /usr/share/icons/hicolor/256x256/apps/io.github.digitgram.HashTally.png
+          test -d /usr/share/hashtally/__pycache__   # postinst compiled it
+      - name: the first start creates the right-click entries, once
+        run: |
+          export HOME="$(mktemp -d)"
+          unset XDG_DATA_HOME XDG_CONFIG_HOME
+          cd /usr/share/hashtally
+          python3 -I -c "import sys; sys.path.insert(0, '.'); import core; assert core.PACKAGED and core.first_run_entries() and not core.first_run_entries()"
+          ls "$HOME/.local/share/nautilus/scripts"/HashTally* >/dev/null
+      - name: remove and purge leave nothing behind
+        run: |
+          apt-get remove -y hashtally
+          test ! -e /usr/share/hashtally
+          test ! -e /usr/bin/hashtally
+          apt-get purge -y hashtally
+          ! dpkg -s hashtally 2>/dev/null
