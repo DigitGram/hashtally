@@ -48,6 +48,7 @@ def main():
 
     cfg = core.load_config()
     i18n.set_language(cfg["language"])
+    core.sync_entries()  # python3-nautilus gone since the last start: back to the Scripts entries
     if args.mode in ("install-scripts", "remove-scripts"):
         sys.exit(core.install_scripts(remove_only=args.mode == "remove-scripts"))  # an error text, or None
 

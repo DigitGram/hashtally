@@ -1421,7 +1421,7 @@ def test_prune_without_update_is_an_error_not_silently_ignored():
     with tempfile.TemporaryDirectory() as tmp:
         cli_folder(tmp)
         assert run_main(["--create", "--prune", str(Path(tmp, "a.txt"))], tty=True)[0] == 2  # argparse's usage error
-        assert run_main(["--create", "--update", "--prune", str(Path(tmp, "a.txt"))], tty=True)[0] in (0, 1)  # together they are accepted
+        assert run_main(["--create", "--update", "--prune", str(Path(tmp, "a.txt"))], tty=True)[0] == 0  # together they are accepted
 
 
 def test_a_file_that_vanishes_before_the_compare_is_an_error_message_not_a_traceback():
@@ -1623,13 +1623,6 @@ def test_update_check():
             core.CONFIG_FILE = old_file
 
 
-if __name__ == "__main__":
-    for name, test in sorted(globals().items()):
-        if name.startswith("test_"):
-            test()
-            print("ok", name)
-
-
 def test_extension_available_is_false_without_the_library():
     with tempfile.TemporaryDirectory() as tmp, mock.patch.object(core.glob, "glob", lambda pattern: [tmp]):
         assert core.extension_available() is False
@@ -1646,3 +1639,68 @@ def test_the_menu_name_is_tidied_and_empty_means_the_default():
         assert len(core.load_config()["menu_name"]) == 40
         core.set_option("menu_name", "")
         assert core.load_config()["menu_name"] == ""
+
+
+def test_a_file_that_is_not_ours_is_never_replaced_by_the_extension():
+    with settings_sandbox(), mock.patch.object(core, "extension_available", lambda: True):
+        core.EXTENSION_FILE.parent.mkdir(parents=True)
+        core.EXTENSION_FILE.write_text("# somebody else's extension\n")
+        error = core.set_option("extension", True)
+        assert error and str(core.EXTENSION_FILE) in error
+        assert core.EXTENSION_FILE.read_text() == "# somebody else's extension\n" and not core.MENU_FILE.exists()
+        assert core.load_config()["extension"] is False  # the setting does not claim what did not happen
+        assert len(list(core.SCRIPTS_DIR.glob("HashTally: *"))) == 4  # the Scripts entries stay
+
+
+def test_when_python3_nautilus_goes_away_the_scripts_come_back():
+    with settings_sandbox():
+        with mock.patch.object(core, "extension_available", lambda: True):
+            core.set_option("extension", True)
+            assert core.EXTENSION_FILE.is_file() and not list(core.SCRIPTS_DIR.glob("HashTally: *"))
+        with mock.patch.object(core, "extension_available", lambda: False):
+            core.sync_entries()
+            assert len(list(core.SCRIPTS_DIR.glob("HashTally: *"))) == 4
+            assert not core.EXTENSION_FILE.exists() and not core.MENU_FILE.exists()
+            core.sync_entries()  # nothing left to do: no error and no change
+            assert len(list(core.SCRIPTS_DIR.glob("HashTally: *"))) == 4
+
+
+def test_a_fork_linked_to_the_files_folder_keeps_its_entries_with_the_extension_on():
+    with settings_sandbox(), mock.patch.object(core, "extension_available", lambda: True), \
+            mock.patch.object(core.shutil, "which", lambda name: "/usr/bin/nemo" if name == "nemo" else None):
+        core.SCRIPTS_DIR.mkdir()
+        core.FORKS["nemo"].symlink_to(core.SCRIPTS_DIR)
+        assert core.set_option("extension", True) is None
+        assert len(list(core.SCRIPTS_DIR.glob("HashTally: *"))) == 4  # Nemo has no extension: it needs them
+
+
+def test_a_hand_edited_menu_name_is_tidied_when_it_is_read():
+    with settings_sandbox():
+        core.CONFIG_FILE.parent.mkdir(parents=True)
+        core.CONFIG_FILE.write_text(json.dumps({"menu_name": "  a \n  b " + "x" * 100}))
+        name = core.load_config()["menu_name"]
+        assert name.startswith("a b x") and len(name) == 40
+
+
+def test_the_extension_survives_a_bad_menu_file_and_shows_a_plain_underscore():
+    if nautilus_ext.Nautilus is None:  # CI without python3-nautilus
+        return
+    with tempfile.TemporaryDirectory() as tmp, mock.patch.object(nautilus_ext, "MENU_FILE", Path(tmp, "menu.json")):
+        menu, target = nautilus_ext.HashTallyMenu(), str(Path(tmp, "f"))
+        Path(target).write_text("x")
+        assert menu._menu([target]) == []  # not written yet
+        for text in ("[]", "{}", "not json", '{"name": 1, "labels": []}'):
+            Path(tmp, "menu.json").write_text(text)
+            assert menu._menu([target]) == [], text
+        Path(tmp, "menu.json").write_text(json.dumps({"launcher": "/bin/true", "name": "My_sums", "labels": {f: f for f in nautilus_ext.ORDER}}))
+        items = menu._menu([target])
+        assert [i.props.label for i in items] == ["My__sums"]  # "__" is a plain underscore in a GTK menu
+
+
+
+if __name__ == "__main__":
+    for name, test in sorted(globals().items()):
+        if name.startswith("test_"):
+            test()
+            print("ok", name)
+

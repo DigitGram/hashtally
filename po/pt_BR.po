@@ -787,3 +787,8 @@ msgstr "Menu de contexto na pasta Scripts"
 #: src/ui_settings.py
 msgid "Checksums"
 msgstr "Checksums"
+
+#: src/core.py
+#, python-brace-format
+msgid "Not changed: {path} is not a file of HashTally."
+msgstr "Não alterado: {path} não é um arquivo do HashTally."

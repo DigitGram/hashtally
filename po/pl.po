@@ -795,3 +795,8 @@ msgstr "Menu kontekstowe w folderze Skrypty"
 #: src/ui_settings.py
 msgid "Checksums"
 msgstr "Sumy kontrolne"
+
+#: src/core.py
+#, python-brace-format
+msgid "Not changed: {path} is not a file of HashTally."
+msgstr "Bez zmian: {path} nie jest plikiem HashTally."

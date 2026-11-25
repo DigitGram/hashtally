@@ -95,7 +95,7 @@ class SettingsWindow(BaseWindow):
         of its own (with its name). Each switch greys the settings of the other way."""
         available = core.extension_available()
         own = cfg["extension"] and available
-        self.scripts_row = Adw.SwitchRow(title=_("Context menu in the Scripts folder"), active=not own)
+        self.scripts_row = Adw.SwitchRow(title=_("Context menu in the Scripts folder"), active=not own, sensitive=available)  # the only way without the package
         self.entries_row = combo_row(_("Entries"), {"scripts": _("Under Scripts"), "folder": _("In a submenu")}, cfg["menu"],
                                      lambda value: self.apply("menu", value),
                                      _("In the submenu “HashTally” they take one more click."))
@@ -220,8 +220,19 @@ class SettingsWindow(BaseWindow):
         window = self.reopen() if reopen else self
         if error:
             window.toast(error)
+            window._show_saved_way()  # the switches show what is saved, not what was asked for
         elif (forced or core.menu_entries() != before) and (running := core.files_running(core.file_managers())):
             window.offer_restart(running)
+
+    def _show_saved_way(self):
+        """Puts the two switches and the settings that go with them in the state that is saved."""
+        own = core.load_config()["extension"] and core.extension_available()
+        self._switching = True
+        self.extension_row.set_active(own)
+        self.scripts_row.set_active(not own)
+        self._switching = False
+        self.entries_row.set_sensitive(not own)
+        self.name_row.set_sensitive(own)
 
     def reopen(self):
         """A new window shows the new language or the defaults."""

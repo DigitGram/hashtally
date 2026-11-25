@@ -795,3 +795,8 @@ msgstr "Контекстне меню в теці «Скрипти»"
 #: src/ui_settings.py
 msgid "Checksums"
 msgstr "Контрольні суми"
+
+#: src/core.py
+#, python-brace-format
+msgid "Not changed: {path} is not a file of HashTally."
+msgstr "Не змінено: {path} не є файлом HashTally."

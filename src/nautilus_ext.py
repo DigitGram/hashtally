@@ -50,19 +50,27 @@ if Nautilus:
         def _menu(self, paths, folder=False):
             try:
                 config = json.loads(MENU_FILE.read_text())
-            except (OSError, ValueError):
-                return []  # not written yet: no entries rather than wrong ones
-            flags = entries_for(paths, folder)
-            if not flags:
-                return []
-            top = Nautilus.MenuItem(name="HashTally::menu", label=config["name"])  # always one submenu: four loose entries would crowd the menu
-            sub = Nautilus.Menu()
-            top.set_submenu(sub)
-            for flag in flags:
-                item = Nautilus.MenuItem(name=f"HashTally::{flag.lstrip('-')}", label=config["labels"][flag])
-                item.connect("activate", lambda _item, flag=flag: subprocess.Popen([config["launcher"], flag, "--", *paths], start_new_session=True))
-                sub.append_item(item)
-            return [top]
+                flags = entries_for(paths, folder)
+                if not flags:
+                    return []
+                # always one submenu: four loose entries would crowd the menu; "_" would be taken for a mnemonic, "__" is a plain one
+                top = Nautilus.MenuItem(name="HashTally::menu", label=str(config["name"]).replace("_", "__"))
+                sub = Nautilus.Menu()
+                top.set_submenu(sub)
+                for flag in flags:
+                    item = Nautilus.MenuItem(name=f"HashTally::{flag.lstrip('-')}", label=str(config["labels"][flag]))
+                    item.connect("activate", lambda _item, flag=flag: self._run(config["launcher"], flag, paths))
+                    sub.append_item(item)
+                return [top]
+            except (OSError, ValueError, KeyError, TypeError, AttributeError):
+                return []  # not written yet, from another version or edited by hand: no entries rather than an error at every right click
+
+        @staticmethod
+        def _run(launcher, flag, paths):
+            try:
+                subprocess.Popen([launcher, flag, "--", *paths], start_new_session=True)
+            except OSError:
+                pass  # the program is gone (package removed): nothing to start
 
         @staticmethod
         def _local(file_info):

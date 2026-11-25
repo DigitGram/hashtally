@@ -672,6 +672,7 @@ def load_config():
         choices = allowed()
         config.update({k: v for k, v in saved.items()
                        if k in DEFAULTS and type(v) is type(DEFAULTS[k]) and v in choices.get(k, (v,))})
+    config["menu_name"] = " ".join(config["menu_name"].split())[:40]  # a hand-edited name is tidied like a typed one
     return config
 
 
@@ -692,7 +693,10 @@ def set_option(key, value):
         return str(e)
     if key == "language":
         i18n.set_language(value)
-    return install_scripts() if key in ("language", "menu", "extension", "menu_name") else None
+    error = install_scripts() if key in ("language", "menu", "extension", "menu_name") else None
+    if error and key == "extension" and value:  # it could not be put in place: the setting must not claim it is
+        set_option("extension", False)
+    return error
 
 
 def reset_config():
@@ -845,32 +849,51 @@ def extension_available():
 
 
 def _apply_extension(on):
-    """Puts the extension and its menu texts in place when `on`, else takes them away (the file only if it is ours)."""
+    """Puts the extension and its menu texts in place when `on`, else takes them away (the file only if it is ours).
+    Returns an error text, or None. A file of that name that is not ours is never replaced."""
     if on:
+        if (EXTENSION_FILE.exists() or EXTENSION_FILE.is_symlink()) and not _ours(EXTENSION_FILE):
+            return _("Not changed: {path} is not a file of HashTally.").format(path=EXTENSION_FILE)
         cfg = load_config()
         menu = {"launcher": str(LAUNCHER), "name": cfg["menu_name"] or MENU_DIR, "labels": {flag: _(title) for flag, title in SCRIPT_ACTIONS.items()}}
         MENU_FILE.parent.mkdir(parents=True, exist_ok=True)
-        MENU_FILE.write_text(json.dumps(menu, ensure_ascii=False))
+        write_atomic(MENU_FILE, json.dumps(menu, ensure_ascii=False))  # the extension reads it each time the menu opens: never half written
         EXTENSION_FILE.parent.mkdir(parents=True, exist_ok=True)
-        EXTENSION_FILE.write_text("#!/usr/bin/python3\n" + MARKER + "\n" + EXTENSION_SOURCE.read_text())
+        write_atomic(EXTENSION_FILE, "#!/usr/bin/python3\n" + MARKER + "\n" + EXTENSION_SOURCE.read_text())
     else:
         MENU_FILE.unlink(missing_ok=True)
         if _ours(EXTENSION_FILE):
             EXTENSION_FILE.unlink()
+    return None
+
+
+def sync_entries():
+    """The setting says "separate entry" but Files cannot load extensions any more (python3-nautilus was removed): the Scripts
+    entries are gone and the extension does nothing, so there would be no entry at all. Back to the Scripts entries then."""
+    if load_config()["extension"] and not extension_available():
+        stale = _ours(EXTENSION_FILE) or MENU_FILE.exists()
+        none = not list(SCRIPTS_DIR.glob(SCRIPT_PREFIX + "*")) and not (SCRIPTS_DIR / MENU_DIR).is_dir()
+        if stale or none:
+            install_scripts()
 
 
 def install_scripts(remove_only=False):
     """(Re)create the right-click entries in the current language and menu style, dropping stale ones
     (any language, any style, even from an older translation), for Files and for each fork that is installed.
     Returns an error text, or None on success."""
+    problem = None
     try:
         via_extension = not remove_only and load_config()["extension"] and extension_available()  # then the Scripts folder stays empty: no double entries
-        _apply_extension(via_extension)
+        if via_extension and (problem := _apply_extension(True)):
+            via_extension = False  # not ours to replace: the Scripts entries stay
+        elif not via_extension:
+            _apply_extension(False)
         seen = set()
         for fm, base in (("nautilus", SCRIPTS_DIR), *FORKS.items()):
             if base.resolve() in seen:  # linked to another one: a second pass would delete what the first wrote
                 continue
-            seen.add(base.resolve())
+            if not (via_extension and fm == "nautilus"):  # that pass writes nothing: a fork linked to its folder still needs its turn
+                seen.add(base.resolve())
             folder = base / MENU_DIR
             for old in [*base.glob(SCRIPT_PREFIX + "*"), *(p for p in folder.glob("*") if _ours(p))]:
                 old.unlink()
@@ -884,7 +907,7 @@ def install_scripts(remove_only=False):
                 script.chmod(0o755)
     except (OSError, RuntimeError) as e:  # RuntimeError: resolve() on a symlink loop
         return str(e)
-    return None
+    return problem
 
 
 def first_run_entries():

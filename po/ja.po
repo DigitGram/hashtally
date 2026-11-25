@@ -779,3 +779,8 @@ msgstr "スクリプトフォルダー内のコンテキストメニュー"
 #: src/ui_settings.py
 msgid "Checksums"
 msgstr "チェックサム"
+
+#: src/core.py
+#, python-brace-format
+msgid "Not changed: {path} is not a file of HashTally."
+msgstr "変更しませんでした: {path} は HashTally のファイルではありません。"

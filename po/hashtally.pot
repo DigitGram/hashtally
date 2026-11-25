@@ -789,3 +789,8 @@ msgstr ""
 #: src/ui_settings.py
 msgid "Checksums"
 msgstr ""
+
+#: src/core.py
+#, python-brace-format
+msgid "Not changed: {path} is not a file of HashTally."
+msgstr ""

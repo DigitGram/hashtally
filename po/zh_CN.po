@@ -779,3 +779,8 @@ msgstr "脚本文件夹中的右键菜单"
 #: src/ui_settings.py
 msgid "Checksums"
 msgstr "校验和"
+
+#: src/core.py
+#, python-brace-format
+msgid "Not changed: {path} is not a file of HashTally."
+msgstr "未更改：{path} 不是 HashTally 的文件。"
