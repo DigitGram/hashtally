@@ -785,3 +785,7 @@ msgstr ""
 #: src/ui_settings.py
 msgid "Context menu in the Scripts folder"
 msgstr ""
+
+#: src/ui_settings.py
+msgid "Checksums"
+msgstr ""

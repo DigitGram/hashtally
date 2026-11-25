@@ -25,7 +25,7 @@ class SettingsWindow(BaseWindow):
         cfg = core.load_config()
         general, menu, updates = Adw.PreferencesPage(), Adw.PreferencesPage(), Adw.PreferencesPage()
         general.add(self._general_group(cfg))
-        general.add(self._info_group())
+        general.add(self._info_group(cfg))
         menu.add(self._context_group(cfg))
         if core.update_check_offered():
             updates.add(self._update_row())
@@ -40,9 +40,10 @@ class SettingsWindow(BaseWindow):
         self.show_page("settings", stack)
 
     def _general_group(self, cfg):
-        prefs = Adw.PreferencesGroup()  # the tab is called "General"
+        prefs = Adw.PreferencesGroup(title=_("Checksums"))
         for key, (title, options, subtitle) in core.setting_choices().items():
-            prefs.add(combo_row(title, options, cfg[key], lambda value, key=key: self.apply(key, value), subtitle))
+            if key != "language":  # that one sits under "Other"
+                prefs.add(combo_row(title, options, cfg[key], lambda value, key=key: self.apply(key, value), subtitle))
         clipboard = Adw.SwitchRow(title=_("Compare with clipboard automatically"),
                                   subtitle=_("Fill in a copied hash when comparing"), active=cfg["clipboard"])
         clipboard.connect("notify::active", lambda r, _p: self.apply("clipboard", r.get_active()))
@@ -126,7 +127,7 @@ class SettingsWindow(BaseWindow):
             self._switching = False
         self.apply("extension", self.extension_row.get_active())
 
-    def _info_group(self):
+    def _info_group(self, cfg):
         reset = Gtk.Button(label=_("Reset"), valign=Gtk.Align.CENTER, css_classes=["destructive-action"])
         reset.connect("clicked", self.confirm_reset)
         reset_row = Adw.ActionRow(title=_("Reset settings"), subtitle=_("Back to the default values."))
@@ -134,7 +135,9 @@ class SettingsWindow(BaseWindow):
         about = Adw.ActionRow(title=_("About HashTally"), activatable=True)
         about.add_suffix(Gtk.Image.new_from_icon_name("go-next-symbolic"))
         about.connect("activated", self._about)
+        title, options, subtitle = core.setting_choices()["language"]
         info = Adw.PreferencesGroup(title=_("Other"))
+        info.add(combo_row(title, options, cfg["language"], lambda value: self.apply("language", value), subtitle))
         info.add(reset_row)
         info.add(about)
         return info

@@ -783,3 +783,7 @@ msgstr "Nome della voce"
 #: src/ui_settings.py
 msgid "Context menu in the Scripts folder"
 msgstr "Menu contestuale nella cartella Script"
+
+#: src/ui_settings.py
+msgid "Checksums"
+msgstr "Checksum"

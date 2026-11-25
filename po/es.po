@@ -783,3 +783,7 @@ msgstr "Nombre de la entrada"
 #: src/ui_settings.py
 msgid "Context menu in the Scripts folder"
 msgstr "Menú contextual en la carpeta Scripts"
+
+#: src/ui_settings.py
+msgid "Checksums"
+msgstr "Sumas de verificación"

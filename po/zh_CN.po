@@ -775,3 +775,7 @@ msgstr "菜单项名称"
 #: src/ui_settings.py
 msgid "Context menu in the Scripts folder"
 msgstr "脚本文件夹中的右键菜单"
+
+#: src/ui_settings.py
+msgid "Checksums"
+msgstr "校验和"

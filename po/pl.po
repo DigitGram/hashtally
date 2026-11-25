@@ -791,3 +791,7 @@ msgstr "Nazwa pozycji"
 #: src/ui_settings.py
 msgid "Context menu in the Scripts folder"
 msgstr "Menu kontekstowe w folderze Skrypty"
+
+#: src/ui_settings.py
+msgid "Checksums"
+msgstr "Sumy kontrolne"

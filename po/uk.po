@@ -791,3 +791,7 @@ msgstr "Назва пункту"
 #: src/ui_settings.py
 msgid "Context menu in the Scripts folder"
 msgstr "Контекстне меню в теці «Скрипти»"
+
+#: src/ui_settings.py
+msgid "Checksums"
+msgstr "Контрольні суми"

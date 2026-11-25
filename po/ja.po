@@ -775,3 +775,7 @@ msgstr "項目の名前"
 #: src/ui_settings.py
 msgid "Context menu in the Scripts folder"
 msgstr "スクリプトフォルダー内のコンテキストメニュー"
+
+#: src/ui_settings.py
+msgid "Checksums"
+msgstr "チェックサム"
